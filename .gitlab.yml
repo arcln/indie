@@ -1,0 +1,9 @@
+image: arthurchaloin/epitech-fedora:latest
+
+build:
+    script:
+        - echo "Hello"
+
+test:
+    script:
+        - echo "Tests coverage: 0%"
