@@ -1,0 +1,12 @@
+image: arthurchaloin/epitech-fedora:latest
+
+build:
+    script:
+        - mkdir build
+        - cd build
+        - cmake ..
+        - cmake --build .
+
+test:
+    script:
+        - echo "Tests coverage 0%"
