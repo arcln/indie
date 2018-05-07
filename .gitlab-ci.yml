@@ -6,4 +6,4 @@ build:
 
 test:
     script:
-        - echo "Tests coverage: 0%"
+        - echo "Tests coverage 0%"
