@@ -57,3 +57,14 @@ TEST(Event, Multiple_emit) {
 		EXPECT_STREQ(response.c_str(), "response");
 	});
 }
+
+TEST(Event, No_response) {
+	engine::Event<std::string> event;
+
+	event.subscribe([](std::string const& payload) -> int {
+		EXPECT_STREQ(payload.c_str(), "payload");
+		return 0;
+	});
+
+	event.emit("payload");
+}

@@ -9,11 +9,10 @@
 
 #include <vector>
 #include <functional>
-#include <cstdarg>
 
 namespace engine {
 
-	template <typename PayloadType, typename ResponseType = PayloadType>
+	template <typename PayloadType, typename ResponseType = int>
 	class Event {
 	public:
 		using ResponseCallbackType = std::function<void (ResponseType const&)>;
