@@ -7,6 +7,3 @@
 
 #include "Component.hpp"
 
-engine::Component::~Component()
-{
-}

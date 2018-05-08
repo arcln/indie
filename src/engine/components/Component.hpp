@@ -12,10 +12,6 @@ namespace engine {
 	enum class ComponentType {
 	};
 
-	class Component {
-	public:
-		virtual ~Component();
+	struct Component {
 	};
 }
-
-

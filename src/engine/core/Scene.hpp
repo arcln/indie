@@ -24,7 +24,7 @@ namespace engine {
 
 		using EntityEdition = std::function<bool, Entity const&>;
 
-		void makeModel(std::string const &name, EntityEdition &composition);
+		void makeModel(std::string const &name, EntityEdition const &composition);
 		void spawnEntity(std::string const &name, EntityEdition &initialisation); // TODO initialisation default parameter
 
 	private:
