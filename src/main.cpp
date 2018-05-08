@@ -5,43 +5,27 @@
 ** main.cpp
 */
 
-#include <irrlicht/irrlicht.h>
+#include <iostream>
+#include <string>
+#include "engine/Event.hpp"
 
-using namespace irr;
+int main()
+{
+	engine::Event<std::string, std::string> event;
 
- int main()
- {
-    // start up the engine
-    IrrlichtDevice *device = createDevice();
+	event.subscribe([](std::string const& payload) -> std::string {
+		std::cout << "1 Event was triggered, payload contains: " << payload << std::endl;
+		return "response 1";
+	});
 
-    video::IVideoDriver* driver = device->getVideoDriver();
-    scene::ISceneManager* scenemgr = device->getSceneManager();
+	event.subscribe([](std::string const& payload) -> std::string {
+		std::cout << "2 Event was triggered, payload contains: " << payload << std::endl;
+		return "response 2";
+	});
 
-    device->setWindowCaption(L"Hello World!");
+	event.emit("payload", [](std::string const& response) -> void {
+		std::cout << "Response: " << response << std::endl;
+	});
 
-    // load and show quake2 .md2 model
-    scene::ISceneNode* node = scenemgr->addAnimatedMeshSceneNode(
-        scenemgr->getMesh("quake2model.md2"));
-
-    // if everything worked, add a texture and disable lighting
-    if (node)
-    {
-        node->setMaterialTexture(0, driver->getTexture("texture.bmp"));
-        node->setMaterialFlag(video::EMF_LIGHTING, false);
-    }
-
-    // add a first person shooter style user controlled camera
-    scenemgr->addCameraSceneNodeFPS();
-
-    // draw everything
-    while(device->run() && driver)
-    {
-        driver->beginScene(true, true, video::SColor(255,0,0,255));
-        scenemgr->drawAll();
-        driver->endScene();
-    }
-
-    // delete device
-    device->drop();
-    return 0;
- }
+	return 0;
+}
