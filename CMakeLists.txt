@@ -1,8 +1,52 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 2.8)
 project(bomberman)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
-add_executable(bomberman
-	src/main.cpp
+find_package(GLUT REQUIRED)
+find_package(ZLIB REQUIRED)
+
+if (APPLE)
+	find_package(OpenGl)
+
+	set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -framework IOKit")
+	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework IOKit")
+	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -framework IOKit")
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
+endif (APPLE)
+
+if (WIN32)
+	find_package(X11 REQUIRED)
+endif (WIN32)
+
+if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE RelWithDebInfo)
+endif (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+
+if (CMAKE_CXX_FLAGS_DEBUG)
+	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/debug)
+else (CMAKE_CXX_FLAGS_DEBUG)
+	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/release)
+endif (CMAKE_CXX_FLAGS_DEBUG)
+
+include_directories(
+	${OPENGL_INCLUDE_DIR}
+	${X11_INCLUDE_DIR}
+	${GLUT_INCLUDE_DIR}
+	${ZLIB_INCLUDE_DIR}
+	${IOKIT_INCLUDE_DIR}
+	./src
+)
+
+file(GLOB SRCS src/*)
+add_executable(bomberman ${SRCS})
+target_link_libraries(bomberman
+	${OPENGL_LIBRARIES}
+	${X11_LIBRARIES}
+	${GLUT_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${IOKIT_LIBRARIES}
+	Irrlicht
 )
