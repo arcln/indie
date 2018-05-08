@@ -4,6 +4,7 @@ project(bomberman)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-g -fprofile-arcs -ftest-coverage")
 
+find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(GTest REQUIRED)
@@ -51,25 +52,24 @@ endif (APPLE)
 
 add_executable(bomberman src/main.cpp)
 target_link_libraries(bomberman
-	game engine
+	game engine Irrlicht
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARIES}
-	Irrlicht
+	${IOKIT_LIBRARIES}
 )
 
 enable_testing()
 file(GLOB_RECURSE TESTS_SRCS tests/*)
 add_executable(tests-engine ${TESTS_SRCS})
 target_link_libraries(tests-engine
-	engine
+	engine pthread Irrlicht
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARIES}
 	${GTEST_BOTH_LIBRARIES}
-	Irrlicht
 )
