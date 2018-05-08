@@ -7,16 +7,15 @@
 
 #pragma once
 
-#include "Scene.hpp"
-
 namespace engine {
 
-	class Game {
-	public:
-		Game();
-		virtual ~Game();
+	enum class ComponentType {
+	};
 
-		void play(Scene& scene);
+	class Component {
+	public:
+		virtual ~Component();
 	};
 }
+
 

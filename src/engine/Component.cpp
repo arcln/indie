@@ -5,12 +5,8 @@
 ** A file for bomberman - Paul Laffitte
 */
 
-#include "Game.hpp"
+#include "Component.hpp"
 
-engine::Game::Game()
-{
-}
-
-void engine::Game::play(engine::Scene& scene)
+engine::Component::~Component()
 {
 }

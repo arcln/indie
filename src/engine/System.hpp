@@ -7,10 +7,19 @@
 
 #pragma once
 
+#include <vector>
+#include <map>
+#include "Component.hpp"
+#include "Entity.hpp"
+
 namespace engine {
 
 	class System {
 	public:
-		virtual ~System() = default;
+		virtual ~System();
+
+		virtual void update(std::vector<std::map<EntityId, Component>&> entities) = 0;
+
+		virtual std::vector<ComponentType> getType() = 0;
 	};
 }

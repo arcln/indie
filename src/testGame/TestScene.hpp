@@ -12,5 +12,9 @@
 namespace testGame {
 
 	class TestScene : public engine::Scene {
+	public:
+		virtual ~TestScene();
+
+		void update() override;
 	};
 }
