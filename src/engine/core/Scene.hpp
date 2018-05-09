@@ -11,11 +11,14 @@
 #include <string>
 #include <functional>
 #include <unordered_map>
-#include <map>
 #include <engine/Event.hpp>
 #include "Entity.hpp"
 
 namespace engine {
+
+	using Models = std::unordered_map<std::string, Entity>;
+
+	using Entities = std::vector<Entity>;
 
 	class Scene {
 	public:
@@ -26,19 +29,22 @@ namespace engine {
 
 		using EntityEdition = std::function<void (Entity const&)>;
 
-		Entity& makeModel(std::string const &name);
-		Entity& makeModel(std::string const &name, EntityEdition const &composition);
+		Entity& registerModel(std::string const& name);
+		Entity& registerModel(std::string const& name, EntityEdition const& composition);
 		Entity& spawnEntity(std::string const &name);
 		Entity& spawnEntity(std::string const &name, EntityEdition const &initialisation);
 
 		bool isRunning() const;
+		ComponentPool& getComponentPool();
+		const ComponentPool& getComponentPool() const;
 
 	protected:
 		void previousScene();
 
 	private:
-		std::vector<Entity> _entities;
-		std::unordered_map<ComponentType, std::map<EntityId, Component>, ComponentTypeHash> _components;
+		Entities _entities;
+		Models _models;
+		ComponentPool _componentPool;
 
 		bool _running;
 	};

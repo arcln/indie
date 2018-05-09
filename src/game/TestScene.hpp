@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "../engine/core/Scene.hpp"
+#include "engine/core/Scene.hpp"
 
 namespace testGame {
 

@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include "Component.hpp"
+#include "engine/core/EntityId.hpp"
 
 namespace engine {
 
-	struct TestComponent : UniqueComponent {
+	struct TestComponent {
 		int value;
 	};
 }

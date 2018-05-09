@@ -7,15 +7,12 @@
 
 #include <iostream>
 #include "TestScene.hpp"
-#include "../engine/components/TestComponent.hpp"
+#include "engine/components/TestComponent.hpp"
 
 testGame::TestScene::TestScene()
 {
-	this->makeModel("test", [](engine::Entity const& entity) -> void {
-		engine::TestComponent component{};
-
-		component.value = 41;
-		entity.addComponent(component);
+	this->registerModel("test", [](engine::Entity const& entity) -> void {
+		std::shared_ptr<engine::TestComponent> testComponent = entity.addTestComponent();
 	});
 
 	_entity = &this->spawnEntity("test");

@@ -15,14 +15,30 @@ engine::Scene::~Scene()
 {
 }
 
-engine::Entity& engine::Scene::makeModel(std::string const& name)
+/**
+ * Register a model to spawn it later
+ * @param name Name of the model to make
+ * @return the model
+ */
+engine::Entity& engine::Scene::registerModel(std::string const& name)
 {
-	// TODO register a model to spawn it later
+	auto entityIt = _models.emplace(name, engine::Entity(_componentPool));
+
+	if (!entityIt.second)
+		throw std::runtime_error("unable to register a model");
+
+	return entityIt.first->second;
 }
 
-engine::Entity& engine::Scene::makeModel(std::string const& name, EntityEdition const &composition)
+/**
+ * Register a model to spawn it later
+ * @param name Name of the model to make
+ * @param composition Function that should make the model
+ * @return the model
+ */
+engine::Entity& engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
 {
-	composition(makeModel(name));
+	composition(registerModel(name));
 }
 
 engine::Entity& engine::Scene::spawnEntity(std::string const& name)
@@ -43,4 +59,14 @@ bool engine::Scene::isRunning() const
 void engine::Scene::previousScene()
 {
 	_running = false;
+}
+
+engine::ComponentPool& engine::Scene::getComponentPool()
+{
+	return _componentPool;
+}
+
+engine::ComponentPool const& engine::Scene::getComponentPool() const
+{
+	return _componentPool;
 }

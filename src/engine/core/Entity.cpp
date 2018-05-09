@@ -5,11 +5,13 @@
 ** A file for bomberman - Paul Laffitte
 */
 
+#include <memory>
 #include "Entity.hpp"
 
 engine::EntityId engine::Entity::_nextId = 0;
 
-engine::Entity::Entity() : _id(Entity::_nextId)
+engine::Entity::Entity(ComponentPool& componentPool)
+	: _id(Entity::_nextId), _componentPool(componentPool)
 {
 	++Entity::_nextId;
 }
@@ -18,12 +20,19 @@ engine::Entity::~Entity()
 {
 }
 
-void engine::Entity::addComponent(engine::Component& component) const
-{
-	// TODO send event to the scene
-}
-
 size_t engine::Entity::getId() const
 {
 	return _id;
+}
+
+std::shared_ptr<engine::TestComponent>
+engine::Entity::addTestComponent() const
+{
+	return _componentPool.addTestComponent(_id);
+}
+
+std::shared_ptr<engine::TestComponent>
+engine::Entity::getTestComponent() const
+{
+	return _componentPool.getTestComponent(_id);
 }

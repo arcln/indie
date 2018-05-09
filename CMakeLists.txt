@@ -50,17 +50,7 @@ if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
-add_executable(worms
-	src/main.cpp
-
-    src/engine/core/Game.cpp
-    src/engine/core/Game.hpp
-    src/engine/core/Scene.hpp
-    src/engine/core/Entity.hpp
-    src/engine/systems/System.hpp
-
-    src/testGame/TestScene.cpp
-    src/testGame/TestScene.hpp)
+add_executable(worms src/main.cpp)
 
 target_link_libraries(worms
 	game engine Irrlicht

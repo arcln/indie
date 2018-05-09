@@ -9,7 +9,7 @@
 #include <string>
 #include "engine/Event.hpp"
 #include "engine/core/Scene.hpp"
-#include "testGame/TestScene.hpp"
+#include "game/TestScene.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/components/TestComponent.hpp"
 

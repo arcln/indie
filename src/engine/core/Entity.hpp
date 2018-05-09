@@ -9,33 +9,30 @@
 
 #include <cstddef>
 #include <vector>
-#include "../components/Component.hpp"
+#include <engine/Event.hpp>
+#include <engine/components/ComponentPool.hpp>
+#include <engine/core/EntityId.hpp>
 
 namespace engine {
 
-	using EntityId = std::size_t;
-
 	class Entity {
 	public:
-		Entity();
+		Entity(ComponentPool& componentPool);
 		virtual ~Entity();
 
-		void addComponent(Component& component) const;
+		/**
+		 * Add a test component
+		 * @return Test component added
+		 */
+		std::shared_ptr<TestComponent> addTestComponent() const;
 
-		template <typename ComponentType>
-		ComponentType const& getComponent() const
-		{
-		}
-
-		template <typename ComponentType>
-		std::vector<ComponentType const*> getComponents() const
-		{
-		}
+		std::shared_ptr<TestComponent> getTestComponent() const;
 
 		size_t getId() const;
 
 		static EntityId _nextId;
 	private:
 		EntityId _id;
+		ComponentPool& _componentPool;
 	};
 }

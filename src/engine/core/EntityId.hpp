@@ -5,5 +5,11 @@
 ** A file for bomberman - Paul Laffitte
 */
 
-#include "Component.hpp"
+#pragma once
 
+#include <cstddef>
+
+namespace engine {
+
+	using EntityId = std::size_t;
+}
