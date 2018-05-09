@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(bomberman)
+project(worms)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-g -fprofile-arcs -ftest-coverage")
@@ -50,8 +50,8 @@ if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
-add_executable(bomberman src/main.cpp)
-target_link_libraries(bomberman
+add_executable(worms src/main.cpp)
+target_link_libraries(worms
 	game engine Irrlicht
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
