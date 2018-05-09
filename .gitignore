@@ -1,7 +1,9 @@
 *.o
 *.a
-bomberman
-.clang_complete
+*.info
+
 build
 cmake-build-debug
+
+.clang_complete
 .idea

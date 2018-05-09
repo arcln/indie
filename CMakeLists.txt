@@ -1,20 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
-project(bomberman)
+project(worms)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS "-g -fprofile-arcs -ftest-coverage")
 
+find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(GTest REQUIRED)
 
 if (APPLE)
 	find_package(OpenGl)
-
-	set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} -framework IOKit")
-	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework IOKit")
-	set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -framework IOKit")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
 if (WIN32)
@@ -26,7 +22,8 @@ if (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 endif (NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
 
 if (CMAKE_CXX_FLAGS_DEBUG)
-	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/debug)
+	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
 else (CMAKE_CXX_FLAGS_DEBUG)
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/release)
 endif (CMAKE_CXX_FLAGS_DEBUG)
@@ -37,16 +34,42 @@ include_directories(
 	${GLUT_INCLUDE_DIR}
 	${ZLIB_INCLUDE_DIR}
 	${IOKIT_INCLUDE_DIR}
+	${GTEST_INCLUDE_DIRS}
 	./src
 )
 
-file(GLOB SRCS src/*)
-add_executable(bomberman ${SRCS})
-target_link_libraries(bomberman
+link_directories(/usr/local/lib)
+
+file(GLOB_RECURSE GAME_SRCS src/game/*)
+add_library(game STATIC ${GAME_SRCS})
+
+file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
+add_library(engine STATIC ${ENGINE_SRCS})
+
+if (APPLE)
+	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
+endif (APPLE)
+
+add_executable(worms src/main.cpp)
+target_link_libraries(worms
+	game engine Irrlicht
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARIES}
-	Irrlicht
+	${IOKIT_LIBRARIES}
+)
+
+enable_testing()
+file(GLOB_RECURSE TESTS_SRCS tests/*)
+add_executable(tests-engine ${TESTS_SRCS})
+target_link_libraries(tests-engine
+	engine pthread Irrlicht
+	${OPENGL_LIBRARIES}
+	${X11_LIBRARIES}
+	${GLUT_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${IOKIT_LIBRARIES}
+	${GTEST_BOTH_LIBRARIES}
 )
