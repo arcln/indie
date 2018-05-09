@@ -9,8 +9,8 @@
 
 #include <vector>
 #include <map>
-#include "Component.hpp"
-#include "Entity.hpp"
+#include "../components/Component.hpp"
+#include "../core/Entity.hpp"
 
 namespace engine {
 

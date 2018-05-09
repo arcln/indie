@@ -8,9 +8,10 @@
 #include <iostream>
 #include <string>
 #include "engine/Event.hpp"
-#include "engine/Scene.hpp"
+#include "engine/core/Scene.hpp"
 #include "testGame/TestScene.hpp"
-#include "engine/Game.hpp"
+#include "engine/core/Game.hpp"
+#include "engine/components/TestComponent.hpp"
 
 int
 main(int const, char const *[])
@@ -32,7 +33,7 @@ main(int const, char const *[])
 	});
 
 	engine::Game game;
-	engine::Scene scene = testGame::TestScene();
+	testGame::TestScene scene = testGame::TestScene();
 
 	game.play(scene);
 	return 0;

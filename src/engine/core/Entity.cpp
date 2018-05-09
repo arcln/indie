@@ -7,6 +7,8 @@
 
 #include "Entity.hpp"
 
+engine::EntityId engine::Entity::_nextId = 0;
+
 engine::Entity::Entity() : _id(Entity::_nextId)
 {
 	++Entity::_nextId;
@@ -21,7 +23,7 @@ void engine::Entity::addComponent(engine::Component& component) const
 	// TODO send event to the scene
 }
 
-size_t engine::Entity::get_id() const
+size_t engine::Entity::getId() const
 {
 	return _id;
 }

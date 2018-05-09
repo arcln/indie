@@ -8,7 +8,8 @@
 #pragma once
 
 #include <cstddef>
-#include "Component.hpp"
+#include <vector>
+#include "../components/Component.hpp"
 
 namespace engine {
 
@@ -21,10 +22,20 @@ namespace engine {
 
 		void addComponent(Component& component) const;
 
-		size_t get_id() const;
+		template <typename ComponentType>
+		ComponentType const& getComponent() const
+		{
+		}
 
+		template <typename ComponentType>
+		std::vector<ComponentType const*> getComponents() const
+		{
+		}
+
+		size_t getId() const;
+
+		static EntityId _nextId;
 	private:
-		static EntityId _nextId = 0;
 		EntityId _id;
 	};
 }

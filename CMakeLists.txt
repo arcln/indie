@@ -50,14 +50,18 @@ if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
-add_executable(worms src/main.cpp
-    src/engine/System.hpp
-    src/engine/Entity.hpp
+add_executable(worms
+	src/main.cpp
+
+    src/engine/core/Game.cpp
+    src/engine/core/Game.hpp
+    src/engine/core/Scene.hpp
+    src/engine/core/Entity.hpp
+    src/engine/systems/System.hpp
+
     src/testGame/TestScene.cpp
-    src/testGame/TestScene.hpp
-    src/engine/Scene.hpp
-    src/engine/Game.cpp
-    src/engine/Game.hpp)
+    src/testGame/TestScene.hpp)
+
 target_link_libraries(worms
 	game engine Irrlicht
 	${OPENGL_LIBRARIES}
@@ -72,11 +76,11 @@ enable_testing()
 file(GLOB_RECURSE TESTS_SRCS tests/*)
 add_executable(tests-engine ${TESTS_SRCS})
 target_link_libraries(tests-engine
-	engine pthread Irrlicht
-	${OPENGL_LIBRARIES}
-	${X11_LIBRARIES}
-	${GLUT_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${IOKIT_LIBRARIES}
-	${GTEST_BOTH_LIBRARIES}
+    ${GTEST_BOTH_LIBRARIES}
+    engine pthread Irrlicht
+    ${OPENGL_LIBRARIES}
+    ${X11_LIBRARIES}
+    ${GLUT_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    ${IOKIT_LIBRARIES}
 )

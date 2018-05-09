@@ -7,14 +7,18 @@
 
 #pragma once
 
-#include "../engine/Scene.hpp"
+#include "../engine/core/Scene.hpp"
 
 namespace testGame {
 
 	class TestScene : public engine::Scene {
 	public:
+		TestScene();
 		virtual ~TestScene();
 
 		void update() override;
+
+	private:
+		engine::Entity* _entity;
 	};
 }
