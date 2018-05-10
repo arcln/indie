@@ -9,12 +9,21 @@
 
 #include <memory>
 #include <map>
-#include "TestComponent.hpp"
+#include <typeindex>
+#include <unordered_map>
+#include <boost/variant/variant.hpp>
+#include <boost/variant/get.hpp>
+#include "engine/components/TestComponent.hpp"
+#include "engine/components/ComponentVisitor.hpp"
 
 namespace engine {
 
+	using AnyComponent = boost::variant<int, TestComponent>;
+
+	using AnyComponents = std::unordered_map<std::type_index, std::multimap<EntityId, AnyComponent> >;
+
 	template <typename ComponentType>
-	using Components = std::multimap<EntityId, std::shared_ptr<ComponentType> >;
+	using Components = std::multimap<EntityId, ComponentType>;
 
 	template <typename ComponentType>
 	using UniqueComponents = std::map<EntityId, std::shared_ptr<ComponentType> >;
@@ -24,44 +33,51 @@ namespace engine {
 	 */
 	class ComponentPool {
 	public:
-		std::shared_ptr<TestComponent> addTestComponent(EntityId entityId);
-		std::shared_ptr<TestComponent> getTestComponent(EntityId entityId);
-
-	private:
-		Components<TestComponent> _testComponents;
 
 		template <typename ComponentType>
-		std::shared_ptr<ComponentType>
-		_addComponent(engine::Components<ComponentType> components, engine::EntityId entityId)
+		ComponentType&
+		addComponent(EntityId entityId)
 		{
-			typename Components<ComponentType>::iterator componentIt = components.emplace(entityId, std::make_shared<ComponentType>());
+			Components<AnyComponent>& components = getComponents<ComponentType>();
+			Components<AnyComponent>::iterator componentIt = components.emplace(entityId, ComponentType());
 
-			if (componentIt == std::end(components))
+			if (componentIt != std::end(components))
 				throw std::runtime_error("unable to add a new component");
-			return componentIt->second;
+			return boost::get<ComponentType>(componentIt->second);
 		}
 
 		template <typename ComponentType>
-		std::shared_ptr<ComponentType>
-		_getComponent(engine::Components<ComponentType> components, engine::EntityId entityId)
+		ComponentType&
+		getComponent(EntityId entityId)
 		{
-			typename Components<ComponentType>::iterator componentIt = components.find(entityId);
+			Components<AnyComponent>& components = getComponents<ComponentType>();
+			Components<AnyComponent>::iterator componentIt = components.find(entityId);
 
 			if (componentIt == std::end(components))
 				throw std::runtime_error("component not found");
-			return componentIt->second;
+			return boost::get<ComponentType>(componentIt->second);
+
 		}
 
 		template <typename ComponentType>
 		typename Components<ComponentType>::iterator
-		_getComponents(engine::Components<ComponentType> components, engine::EntityId entityId)
+		getComponents(EntityId entityId)
 		{
-			typename Components<ComponentType>::iterator componentsIt = components.find(entityId);
-
-			if (componentsIt == std::end(components))
-				throw std::runtime_error("components not found");
-			return componentsIt;
+			return getComponents<ComponentType>().find(entityId);
 		}
+
+		template <typename ComponentType>
+		Components<AnyComponent>& getComponents()
+		{
+			AnyComponents::iterator componentsIt = _components.find(typeid(ComponentType));
+
+			if (std::end(_components) != componentsIt || typeid(componentsIt->second) != typeid(ComponentType))
+				throw std::runtime_error("components not found");
+			return componentsIt->second;
+		}
+
+	private:
+		AnyComponents _components;
 	};
 }
 

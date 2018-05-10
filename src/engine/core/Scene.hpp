@@ -30,12 +30,12 @@ namespace engine {
 
 		virtual void update() = 0;
 
-		using EntityEdition = std::function<void (Entity const&)>;
+		using EntityEdition = std::function<Entity const& (Entity const&)>;
 
 		Entity& registerModel(std::string const& name);
-		Entity& registerModel(std::string const& name, EntityEdition const& composition);
-		Entity& spawnEntity(std::string const &name);
-		Entity& spawnEntity(std::string const &name, EntityEdition const &initialisation);
+		const Entity& registerModel(std::string const& name, EntityEdition const& composition);
+		const Entity& spawnEntity(std::string const &name);
+		const Entity& spawnEntity(std::string const &name, EntityEdition const &initialisation);
 
 		bool isRunning() const;
 		ComponentPool& getComponentPool();

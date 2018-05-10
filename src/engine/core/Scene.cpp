@@ -37,19 +37,19 @@ engine::Scene::registerModel(std::string const& name)
  * @param composition Function that should make the model
  * @return the model
  */
-engine::Entity&
+engine::Entity const&
 engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
 {
-	composition(registerModel(name));
+	return composition(registerModel(name));
 }
 
-engine::Entity&
+engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name)
 {
 	// TODO create an entity based on the name corresponding model
 }
 
-engine::Entity&
+engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name, EntityEdition const &initialisation)
 {
 	initialisation(spawnEntity(name));

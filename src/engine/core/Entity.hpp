@@ -27,9 +27,9 @@ namespace engine {
 		 * Add a test component
 		 * @return Test component added
 		 */
-		std::shared_ptr<TestComponent> addTestComponent() const;
+		TestComponent& addTestComponent() const;
 
-		std::shared_ptr<TestComponent> getTestComponent() const;
+		TestComponent& getTestComponent() const;
 
 		size_t getId() const;
 

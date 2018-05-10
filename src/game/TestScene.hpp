@@ -19,6 +19,6 @@ namespace testGame {
 		void update() override;
 
 	private:
-		engine::Entity* _entity;
+		engine::Entity const* _entity;
 	};
 }

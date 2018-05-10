@@ -26,14 +26,14 @@ engine::Entity::getId() const
 	return _id;
 }
 
-std::shared_ptr<engine::TestComponent>
+engine::TestComponent&
 engine::Entity::addTestComponent() const
 {
-	return _componentPool.addTestComponent(_id);
+	return _componentPool.addComponent<TestComponent>(_id);
 }
 
-std::shared_ptr<engine::TestComponent>
+engine::TestComponent&
 engine::Entity::getTestComponent() const
 {
-	return _componentPool.getTestComponent(_id);
+	return _componentPool.getComponent<TestComponent>(_id);
 }

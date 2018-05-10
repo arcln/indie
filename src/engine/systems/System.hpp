@@ -9,8 +9,8 @@
 
 #include <vector>
 #include <map>
-#include "../components/Component.hpp"
-#include "../core/Entity.hpp"
+#include <engine/core/EntityId.hpp>
+#include <engine/components/ComponentPool.hpp>
 
 namespace engine {
 
@@ -18,8 +18,7 @@ namespace engine {
 	public:
 		virtual ~System();
 
-		virtual void update(std::vector<std::map<EntityId, Component>&> entities) = 0;
+		virtual void update(AnyComponents& entities) = 0;
 
-		virtual std::vector<ComponentType> getType() = 0;
 	};
 }

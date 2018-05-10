@@ -11,8 +11,10 @@
 
 testGame::TestScene::TestScene()
 {
-	this->registerModel("test", [](engine::Entity const& entity) -> void {
-		std::shared_ptr<engine::TestComponent> testComponent = entity.addTestComponent();
+	this->registerModel("test", [](engine::Entity const& entity) -> engine::Entity const& {
+		engine::TestComponent& testComponent = entity.addTestComponent();
+		testComponent.value = 42;
+		return entity;
 	});
 
 	_entity = &this->spawnEntity("test");
@@ -25,4 +27,5 @@ testGame::TestScene::~TestScene()
 void
 testGame::TestScene::update()
 {
+	std::cout << _entity->getTestComponent().value << std::endl;
 }
