@@ -13,13 +13,13 @@ namespace testGame {
 
 	class TestScene : public engine::Scene {
 	public:
-		TestScene();
+		TestScene(engine::Game* game);
 		virtual ~TestScene();
 
 		void update() override;
 
 	private:
-		engine::Entity const* _entity;
-		engine::Entity const* _entity2;
+		engine::EntityId _entity;
+		engine::EntityId _entity2;
 	};
 }

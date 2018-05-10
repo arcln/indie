@@ -8,10 +8,9 @@
 #pragma once
 
 #include <cstddef>
-#include <vector>
-#include <engine/Event.hpp>
-#include <engine/components/ComponentPool.hpp>
+#include <engine/core/Event.hpp>
 #include <engine/core/EntityId.hpp>
+#include <engine/components/ComponentPool.hpp>
 
 namespace engine {
 
@@ -21,12 +20,12 @@ namespace engine {
 	class Entity {
 	public:
 		Entity();
-		explicit Entity(ComponentPool& componentPool);
+		explicit Entity(ComponentPool* componentPool);
 		Entity(Entity const& entity);
 		Entity& operator=(Entity const& entity);
-
-
 		virtual ~Entity();
+
+		Entity& copyComponents(engine::Entity const& entity);
 
 		template <typename ComponentType>
 		ComponentType&
@@ -40,7 +39,6 @@ namespace engine {
 		getComponent() const
 		{
 			return _componentPool->getComponent<ComponentType>(_id);
-
 		}
 
 		template <typename ComponentType>
@@ -53,6 +51,7 @@ namespace engine {
 		size_t getId() const;
 
 		static EntityId _nextId;
+
 	private:
 		EntityId _id;
 		ComponentPool* _componentPool;

@@ -7,9 +7,15 @@
 
 #pragma once
 
-#include "Scene.hpp"
+#include <unordered_map>
+#include <irrlicht/irrlicht.h>
+#include "engine/core/Scene.hpp"
+#include "engine/resource/ResourceManager.hpp"
 
 namespace engine {
+
+	class System;
+	using MeshNode = irr::scene::IAnimatedMesh;
 
 	class Game {
 	public:
@@ -17,6 +23,15 @@ namespace engine {
 		virtual ~Game();
 
 		void play(Scene& scene);
+		void registerSystem(std::string const& name, System* system);
+
+		irr::IrrlichtDevice& device();
+		irr::IrrlichtDevice const& device() const;
+
+		ResourceManager<MeshNode*> meshManager;
+
+	private:
+		irr::IrrlichtDevice* _device = nullptr;
+		std::unordered_map<std::string, System*> _systems;
 	};
 }
-

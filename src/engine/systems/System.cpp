@@ -6,7 +6,3 @@
 */
 
 #include "System.hpp"
-
-engine::System::~System()
-{
-}

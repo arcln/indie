@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <map>
 #include <typeindex>
@@ -14,11 +15,12 @@
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include "engine/components/TestComponent.hpp"
+#include "engine/components/DisplayComponent.hpp"
 #include "engine/components/ComponentVisitor.hpp"
 
 namespace engine {
 
-	using AnyComponent = boost::variant<int, TestComponent>;
+	using AnyComponent = boost::variant<TestComponent, DisplayComponent>;
 
 	using AnyComponents = std::unordered_map<std::type_index, std::multimap<EntityId, AnyComponent> >;
 
@@ -40,6 +42,10 @@ namespace engine {
 		ComponentType&
 		addComponent(EntityId entityId)
 		{
+			if (!this) {
+				throw std::runtime_error("null component pool");
+			}
+
 			Components<AnyComponent>& components = getComponents<ComponentType>();
 			Components<AnyComponent>::iterator componentIt = components.emplace(entityId, ComponentType());
 
@@ -65,7 +71,7 @@ namespace engine {
 		typename Components<ComponentType>::iterator
 		getComponents(EntityId entityId)
 		{
-			return getComponents<ComponentType>().find(entityId);
+			return this->getComponents<ComponentType>().find(entityId);
 		}
 
 		template <typename ComponentType>
@@ -80,5 +86,3 @@ namespace engine {
 		AnyComponents _components;
 	};
 }
-
-

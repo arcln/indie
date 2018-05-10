@@ -4,5 +4,3 @@
  ** File description:
  ** Engine.hpp
  */
-
-#include "Event.hpp"

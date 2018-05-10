@@ -7,34 +7,27 @@
 
 #include <iostream>
 #include <string>
-#include "engine/Event.hpp"
+#include "engine/core/Event.hpp"
 #include "engine/core/Scene.hpp"
 #include "game/TestScene.hpp"
 #include "engine/core/Game.hpp"
-#include "engine/components/TestComponent.hpp"
+#include "engine/components/DisplayComponent.hpp"
+#include "engine/systems/DisplaySystem.hpp"
 
 int
 main(int const, char const *[])
 {
-	engine::Event<std::string, std::string> event;
-
-	event.subscribe([](std::string const& payload) -> std::string {
-		std::cout << "1 Event was triggered, payload contains: " << payload << std::endl;
-		return "response 1";
-	});
-
-	event.subscribe([](std::string const& payload) -> std::string {
-		std::cout << "2 Event was triggered, payload contains: " << payload << std::endl;
-		return "response 2";
-	});
-
-	event.emit("payload", [](std::string const& response) -> void {
-		std::cout << "Response: " << response << std::endl;
-	});
-
 	engine::Game game;
-	testGame::TestScene scene = testGame::TestScene();
 
-	game.play(scene);
+	try {
+		engine::DisplaySystem display(game);
+		game.registerSystem("display", &display);
+
+		testGame::TestScene scene(&game);
+		game.play(scene);
+	} catch (std::exception& e) {
+		std::cerr << "worms: ERROR: " << e.what() << std::endl;
+	}
+
 	return 0;
 }

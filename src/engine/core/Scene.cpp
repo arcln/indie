@@ -1,5 +1,3 @@
-#include "Scene.hpp"
-
 /*
 ** EPITECH PROJECT, 2017
 ** bomberman
@@ -7,7 +5,9 @@
 ** A file for bomberman - Paul Laffitte
 */
 
-engine::Scene::Scene() : _running(true)
+#include "Scene.hpp"
+
+engine::Scene::Scene(engine::Game* game) : _game(game), _running(true)
 {
 }
 
@@ -15,38 +15,35 @@ engine::Scene::~Scene()
 {
 }
 
-engine::Entity&
-engine::Scene::registerModel(std::string const& name)
-{
-	auto entityIt = _models.emplace(name, engine::Entity(_componentPool));
-
-	if (!entityIt.second)
-		throw std::runtime_error("unable to register a model");
-
-	return entityIt.first->second;
-}
-
-engine::Entity const&
+void
 engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
 {
-	return composition(registerModel(name));
+	_models[name] = composition;
 }
 
-engine::Entity const&
+engine::EntityId
 engine::Scene::spawnEntity(std::string const& name)
 {
 	if (_models.find(name) == std::end(_models))
-		throw std::runtime_error("model \"" + name + "\" not found");
-	_entities.emplace_back(_models[name]);
-	return _entities.back();
+		throw std::runtime_error("model '" + name + "' not found");
+	auto entity = Entity(&this->componentPool);
+	_entities[entity.getId()] = _models[name](entity);
+	return entity.getId();
 }
 
+
+engine::EntityId
+engine::Scene::spawnEntity(std::string const& name, EntityEdition const& initialisation)
+{
+	return initialisation(this->getEntity(spawnEntity(name))).getId();
+}
 
 engine::Entity const&
-engine::Scene::spawnEntity(std::string const& name, EntityEdition const &initialisation)
+engine::Scene::getEntity(EntityId id) const
 {
-	initialisation(spawnEntity(name));
+	return _entities.at(id);
 }
+
 
 bool
 engine::Scene::isRunning() const
@@ -58,16 +55,4 @@ void
 engine::Scene::previousScene()
 {
 	_running = false;
-}
-
-engine::ComponentPool&
-engine::Scene::getComponentPool()
-{
-	return _componentPool;
-}
-
-engine::ComponentPool
-const& engine::Scene::getComponentPool() const
-{
-	return _componentPool;
 }
