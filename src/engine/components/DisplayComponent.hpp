@@ -18,7 +18,6 @@ namespace engine {
 
 	struct DisplayComponent : public Component {
 		DisplayComponent(MeshNode* mesh);
-
 		Node* node = nullptr;
 	};
 }

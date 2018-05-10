@@ -11,7 +11,8 @@
 #include <string>
 #include <functional>
 #include <unordered_map>
-#include <engine/Event.hpp>
+#include <map>
+#include <engine/core/Event.hpp>
 #include "Entity.hpp"
 
 namespace engine {
@@ -52,7 +53,7 @@ namespace engine {
 		 * @param name Model's name
 		 * @return the spawned entity
 		 */
-		const Entity& spawnEntity(std::string const &name);
+		const Entity& spawnEntity(std::string const& name);
 
 		/**
 		 * Spawn an entity based on the model designated by his name
@@ -60,7 +61,7 @@ namespace engine {
 		 * @param initialisation Function that modify the spawned entity
 		 * @return the spawned entity
 		 */
-		const Entity& spawnEntity(std::string const &name, EntityEdition const &initialisation);
+		const Entity& spawnEntity(std::string const& name, EntityEdition const &initialisation);
 
 		bool isRunning() const;
 		ComponentPool& getComponentPool();
@@ -74,6 +75,6 @@ namespace engine {
 		Models _models;
 		ComponentPool _componentPool;
 
-		bool _running;
+		bool _running = true;
 	};
 }

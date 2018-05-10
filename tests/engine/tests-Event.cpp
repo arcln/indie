@@ -8,7 +8,7 @@
 #include <iostream>
 #include <string>
 #include <gtest/gtest.h>
-#include "engine/Event.hpp"
+#include "engine/core/Event.hpp"
 
 TEST(Event, Basic_usage) {
 	engine::Event<std::string, std::string> event;
