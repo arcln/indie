@@ -12,7 +12,7 @@
 testGame::TestScene::TestScene()
 {
 	this->registerModel("test", [](engine::Entity const& entity) -> engine::Entity const& {
-		engine::TestComponent& testComponent = entity.addTestComponent();
+		engine::TestComponent& testComponent = entity.addComponent<engine::TestComponent>();
 		testComponent.value = 42;
 		return entity;
 	});
@@ -27,5 +27,5 @@ testGame::TestScene::~TestScene()
 void
 testGame::TestScene::update()
 {
-	std::cout << _entity->getTestComponent().value << std::endl;
+	std::cout << _entity->getComponent<engine::TestComponent>().value << std::endl;
 }

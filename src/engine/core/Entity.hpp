@@ -23,13 +23,27 @@ namespace engine {
 		Entity(ComponentPool& componentPool);
 		virtual ~Entity();
 
-		/**
-		 * Add a test component
-		 * @return Test component added
-		 */
-		TestComponent& addTestComponent() const;
+		template <typename ComponentType>
+		ComponentType&
+		addComponent() const
+		{
+			return _componentPool.addComponent<ComponentType>(_id);
+		}
 
-		TestComponent& getTestComponent() const;
+		template <typename ComponentType>
+		ComponentType&
+		getComponent() const
+		{
+			return _componentPool.getComponent<ComponentType>(_id);
+
+		}
+
+		template <typename ComponentType>
+		typename Components<ComponentType>::iterator
+		getComponents() const
+		{
+			return _componentPool.getComponents<ComponentType>(_id);
+		}
 
 		size_t getId() const;
 

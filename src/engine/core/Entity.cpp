@@ -26,14 +26,3 @@ engine::Entity::getId() const
 	return _id;
 }
 
-engine::TestComponent&
-engine::Entity::addTestComponent() const
-{
-	return _componentPool.addComponent<TestComponent>(_id);
-}
-
-engine::TestComponent&
-engine::Entity::getTestComponent() const
-{
-	return _componentPool.getComponent<TestComponent>(_id);
-}
