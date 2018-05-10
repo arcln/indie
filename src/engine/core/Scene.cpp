@@ -15,21 +15,10 @@ engine::Scene::~Scene()
 {
 }
 
-engine::Entity&
-engine::Scene::registerModel(std::string const& name)
-{
-	auto entityIt = _models.emplace(name, engine::Entity(&this->componentPool));
-
-	if (!entityIt.second)
-		throw std::runtime_error("unable to register a model");
-
-	return entityIt.first->second;
-}
-
-engine::Entity const&
+void
 engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
 {
-	return composition(registerModel(name));
+	_models[name] = composition;
 }
 
 engine::EntityId
@@ -38,8 +27,8 @@ engine::Scene::spawnEntity(std::string const& name)
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("model '" + name + "' not found");
 	auto entity = Entity(&this->componentPool);
-	_entities[entity.getId()] = std::move(entity);
-	return _entities[entity.getId()].copyComponents(_models[name]).getId();
+	_entities[entity.getId()] = _models[name](entity);
+	return entity.getId();
 }
 
 

@@ -17,8 +17,6 @@
 
 namespace engine {
 
-	using Models = std::unordered_map<std::string, Entity>;
-
 	using Entities = std::unordered_map<EntityId, Entity>;
 
 	/**
@@ -32,13 +30,7 @@ namespace engine {
 		virtual void update() = 0;
 
 		using EntityEdition = std::function<Entity const& (Entity const&)>;
-
-		/**
-		 * Register a model to spawn it later
-		 * @param name Name of the model to register
-		 * @return the model
-		 */
-		Entity& registerModel(std::string const& name);
+		using Models = std::unordered_map<std::string, EntityEdition>;
 
 		/**
 		 * Register a model to spawn it later
@@ -46,7 +38,7 @@ namespace engine {
 		 * @param composition Function that model an entity
 		 * @return the model
 		 */
-		Entity const& registerModel(std::string const& name, EntityEdition const& composition);
+		void registerModel(std::string const& name, EntityEdition const& composition);
 
 		/**
 		 * Spawn an entity based on the model designated by his name
