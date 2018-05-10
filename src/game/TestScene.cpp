@@ -18,6 +18,7 @@ testGame::TestScene::TestScene()
 	});
 
 	_entity = &this->spawnEntity("test");
+	_entity2 = &this->spawnEntity("test");
 }
 
 testGame::TestScene::~TestScene()
@@ -27,5 +28,7 @@ testGame::TestScene::~TestScene()
 void
 testGame::TestScene::update()
 {
-	std::cout << _entity->getComponent<engine::TestComponent>().value << std::endl;
+	std::cout << "component 1 value: " << ++_entity->getComponent<engine::TestComponent>().value << std::endl;
+	std::cout << "component 2 value: " << --_entity2->getComponent<engine::TestComponent>().value << std::endl;
+
 }

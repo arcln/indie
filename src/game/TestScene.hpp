@@ -20,5 +20,6 @@ namespace testGame {
 
 	private:
 		engine::Entity const* _entity;
+		engine::Entity const* _entity2;
 	};
 }

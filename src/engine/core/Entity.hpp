@@ -20,21 +20,26 @@ namespace engine {
 	 */
 	class Entity {
 	public:
-		Entity(ComponentPool& componentPool);
+		Entity();
+		explicit Entity(ComponentPool& componentPool);
+		Entity(Entity const& entity);
+		Entity& operator=(Entity const& entity);
+
+
 		virtual ~Entity();
 
 		template <typename ComponentType>
 		ComponentType&
 		addComponent() const
 		{
-			return _componentPool.addComponent<ComponentType>(_id);
+			return _componentPool->addComponent<ComponentType>(_id);
 		}
 
 		template <typename ComponentType>
 		ComponentType&
 		getComponent() const
 		{
-			return _componentPool.getComponent<ComponentType>(_id);
+			return _componentPool->getComponent<ComponentType>(_id);
 
 		}
 
@@ -42,7 +47,7 @@ namespace engine {
 		typename Components<ComponentType>::iterator
 		getComponents() const
 		{
-			return _componentPool.getComponents<ComponentType>(_id);
+			return _componentPool->getComponents<ComponentType>(_id);
 		}
 
 		size_t getId() const;
@@ -50,6 +55,6 @@ namespace engine {
 		static EntityId _nextId;
 	private:
 		EntityId _id;
-		ComponentPool& _componentPool;
+		ComponentPool* _componentPool;
 	};
 }

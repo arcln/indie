@@ -46,7 +46,7 @@ file(GLOB_RECURSE GAME_SRCS src/game/*)
 add_library(game STATIC ${GAME_SRCS})
 
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
-add_library(engine STATIC ${ENGINE_SRCS} src/engine/components/ComponentVisitor.hpp)
+add_library(engine STATIC ${ENGINE_SRCS} src/engine/components/ComponentVisitor.hpp src/engine/components/ComponentPool.cpp)
 
 if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")

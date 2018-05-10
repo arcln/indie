@@ -25,6 +25,8 @@ namespace engine {
 	template <typename ComponentType>
 	using Components = std::multimap<EntityId, ComponentType>;
 
+	using AnyEntityComponents = std::unordered_map<std::type_index, std::multimap<EntityId, AnyComponent> >;
+
 	template <typename ComponentType>
 	using UniqueComponents = std::map<EntityId, std::shared_ptr<ComponentType> >;
 
@@ -71,6 +73,8 @@ namespace engine {
 		{
 			return _components[typeid(ComponentType)];
 		}
+
+		void copyComponents(EntityId dest, EntityId src);
 
 	private:
 		AnyComponents _components;

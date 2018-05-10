@@ -15,11 +15,6 @@ engine::Scene::~Scene()
 {
 }
 
-/**
- * Register a model to spawn it later
- * @param name Name of the model to make
- * @return the model
- */
 engine::Entity&
 engine::Scene::registerModel(std::string const& name)
 {
@@ -31,12 +26,6 @@ engine::Scene::registerModel(std::string const& name)
 	return entityIt.first->second;
 }
 
-/**
- * Register a model to spawn it later
- * @param name Name of the model to make
- * @param composition Function that should make the model
- * @return the model
- */
 engine::Entity const&
 engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
 {
@@ -46,8 +35,12 @@ engine::Scene::registerModel(std::string const& name, EntityEdition const& compo
 engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name)
 {
-	// TODO create an entity based on the name corresponding model
+	if (_models.find(name) == std::end(_models))
+		throw std::runtime_error("model \"" + name + "\" not found");
+	_entities.emplace_back(_models[name]);
+	return _entities.back();
 }
+
 
 engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name, EntityEdition const &initialisation)
