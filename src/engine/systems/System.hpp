@@ -12,6 +12,9 @@
 #include <engine/core/EntityId.hpp>
 #include <engine/components/ComponentPool.hpp>
 
+
+#include "engine/components/DisplayComponent.hpp"
+
 namespace engine {
 
 	class System {

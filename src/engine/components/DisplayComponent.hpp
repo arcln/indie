@@ -9,15 +9,16 @@
 
 #include <string>
 #include <irrlicht/irrlicht.h>
-#include "Component.hpp"
+#include "engine/core/Game.hpp"
+#include "engine/components/Component.hpp"
 
 namespace engine {
 
 	using Node = irr::scene::IAnimatedMeshSceneNode;
-	using MeshNode = irr::scene::IAnimatedMesh;
 
 	struct DisplayComponent : public Component {
-		DisplayComponent(irr::scene::ISceneManager* smgr, MeshNode* mesh);
+		DisplayComponent(Game& game, std::string const& asset);
+
 		Node* node = nullptr;
 	};
 }

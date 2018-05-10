@@ -11,19 +11,19 @@
 #include "engine/core/Scene.hpp"
 #include "game/TestScene.hpp"
 #include "engine/core/Game.hpp"
-#include "engine/components/TestComponent.hpp"
+#include "engine/components/DisplayComponent.hpp"
 #include "engine/systems/DisplaySystem.hpp"
 
 int
 main(int const, char const *[])
 {
 	engine::Game game;
-	engine::DisplaySystem display(game);
-	engine::Components<int> components;
 
-	while (true) {
-		display.update(components);
-	}
+	engine::DisplaySystem display(game);
+	game.registerSystem("display", &display);
+
+	testGame::TestScene scene;
+	game.play(scene);
 
 	return 0;
 }

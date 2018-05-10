@@ -13,6 +13,8 @@
 #include <unordered_map>
 #include <iostream>
 
+#define ASSETS_ROOT	"../assets/"
+
 /**
  * @brief Engine namespace, used for everything that touch to low-level graphics
  */
@@ -37,7 +39,7 @@ namespace engine {
 		 */
 		T const& get(std::string const& asset) {
 			if (_cache.find(asset) == _cache.end()) {
-				_cache[asset] = _loadFunc(asset);
+				_cache[asset] = _loadFunc(ASSETS_ROOT + asset);
 			}
 
 			return _cache[asset];
