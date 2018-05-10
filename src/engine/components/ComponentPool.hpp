@@ -41,7 +41,7 @@ namespace engine {
 			Components<AnyComponent>& components = getComponents<ComponentType>();
 			Components<AnyComponent>::iterator componentIt = components.emplace(entityId, ComponentType());
 
-			if (componentIt != std::end(components))
+			if (componentIt == std::end(components))
 				throw std::runtime_error("unable to add a new component");
 			return boost::get<ComponentType>(componentIt->second);
 		}
@@ -69,11 +69,7 @@ namespace engine {
 		template <typename ComponentType>
 		Components<AnyComponent>& getComponents()
 		{
-			AnyComponents::iterator componentsIt = _components.find(typeid(ComponentType));
-
-			if (std::end(_components) != componentsIt || typeid(componentsIt->second) != typeid(ComponentType))
-				throw std::runtime_error("components not found");
-			return componentsIt->second;
+			return _components[typeid(ComponentType)];
 		}
 
 	private:
