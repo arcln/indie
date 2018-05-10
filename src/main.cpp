@@ -8,8 +8,13 @@
 #include <iostream>
 #include <string>
 #include "engine/Event.hpp"
+#include "engine/core/Scene.hpp"
+#include "game/TestScene.hpp"
+#include "engine/core/Game.hpp"
+#include "engine/components/TestComponent.hpp"
 
-int main()
+int
+main(int const, char const *[])
 {
 	engine::Event<std::string, std::string> event;
 
@@ -27,5 +32,9 @@ int main()
 		std::cout << "Response: " << response << std::endl;
 	});
 
+	engine::Game game;
+	testGame::TestScene scene = testGame::TestScene();
+
+	game.play(scene);
 	return 0;
 }

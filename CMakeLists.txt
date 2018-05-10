@@ -8,6 +8,7 @@ find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(GTest REQUIRED)
+find_package(Boost 1.58 REQUIRED)
 
 if (APPLE)
 	find_package(OpenGl)
@@ -35,6 +36,7 @@ include_directories(
 	${ZLIB_INCLUDE_DIR}
 	${IOKIT_INCLUDE_DIR}
 	${GTEST_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIR}
 	./src
 )
 
@@ -44,13 +46,16 @@ file(GLOB_RECURSE GAME_SRCS src/game/*)
 add_library(game STATIC ${GAME_SRCS})
 
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
-add_library(engine STATIC ${ENGINE_SRCS})
+add_library(engine STATIC ${ENGINE_SRCS} src/engine/components/ComponentVisitor.hpp src/engine/components/ComponentPool.cpp)
 
 if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
 add_executable(worms src/main.cpp)
+
+target_link_libraries(worms LINK_PUBLIC
+        ${Boost_LIBRARIES})
 target_link_libraries(worms
 	game engine Irrlicht
 	${OPENGL_LIBRARIES}
@@ -58,18 +63,17 @@ target_link_libraries(worms
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARIES}
-	${IOKIT_LIBRARIES}
-)
+	${IOKIT_LIBRARIES})
 
 enable_testing()
 file(GLOB_RECURSE TESTS_SRCS tests/*)
 add_executable(tests-engine ${TESTS_SRCS})
 target_link_libraries(tests-engine
-	engine pthread Irrlicht
-	${OPENGL_LIBRARIES}
-	${X11_LIBRARIES}
-	${GLUT_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${IOKIT_LIBRARIES}
-	${GTEST_BOTH_LIBRARIES}
+    ${GTEST_BOTH_LIBRARIES}
+    engine pthread Irrlicht
+    ${OPENGL_LIBRARIES}
+    ${X11_LIBRARIES}
+    ${GLUT_LIBRARIES}
+    ${ZLIB_LIBRARIES}
+    ${IOKIT_LIBRARIES}
 )
