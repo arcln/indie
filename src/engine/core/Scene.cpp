@@ -20,7 +20,8 @@ engine::Scene::~Scene()
  * @param name Name of the model to make
  * @return the model
  */
-engine::Entity& engine::Scene::registerModel(std::string const& name)
+engine::Entity&
+engine::Scene::registerModel(std::string const& name)
 {
 	auto entityIt = _models.emplace(name, engine::Entity(_componentPool));
 
@@ -36,37 +37,44 @@ engine::Entity& engine::Scene::registerModel(std::string const& name)
  * @param composition Function that should make the model
  * @return the model
  */
-engine::Entity& engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
+engine::Entity&
+engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
 {
 	composition(registerModel(name));
 }
 
-engine::Entity& engine::Scene::spawnEntity(std::string const& name)
+engine::Entity&
+engine::Scene::spawnEntity(std::string const& name)
 {
 	// TODO create an entity based on the name corresponding model
 }
 
-engine::Entity& engine::Scene::spawnEntity(std::string const& name, EntityEdition const &initialisation)
+engine::Entity&
+engine::Scene::spawnEntity(std::string const& name, EntityEdition const &initialisation)
 {
 	initialisation(spawnEntity(name));
 }
 
-bool engine::Scene::isRunning() const
+bool
+engine::Scene::isRunning() const
 {
 	return _running;
 }
 
-void engine::Scene::previousScene()
+void
+engine::Scene::previousScene()
 {
 	_running = false;
 }
 
-engine::ComponentPool& engine::Scene::getComponentPool()
+engine::ComponentPool&
+engine::Scene::getComponentPool()
 {
 	return _componentPool;
 }
 
-engine::ComponentPool const& engine::Scene::getComponentPool() const
+engine::ComponentPool
+const& engine::Scene::getComponentPool() const
 {
 	return _componentPool;
 }

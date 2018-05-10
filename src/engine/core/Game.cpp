@@ -15,7 +15,8 @@ engine::Game::~Game()
 {
 }
 
-void engine::Game::play(engine::Scene& scene)
+void
+engine::Game::play(engine::Scene& scene)
 {
 	while (scene.isRunning()) {
 		scene.update();

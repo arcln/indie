@@ -22,6 +22,7 @@ testGame::TestScene::~TestScene()
 {
 }
 
-void testGame::TestScene::update()
+void
+testGame::TestScene::update()
 {
 }

@@ -20,7 +20,8 @@ engine::Entity::~Entity()
 {
 }
 
-size_t engine::Entity::getId() const
+engine::EntityId
+engine::Entity::getId() const
 {
 	return _id;
 }
