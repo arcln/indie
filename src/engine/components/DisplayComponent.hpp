@@ -17,7 +17,7 @@ namespace engine {
 	using MeshNode = irr::scene::IAnimatedMesh;
 
 	struct DisplayComponent : public Component {
-		DisplayComponent(MeshNode* mesh);
+		DisplayComponent(irr::scene::ISceneManager* smgr, MeshNode* mesh);
 		Node* node = nullptr;
 	};
 }

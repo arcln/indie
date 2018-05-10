@@ -19,6 +19,5 @@ namespace engine {
 		virtual ~System();
 
 		virtual void update(AnyComponents& entities) = 0;
-
 	};
 }

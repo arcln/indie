@@ -7,4 +7,7 @@
 
 #include "DisplayComponent.hpp"
 
-engine::DisplayComponent::DisplayComponent()
+engine::DisplayComponent::DisplayComponent(irr::scene::ISceneManager* smgr, MeshNode* mesh)
+{
+	this->node = smgr->addAnimatedMeshSceneNode(mesh);
+}

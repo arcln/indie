@@ -17,7 +17,7 @@ engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 }
 
 void
-engine::DisplaySystem::update(Components&)
+engine::DisplaySystem::update(Components<int>&)
 {
 	_driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 

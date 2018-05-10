@@ -9,9 +9,9 @@
 
 #include <cstddef>
 #include <vector>
-#include <engine/Event.hpp>
-#include <engine/components/ComponentPool.hpp>
+#include <engine/core/Event.hpp>
 #include <engine/core/EntityId.hpp>
+#include <engine/components/ComponentPool.hpp>
 
 namespace engine {
 

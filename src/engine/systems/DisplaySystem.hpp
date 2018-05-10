@@ -19,7 +19,7 @@ namespace engine {
 		DisplaySystem(Game& game);
 		~DisplaySystem();
 
-		void update(Components& components);
+		void update(Components<int>& components);
 
 	private:
 		Game& _game;

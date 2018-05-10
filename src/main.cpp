@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <string>
-#include "engine/Event.hpp"
+#include "engine/core/Event.hpp"
 #include "engine/core/Scene.hpp"
 #include "game/TestScene.hpp"
 #include "engine/core/Game.hpp"
@@ -19,7 +19,7 @@ main(int const, char const *[])
 {
 	engine::Game game;
 	engine::DisplaySystem display(game);
-	engine::Components components;
+	engine::Components<int> components;
 
 	while (true) {
 		display.update(components);
