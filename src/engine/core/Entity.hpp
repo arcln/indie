@@ -15,6 +15,9 @@
 
 namespace engine {
 
+	/**
+	 * An entity composed of components. The smallest logic unit in a game
+	 */
 	class Entity {
 	public:
 		Entity(ComponentPool& componentPool);

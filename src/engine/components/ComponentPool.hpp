@@ -19,6 +19,9 @@ namespace engine {
 	template <typename ComponentType>
 	using UniqueComponents = std::map<EntityId, std::shared_ptr<ComponentType> >;
 
+	/**
+	 * Contains several type of components attached to Entities by EntityId
+	 */
 	class ComponentPool {
 	public:
 		std::shared_ptr<TestComponent> addTestComponent(EntityId entityId);

@@ -20,6 +20,9 @@ namespace engine {
 
 	using Entities = std::vector<Entity>;
 
+	/**
+	 * Holds models, entities and components.
+	 */
 	class Scene {
 	public:
 		Scene();
