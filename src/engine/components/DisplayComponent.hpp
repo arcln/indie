@@ -9,15 +9,11 @@
 
 #include <string>
 #include <irrlicht/irrlicht.h>
-#include "engine/components/Component.hpp"
 
 namespace engine {
 
-	using Node = irr::scene::IAnimatedMeshSceneNode;
-
-	struct DisplayComponent : public Component {
+	struct DisplayComponent {
 		void init(class Game* game, std::string const& asset);
-
-		Node* node = nullptr;
+		irr::scene::IAnimatedMeshSceneNode* node = nullptr;
 	};
 }

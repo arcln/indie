@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(worms)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-W -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "-W -Wall -Wextra -g")
 
 find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
@@ -15,7 +15,7 @@ if (APPLE)
 endif (APPLE)
 
 if (WIN32)
-	set(CMAKE_CXX_FLAGS "-g -fprofile-arcs -ftest-coverage")
+	set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
 	find_package(X11 REQUIRED)
 endif (WIN32)
 

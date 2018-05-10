@@ -6,7 +6,6 @@
 */
 
 #include "engine/systems/System.hpp"
-#include "engine/components/DisplayComponent.hpp"
 #include "Game.hpp"
 
 engine::Game::Game()
@@ -31,12 +30,6 @@ engine::Game::~Game()
 void
 engine::Game::play(engine::Scene& scene)
 {
-	scene.registerModel("map", [&](Entity const& e) -> Entity const& {
-		auto& displayComponent = e.addComponent<DisplayComponent>();
-		displayComponent.init(this, "plant.md3");
-		return e;
-	});
-
 	while (_device->run() && scene.isRunning()) {
 		for (auto& s : _systems) {
 			s.second->update(scene.componentPool);

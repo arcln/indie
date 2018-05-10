@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <map>
 #include <typeindex>
@@ -41,6 +42,10 @@ namespace engine {
 		ComponentType&
 		addComponent(EntityId entityId)
 		{
+			if (!this) {
+				throw std::runtime_error("null component pool");
+			}
+
 			Components<AnyComponent>& components = getComponents<ComponentType>();
 			Components<AnyComponent>::iterator componentIt = components.emplace(entityId, ComponentType());
 
@@ -66,7 +71,7 @@ namespace engine {
 		typename Components<ComponentType>::iterator
 		getComponents(EntityId entityId)
 		{
-			return getComponents<ComponentType>().find(entityId);
+			return this->getComponents<ComponentType>().find(entityId);
 		}
 
 		template <typename ComponentType>
@@ -81,5 +86,3 @@ namespace engine {
 		AnyComponents _components;
 	};
 }
-
-
