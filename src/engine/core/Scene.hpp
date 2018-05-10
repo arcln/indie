@@ -12,8 +12,8 @@
 #include <functional>
 #include <unordered_map>
 #include <map>
-#include <engine/core/Event.hpp>
-#include "Entity.hpp"
+#include "engine/core/Event.hpp"
+#include "engine/core/Entity.hpp"
 
 namespace engine {
 
@@ -64,8 +64,8 @@ namespace engine {
 		const Entity& spawnEntity(std::string const& name, EntityEdition const &initialisation);
 
 		bool isRunning() const;
-		ComponentPool& getComponentPool();
-		const ComponentPool& getComponentPool() const;
+
+		ComponentPool componentPool;
 
 	protected:
 		void previousScene();
@@ -73,7 +73,6 @@ namespace engine {
 	private:
 		Entities _entities;
 		Models _models;
-		ComponentPool _componentPool;
 
 		bool _running = true;
 	};

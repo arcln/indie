@@ -18,7 +18,7 @@ engine::Scene::~Scene()
 engine::Entity&
 engine::Scene::registerModel(std::string const& name)
 {
-	auto entityIt = _models.emplace(name, engine::Entity(_componentPool));
+	auto entityIt = _models.emplace(name, engine::Entity(this->componentPool));
 
 	if (!entityIt.second)
 		throw std::runtime_error("unable to register a model");
@@ -45,7 +45,7 @@ engine::Scene::spawnEntity(std::string const& name)
 engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name, EntityEdition const &initialisation)
 {
-	initialisation(spawnEntity(name));
+	return initialisation(spawnEntity(name));
 }
 
 bool
@@ -58,16 +58,4 @@ void
 engine::Scene::previousScene()
 {
 	_running = false;
-}
-
-engine::ComponentPool&
-engine::Scene::getComponentPool()
-{
-	return _componentPool;
-}
-
-engine::ComponentPool
-const& engine::Scene::getComponentPool() const
-{
-	return _componentPool;
 }

@@ -19,11 +19,15 @@ main(int const, char const *[])
 {
 	engine::Game game;
 
-	engine::DisplaySystem display(game);
-	game.registerSystem("display", &display);
+//	try {
+		engine::DisplaySystem display(game);
+		game.registerSystem("display", &display);
 
-	testGame::TestScene scene;
-	game.play(scene);
+		testGame::TestScene scene;
+		game.play(scene);
+//	} catch (std::exception& e) {
+//		std::cerr << "worms: ERROR: " << e.what() << std::endl;
+//	}
 
 	return 0;
 }

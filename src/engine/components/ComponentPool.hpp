@@ -14,11 +14,12 @@
 #include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include "engine/components/TestComponent.hpp"
+#include "engine/components/DisplayComponent.hpp"
 #include "engine/components/ComponentVisitor.hpp"
 
 namespace engine {
 
-	using AnyComponent = boost::variant<int, TestComponent>;
+	using AnyComponent = boost::variant<TestComponent, DisplayComponent>;
 
 	using AnyComponents = std::unordered_map<std::type_index, std::multimap<EntityId, AnyComponent> >;
 

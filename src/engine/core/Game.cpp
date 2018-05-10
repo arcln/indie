@@ -6,6 +6,7 @@
 */
 
 #include "engine/systems/System.hpp"
+#include "engine/components/DisplayComponent.hpp"
 #include "Game.hpp"
 
 engine::Game::Game()
@@ -30,12 +31,15 @@ engine::Game::~Game()
 void
 engine::Game::play(engine::Scene& scene)
 {
-	engine::Components<engine::DisplayComponent> components;
-	components.emplace(0, new engine::DisplayComponent(*this, "plant.md3"));
+	scene.registerModel("map", [&](Entity const& e) -> Entity const& {
+		auto& displayComponent = e.addComponent<DisplayComponent>();
+		displayComponent.init(this, "plant.md3");
+		return e;
+	});
 
 	while (_device->run() && scene.isRunning()) {
 		for (auto& s : _systems) {
-			s.second->update(components);
+			s.second->update(scene.componentPool);
 		}
 
 		scene.update();
@@ -45,6 +49,7 @@ engine::Game::play(engine::Scene& scene)
 void
 engine::Game::registerSystem(std::string const& name, System* system)
 {
+	_systems[name] = system;
 }
 
 irr::IrrlichtDevice&

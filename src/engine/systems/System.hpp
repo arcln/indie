@@ -12,15 +12,12 @@
 #include <engine/core/EntityId.hpp>
 #include <engine/components/ComponentPool.hpp>
 
-
-#include "engine/components/DisplayComponent.hpp"
-
 namespace engine {
 
 	class System {
 	public:
-		virtual ~System();
+		virtual ~System() = default;
 
-		virtual void update(AnyComponents& entities) = 0;
+		virtual void update(ComponentPool& componentPool) = 0;
 	};
 }
