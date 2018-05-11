@@ -10,6 +10,7 @@
 
 engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 {
+	std::cout << "ok" << std::endl;
 	_videoDriver = _game.device().getVideoDriver();
 	_sceneManager = _game.device().getSceneManager();
 	_guiEnv = _game.device().getGUIEnvironment();

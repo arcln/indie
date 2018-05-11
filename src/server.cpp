@@ -25,20 +25,20 @@ void sighandler(int signum) {
 using namespace engine::network;
 
 int
-main(int const, char const *[])
+main()
 {
-	signal(SIGINT, &sighandler);
-
-	Selector master;
-	
-	master.onData<TextMessage>([](ClientSocket const& client, void* msg) {
-		std::cout << reinterpret_cast<TextMessage*>(msg)->text << std::endl;
-	});
-
-	master.run().join();
-
-	std::cout << "all clients connected." << std::endl;
-	while (true);
+//	signal(SIGINT, &sighandler);
+//
+//	Selector master;
+//	
+//	master.onData<TextMessage>([](ClientSocket const& client, void* msg) {
+//		std::cout << reinterpret_cast<TextMessage*>(msg)->text << std::endl;
+//	});
+//
+//	master.run().join();
+//
+//	std::cout << "all clients connected." << std::endl;
+//	while (true);
 
 
 //	engine::Game game;

@@ -17,30 +17,34 @@
 #include "engine/network/Message.hpp"
 
 int
-main(int const, char const *[])
+main()
 {
-//	engine::Game game;
-//
-//	try {
-//		engine::DisplaySystem display(game);
+	std::cout << "ok" << std::endl;
+	engine::Game game;
+
+
+
+	try {
+		engine::DisplaySystem display(game);
 //		game.registerSystem("display", &display);
-//
+
 //		testGame::TestScene scene(&game);
-//		game.play(scene);
-//	} catch (std::exception& e) {
-//		std::cerr << "worms: ERROR: " << e.what() << std::endl;
-//	}
+//		game.registerSceneModel("main", scene.getSceneModel());
+//		game.play("main");
+	} catch (std::exception& e) {
+		std::cerr << "worms: ERROR: " << e.what() << std::endl;
+	}
 
-	engine::network::Socket socket;
-
-	socket.create().connect("localhost");
-
-	socket.send<std::string>("v0.1");
-	auto res = socket.receive<engine::network::TextMessage>();
-	socket.send<std::string>("vhjisuhvuishviushuishiv");
-	res = socket.receive<engine::network::TextMessage>();
-
-	std::cout << res.text << std::endl;
+//	engine::network::Socket socket;
+//
+//	socket.create().connect("localhost");
+//
+//	socket.send<std::string>("v0.1");
+//	auto res = socket.receive<engine::network::TextMessage>();
+//	socket.send<std::string>("vhjisuhvuishviushuishiv");
+//	res = socket.receive<engine::network::TextMessage>();
+//
+//	std::cout << res.text << std::endl;
 
 	return 0;
 }

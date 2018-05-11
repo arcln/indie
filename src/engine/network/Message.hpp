@@ -7,8 +7,10 @@
 
 #pragma once
 
-#include <cstddef>
 #include <string>
+#include <ctime>
+#include <cstddef>
+#include "engine/network/Network.hpp"
 
 namespace engine { namespace network {
 
@@ -17,6 +19,6 @@ namespace engine { namespace network {
 	};
 
 	struct TextMessage : public Message {
-		char text[256];
+		char text[NET_MAX_MSG_SIZE - sizeof(Message)];
 	};
 }}

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <list>
+#include <vector>
 #include <unordered_map>
 #include <irrlicht/irrlicht.h>
 #include <stack>
@@ -40,14 +42,14 @@ namespace engine {
 		irr::IrrlichtDevice const& device() const;
 
 		ResourceManager<MeshNode*> meshManager;
+		EventsHandler eventsHandler;
 
 	private:
 		irr::IrrlichtDevice* _device = nullptr;
 		Event<KeyState> _keyEvents;
 		EventsReceiver _eventReceiver;
-		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
-		std::vector<Scene> _scenes;
+		std::list<Scene> _scenes;
 		SceneModels _sceneModels;
 
 		void _updateScenes();

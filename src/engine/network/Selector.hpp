@@ -9,6 +9,7 @@
 
 #include <vector>
 #include <thread>
+#include <mutex>
 #include <functional>
 #include <typeindex>
 #include <unordered_map>
