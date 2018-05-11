@@ -25,5 +25,7 @@ engine::ComponentPool::copyComponents(EntityId dest, EntityId src)
 void
 engine::ComponentPool::removeComponents(engine::EntityId entityId)
 {
-	// TODO remove all components of an entity by its id
+	for (auto& componentTypeIt : _components) {
+		componentTypeIt.second.erase(entityId);
+	}
 }
