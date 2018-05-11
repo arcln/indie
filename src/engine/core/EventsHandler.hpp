@@ -26,25 +26,16 @@ namespace engine {
 
 	using KeyState = irr::SEvent::SKeyInput;
 
-	class EventsReceiver : public irr::IEventReceiver {
-	public:
-		explicit EventsReceiver(Event<KeyState>* keyEvents);
-
-		bool OnEvent(const irr::SEvent& event) override;
-
-	private:
-		Event<KeyState>* _keyEvents;
-	};
-
-	class EventsHandler {
+	class EventsHandler : public irr::IEventReceiver {
 	public:
 		EventsHandler();
+
+		bool OnEvent(const irr::SEvent& event) override;
 
 		KeyState const& getKeyState(KeyCode keyCode);
 
 		Event<KeyState> keyEvents;
 	private:
 		std::unordered_map<KeyCode, KeyState, EnumClassHash> _keyStates;
-		EventsReceiver _eventReceiver;
 	};
 }

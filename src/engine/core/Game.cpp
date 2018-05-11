@@ -10,9 +10,7 @@
 
 engine::Game::Game()
 {
-	_device = irr::createDevice(irr::video::EDT_OPENGL,
-								irr::core::dimension2d<irr::u32>(1280, 720),
-								16, false, false, false, 0);
+	_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false, &_eventHandler);
 	if (!_device) {
 		throw std::runtime_error("fatal: failed to initialize irrlicht");
 	}
@@ -20,6 +18,12 @@ engine::Game::Game()
 
 	this->meshManager.onLoad([&](std::string const& asset) {
 		return this->_device->getSceneManager()->getMesh(asset.c_str());
+	});
+
+	_eventHandler.keyEvents.subscribe([&](KeyState const& keyState) -> int {
+		if (keyState.Key == engine::KeyCode::KEY_ESCAPE)
+			_device->closeDevice();
+		return 0;
 	});
 }
 
