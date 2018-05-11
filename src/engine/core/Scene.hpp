@@ -24,7 +24,7 @@ namespace engine {
 	 */
 	class Scene {
 	public:
-		Scene(class Game* device);
+		Scene();
 		virtual ~Scene();
 
 		virtual void update() = 0;
@@ -68,8 +68,6 @@ namespace engine {
 
 	protected:
 		void previousScene();
-
-		class Game* _game;
 
 	private:
 		Entities _entities;

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 
 namespace testGame {
@@ -17,9 +18,5 @@ namespace testGame {
 		virtual ~TestScene();
 
 		void update() override;
-
-	private:
-		engine::EntityId _entity;
-		engine::EntityId _entity2;
 	};
 }

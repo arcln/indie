@@ -5,29 +5,28 @@
 ** A file for bomberman - Paul Laffitte
 */
 
-#include <iostream>
-#include "DisplaySystem.hpp"
-#include "engine/components/DisplayComponent.hpp"
+#include "engine/core/Game.hpp"
+#include "engine/systems/DisplaySystem.hpp"
 
 engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 {
-	_driver = _game.device().getVideoDriver();
-	_smgr = _game.device().getSceneManager();
-	_guienv = _game.device().getGUIEnvironment();
+	_videoDriver = _game.device().getVideoDriver();
+	_sceneManager = _game.device().getSceneManager();
+	_guiEnv = _game.device().getGUIEnvironment();
 
-	_smgr->addCameraSceneNode(0, irr::core::vector3df(0, 30, -40), irr::core::vector3df(0, 5, 0));
+	_sceneManager->addCameraSceneNode(0, irr::core::vector3df(0, 30, -40), irr::core::vector3df(0, 5, 0));
 }
 
 void
 engine::DisplaySystem::update(ComponentPool&)
 {
 	_game.device().run();
-	_driver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
-	_smgr->drawAll();
-	_guienv->drawAll();
+	_sceneManager->drawAll();
+	_guiEnv->drawAll();
 
-	_driver->endScene();
+	_videoDriver->endScene();
 }
 
 engine::DisplaySystem::~DisplaySystem()
