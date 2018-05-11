@@ -12,11 +12,15 @@
 
 namespace testGame {
 
-	class TestScene : public engine::Scene {
+	class TestScene {
 	public:
 		TestScene(engine::Game* game);
 		virtual ~TestScene();
 
-		void update() override;
+		engine::Game::SceneModel getSceneModel();
+
+	private:
+		engine::Game* _game;
+		engine::Game::SceneModel _scene;
 	};
 }

@@ -14,10 +14,9 @@
 #include <map>
 #include "engine/core/Event.hpp"
 #include "engine/core/Entity.hpp"
+#include "engine/core/Entities.hpp"
 
 namespace engine {
-
-	using Entities = std::unordered_map<EntityId, Entity>;
 
 	/**
 	 * Holds models, entities and components.
@@ -27,18 +26,16 @@ namespace engine {
 		Scene();
 		virtual ~Scene();
 
-		virtual void update() = 0;
-
-		using EntityEdition = std::function<Entity const& (Entity const&)>;
-		using Models = std::unordered_map<std::string, EntityEdition>;
+		using EntityModel = std::function<Entity const& (Entity const&)>;
+		using EntityModels = std::unordered_map<std::string, EntityModel>;
 
 		/**
 		 * Register a model to spawn it later
 		 * @param name Name of the model to register
-		 * @param composition Function that model an entity
+		 * @param model Function that model an entity
 		 * @return the model
 		 */
-		void registerModel(std::string const& name, EntityEdition const& composition);
+		void registerEntityModel(std::string const& name, EntityModel const& model);
 
 		/**
 		 * Spawn an entity based on the model designated by its name
@@ -53,26 +50,20 @@ namespace engine {
 		 * @param initialisation Function that modify the spawned entity
 		 * @return the spawned entity
 		 */
-		EntityId spawnEntity(std::string const& name, EntityEdition const& initialisation);
+		EntityId spawnEntity(std::string const& name, EntityModel const& initialisation);
 
-		/**
-		 * Get an entity by its id
-		 * @param id Entity's id
-		 * @return the entity
-		 */
-		Entity const& getEntity(EntityId id) const;
+		Entities const& getEntities() const;
 
 		bool isRunning() const;
-
-		ComponentPool componentPool;
 
 	protected:
 		void previousScene();
 
 	private:
-		Entities _entities;
-		Models _models;
+		static EntityId _lastSpawnedEntityId;
 
-		bool _running = true;
+		EntityModels _models;
+		Entities _entities;
+		bool _running;
 	};
 }

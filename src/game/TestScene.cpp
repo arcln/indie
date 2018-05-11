@@ -8,22 +8,25 @@
 #include <iostream>
 #include "TestScene.hpp"
 
-testGame::TestScene::TestScene(engine::Game* game) : engine::Scene()
+testGame::TestScene::TestScene(engine::Game* game) : _game(game)
 {
-	this->registerModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
-		auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
-		displayComponent.init(game, "plant.md3");
-		return entity;
-	});
 
-	this->spawnEntity("map");
 }
 
 testGame::TestScene::~TestScene()
 {
 }
 
-void
-testGame::TestScene::update()
+engine::Game::SceneModel testGame::TestScene::getSceneModel()
 {
+	return [&](engine::Scene& scene) -> engine::Scene& {
+		scene.registerEntityModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
+			auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
+			displayComponent.init(_game, "plant.md3");
+			return entity;
+		});
+
+		scene.spawnEntity("map");
+		return scene;
+	};
 }

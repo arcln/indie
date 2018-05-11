@@ -14,46 +14,52 @@
 
 namespace engine {
 
+	class Entities;
+
 	/**
 	 * An entity composed of components. The smallest logic unit in a game
 	 */
 	class Entity {
 	public:
 		Entity();
-		explicit Entity(ComponentPool* componentPool);
+		Entity(EntityId id, EntityId parentId, Entities* entities);
 		Entity(Entity const& entity);
 		Entity& operator=(Entity const& entity);
 		virtual ~Entity();
 
-		Entity& copyComponents(engine::Entity const& entity);
+		void kill();
 
 		template <typename ComponentType>
 		ComponentType&
 		addComponent() const
 		{
-			return _componentPool->addComponent<ComponentType>(_id);
+			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().addComponent(_id);
 		}
 
 		template <typename ComponentType>
 		ComponentType&
 		getComponent() const
 		{
-			return _componentPool->getComponent<ComponentType>(_id);
+			return ComponentPool<engine::UniqueComponentContainer<ComponentType>, ComponentType>::instance().getComponent(_id);
 		}
 
 		template <typename ComponentType>
-		typename Components<ComponentType>::iterator
+		typename engine::ComponentContainer<ComponentType>::iterator
 		getComponents() const
 		{
-			return _componentPool->getComponents<ComponentType>(_id);
+			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().getComponents(_id);
 		}
 
-		size_t getId() const;
+		EntityId getId() const;
 
-		static EntityId _nextId;
+		EntityId getParentId() const;
+
+		static EntityId const nullId;
 
 	private:
 		EntityId _id;
-		ComponentPool* _componentPool;
+		EntityId _parentId;
+
+		Entities* _entities;
 	};
 }

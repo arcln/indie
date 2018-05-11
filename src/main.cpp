@@ -24,7 +24,8 @@ main(int const, char const *[])
 		game.registerSystem("display", &display);
 
 		testGame::TestScene scene(&game);
-		game.play(scene);
+		game.registerSceneModel("worms", scene.getSceneModel());
+		game.play("worms");
 	} catch (std::exception& e) {
 		std::cerr << "worms: ERROR: " << e.what() << std::endl;
 	}
