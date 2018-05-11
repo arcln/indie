@@ -7,6 +7,7 @@
 
 #include <memory>
 #include "Entity.hpp"
+#include "Entities.hpp"
 
 engine::EntityId const engine::Entity::nullId = 0;
 
@@ -34,18 +35,17 @@ engine::Entity::~Entity()
 
 void engine::Entity::kill()
 {
-	auto entityIt = _entities->find(_parentId);
-
-	for (; entityIt->first == _parentId ; entityIt++);
-
-	if (_parentId != entityIt->first)
-		throw std::runtime_error("unable to kill entity " + _id);
-
-	_entities->erase(entityIt);
+	_entities->remove(_id);
 }
 
 engine::EntityId
 engine::Entity::getId() const
 {
 	return _id;
+}
+
+engine::EntityId
+engine::Entity::getParentId() const
+{
+	return _parentId;
 }

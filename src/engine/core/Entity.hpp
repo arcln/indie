@@ -14,7 +14,7 @@
 
 namespace engine {
 
-	using Entities = std::multimap<EntityId, class Entity>;
+	class Entities;
 
 	/**
 	 * An entity composed of components. The smallest logic unit in a game
@@ -50,7 +50,9 @@ namespace engine {
 			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().getComponents(_id);
 		}
 
-		size_t getId() const;
+		EntityId getId() const;
+
+		EntityId getParentId() const;
 
 		static EntityId const nullId;
 

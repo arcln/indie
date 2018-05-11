@@ -14,6 +14,7 @@
 #include <map>
 #include "engine/core/Event.hpp"
 #include "engine/core/Entity.hpp"
+#include "engine/core/Entities.hpp"
 
 namespace engine {
 
