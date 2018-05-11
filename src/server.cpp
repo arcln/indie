@@ -1,0 +1,46 @@
+/*
+** EPITECH PROJECT, 2018
+** worms
+** File description:
+** main.cpp
+*/
+
+#include <iostream>
+#include <string>
+#include "engine/core/Event.hpp"
+#include "engine/core/Scene.hpp"
+#include "game/TestScene.hpp"
+#include "engine/core/Game.hpp"
+#include "engine/components/DisplayComponent.hpp"
+#include "engine/systems/DisplaySystem.hpp"
+#include "engine/network/Socket.hpp"
+#include "engine/network/Message.hpp"
+
+int
+main(int const, char const *[])
+{
+	engine::network::ServerSocket master;
+	engine::network::ClientSocket client;
+
+	master.accept(client);
+
+	engine::network::TextMessage message;
+
+	std::sprintf(message.text, "salut");
+	client.send<engine::network::TextMessage>(message);
+
+//	engine::Game game;
+//
+//	try {
+//		engine::DisplaySystem display(game);
+//		game.registerSystem("display", &display);
+//
+//		testGame::TestScene scene(&game);
+//		game.play(scene);
+//	} catch (std::exception& e) {
+//		std::cerr << "worms: ERROR: " << e.what() << std::endl;
+//	}
+
+
+	return 0;
+}
