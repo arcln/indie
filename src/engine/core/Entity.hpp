@@ -22,7 +22,7 @@ namespace engine {
 	class Entity {
 	public:
 		Entity();
-		Entity(EntityId id, EntityId parentId, Entities* entities, ComponentPool* componentPool);
+		Entity(EntityId id, EntityId parentId, Entities* entities);
 		Entity(Entity const& entity);
 		Entity& operator=(Entity const& entity);
 		virtual ~Entity();
@@ -35,21 +35,21 @@ namespace engine {
 		ComponentType&
 		addComponent() const
 		{
-			return _componentPool->addComponent<ComponentType>(_id);
+			return ComponentPool::instance().addComponent<ComponentType>(_id);
 		}
 
 		template <typename ComponentType>
 		ComponentType&
 		getComponent() const
 		{
-			return _componentPool->getComponent<ComponentType>(_id);
+			return ComponentPool::instance().getComponent<ComponentType>(_id);
 		}
 
 		template <typename ComponentType>
 		typename EntityComponents<ComponentType>::iterator
 		getComponents() const
 		{
-			return _componentPool->getComponents<ComponentType>(_id);
+			return ComponentPool::instance().getComponents<ComponentType>(_id);
 		}
 
 		size_t getId() const;
@@ -61,6 +61,5 @@ namespace engine {
 		EntityId _parentId;
 
 		Entities* _entities;
-		ComponentPool* _componentPool;
 	};
 }

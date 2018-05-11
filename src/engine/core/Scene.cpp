@@ -30,7 +30,7 @@ engine::Scene::spawnEntity(std::string const& name)
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("model '" + name + "' not found");
 
-	_entities.emplace(engine::Entity::nullId, _models[name](engine::Entity(++_lastSpawnedEntityId, engine::Entity::nullId, &_entities, &componentPool)));
+	_entities.emplace(engine::Entity::nullId, _models[name](engine::Entity(++_lastSpawnedEntityId, engine::Entity::nullId, &_entities)));
 	return _lastSpawnedEntityId;
 }
 
@@ -39,7 +39,7 @@ engine::Scene::spawnEntity(std::string const& name, EntityEdition const& initial
 {
 	EntityId entityId = this->spawnEntity(name);
 
-	initialisation(Entity(entityId, engine::Entity::nullId, &_entities, &componentPool));
+	initialisation(Entity(entityId, engine::Entity::nullId, &_entities));
 	return entityId;
 }
 

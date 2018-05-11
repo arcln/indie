@@ -55,8 +55,6 @@ namespace engine {
 
 		bool isRunning() const;
 
-		ComponentPool componentPool;
-
 	protected:
 		void previousScene();
 

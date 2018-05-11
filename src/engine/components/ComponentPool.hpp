@@ -35,7 +35,7 @@ namespace engine {
 	using UniqueComponents = std::unordered_map<std::type_index, UniqueEntityComponents<ComponentType> >;
 
 	/**
-	 * Contains several type of components attached to Entities by EntityId
+	 * Singleton that contains all the components of a type
 	 */
 	class ComponentPool {
 	public:
@@ -94,7 +94,19 @@ namespace engine {
 		 */
 		void removeComponents(EntityId entityId);
 
+		/**
+		 * Singleton getter
+		 * @return the component pool singleton itself
+		 */
+		static ComponentPool& instance() {
+			static ComponentPool componentPool;
+
+			return componentPool;
+		}
+
 	private:
 		Components<AnyComponent> _components;
+
+		ComponentPool();
 	};
 }

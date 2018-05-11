@@ -9,6 +9,9 @@
 #include <iostream>
 #include "engine/components/ComponentPool.hpp"
 
+engine::ComponentPool::ComponentPool()
+{}
+
 void
 engine::ComponentPool::copyComponents(EntityId dest, EntityId src)
 {
