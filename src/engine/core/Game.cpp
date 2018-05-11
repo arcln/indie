@@ -37,16 +37,14 @@ engine::Game::play(std::string const& name)
 	this->pushScene(name);
 
 	while (_device->run() && !_scenes.empty()) {
-		for (auto& s : _systems) {
-			s.second->update();
-		}
+		_updateScenes();
 	}
 }
 
 void engine::Game::replaceScene(std::string const& name)
 {
 	if (!_scenes.empty()) {
-		_scenes = std::stack<engine::Scene>();
+		_scenes.clear();
 	}
 
 	this->pushScene(name);
@@ -59,12 +57,12 @@ void engine::Game::pushScene(std::string const& name)
 	if (_sceneModels.find(name) == std::end(_sceneModels))
 		throw std::runtime_error("scene model '" + name + "' not found");
 
-	_scenes.push(_sceneModels[name](scene));
+	_scenes.push_back(_sceneModels[name](scene));
 }
 
 void engine::Game::popScene()
 {
-	_scenes.pop();
+	_scenes.pop_back();
 }
 
 void
@@ -88,4 +86,14 @@ irr::IrrlichtDevice const&
 engine::Game::device() const
 {
 	return *_device;
+}
+
+void engine::Game::_updateScenes()
+{
+	for (auto& scene : _scenes) {
+		for (auto& system : _systems) {
+			system.second->update(scene.getEntities());
+		}
+	}
+
 }

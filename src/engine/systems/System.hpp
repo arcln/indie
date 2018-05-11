@@ -9,7 +9,7 @@
 
 #include <vector>
 #include <map>
-#include <engine/core/EntityId.hpp>
+#include <engine/core/Entity.hpp>
 #include <engine/components/ComponentPool.hpp>
 
 namespace engine {
@@ -18,6 +18,6 @@ namespace engine {
 	public:
 		virtual ~System() = default;
 
-		virtual void update() = 0;
+		virtual void update(Entities const& entities) = 0;
 	};
 }

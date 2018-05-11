@@ -19,7 +19,7 @@ namespace engine {
 		DisplaySystem(Game& game);
 		~DisplaySystem();
 
-		void update() override;
+		void update(Entities const& entities) override;
 
 	private:
 		Game& _game;

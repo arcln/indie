@@ -54,3 +54,8 @@ engine::Scene::previousScene()
 {
 	_running = false;
 }
+
+const engine::Entities& engine::Scene::getEntities() const
+{
+	return _entities;
+}

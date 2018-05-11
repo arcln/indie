@@ -51,6 +51,8 @@ namespace engine {
 		 */
 		EntityId spawnEntity(std::string const& name, EntityModel const& initialisation);
 
+		Entities const& getEntities() const;
+
 		bool isRunning() const;
 
 	protected:

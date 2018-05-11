@@ -47,7 +47,9 @@ namespace engine {
 		EventsReceiver _eventReceiver;
 		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
-		std::stack<Scene> _scenes;
+		std::vector<Scene> _scenes;
 		SceneModels _sceneModels;
+
+		void _updateScenes();
 	};
 }
