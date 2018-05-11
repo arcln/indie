@@ -8,11 +8,13 @@
 #include <memory>
 #include "Entity.hpp"
 
+engine::EntityId const engine::Entity::nullId = 0;
+
 engine::Entity::Entity() : _componentPool(nullptr)
 {}
 
-engine::Entity::Entity(EntityId entityId, Entities* entities, ComponentPool* componentPool)
-	: _id(entityId), _entities(entities), _componentPool(componentPool)
+engine::Entity::Entity(EntityId id, EntityId parentId, Entities* entities, ComponentPool* componentPool)
+	: _id(id), _parentId(parentId), _entities(entities), _componentPool(componentPool)
 {}
 
 engine::Entity::Entity(engine::Entity const& entity)
@@ -38,18 +40,21 @@ engine::Entity::copyComponents(engine::Entity const& entity)
 	return *this;
 }
 
+void engine::Entity::kill()
+{
+	auto entityIt = _entities->find(_parentId);
+
+	for (; entityIt->first == _parentId ; entityIt++);
+
+	if (_parentId != entityIt->first)
+		throw std::runtime_error("unable to kill entity " + _id);
+
+	_componentPool->removeComponents(_id);
+	_entities->erase(entityIt);
+}
+
 engine::EntityId
 engine::Entity::getId() const
 {
 	return _id;
-}
-
-void engine::Entity::kill()
-{
-	auto const& entityIt = std::find(std::begin(*_entities), std::end(*_entities), _id);
-
-	if (entityIt != std::end(*_entities)) {
-		_componentPool->removeComponents(_id);
-		_entities->erase(entityIt);
-	}
 }

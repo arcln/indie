@@ -8,7 +8,7 @@
 #include "engine/core/Scene.hpp"
 #include "engine/core/Game.hpp"
 
-engine::EntityId engine::Scene::_lastSpawnedEntityId = 0;
+engine::EntityId engine::Scene::_lastSpawnedEntityId = engine::Entity::nullId;
 
 engine::Scene::Scene() : _running(true)
 {
@@ -30,17 +30,16 @@ engine::Scene::spawnEntity(std::string const& name)
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("model '" + name + "' not found");
 
-	_entities.push_back(++_lastSpawnedEntityId);
+	_entities.emplace(engine::Entity::nullId, engine::Entity(++_lastSpawnedEntityId, engine::Entity::nullId, &_entities, &componentPool));
 	return _lastSpawnedEntityId;
 }
-
 
 engine::EntityId
 engine::Scene::spawnEntity(std::string const& name, EntityEdition const& initialisation)
 {
 	EntityId entityId = this->spawnEntity(name);
 
-	initialisation(Entity(entityId, &_entities, &componentPool));
+	initialisation(Entity(entityId, engine::Entity::nullId, &_entities, &componentPool));
 	return entityId;
 }
 

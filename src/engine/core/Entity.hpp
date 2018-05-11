@@ -14,7 +14,7 @@
 
 namespace engine {
 
-	using Entities = std::vector<EntityId>;
+	using Entities = std::multimap<EntityId, class Entity>;
 
 	/**
 	 * An entity composed of components. The smallest logic unit in a game
@@ -22,7 +22,7 @@ namespace engine {
 	class Entity {
 	public:
 		Entity();
-		Entity(EntityId entityId, Entities* entities, ComponentPool* componentPool);
+		Entity(EntityId id, EntityId parentId, Entities* entities, ComponentPool* componentPool);
 		Entity(Entity const& entity);
 		Entity& operator=(Entity const& entity);
 		virtual ~Entity();
@@ -54,8 +54,12 @@ namespace engine {
 
 		size_t getId() const;
 
+		static EntityId const nullId;
+
 	private:
 		EntityId _id;
+		EntityId _parentId;
+
 		Entities* _entities;
 		ComponentPool* _componentPool;
 	};
