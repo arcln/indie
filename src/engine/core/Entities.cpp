@@ -23,7 +23,8 @@ engine::Entities::add(engine::Entity const&& entity)
 	EntityId parentId = entity.getParentId();
 
 	if (parentId == engine::Entity::nullId)
-		_roots.emplace(parentId, entity);
+		_roots.emplace(entity.getId(), entity);
+
 	_childs.emplace(parentId, entity);
 }
 
