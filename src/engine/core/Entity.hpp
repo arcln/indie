@@ -42,7 +42,7 @@ namespace engine {
 		}
 
 		template <typename ComponentType>
-		typename Components<ComponentType>::iterator
+		typename EntityComponents<ComponentType>::iterator
 		getComponents() const
 		{
 			return _componentPool->getComponents<ComponentType>(_id);

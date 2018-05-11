@@ -12,7 +12,7 @@
 void engine::ComponentPool::copyComponents(EntityId dest, EntityId src)
 {
 	for (auto& componentTypeIt : _components) {
-		Components<AnyComponent>& entityComponents = componentTypeIt.second;
+		EntityComponents<AnyComponent>& entityComponents = componentTypeIt.second;
 		for (auto componentIt = entityComponents.find(src); componentIt->first == src ; componentIt++) {
 			if (componentIt != std::end(componentTypeIt.second)) {
 				componentTypeIt.second.emplace(dest, componentIt->second);
