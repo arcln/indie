@@ -24,13 +24,17 @@ namespace engine {
 		Game();
 		virtual ~Game();
 
-		void play(Scene& scene);
+		using SceneModel = std::function<Scene& (Scene&)>;
+		using SceneModels = std::unordered_map<std::string, SceneModel>;
 
-		void replaceScene(Scene& scene);
-		void pushScene(Scene& scene);
+		void play(std::string const& name);
+
+		void replaceScene(std::string const& name);
+		void pushScene(std::string const& name);
 		void popScene();
 
 		void registerSystem(std::string const& name, System* system);
+		void registerSceneModel(std::string const& name, SceneModel const& sceneModel);
 
 		irr::IrrlichtDevice& device();
 		irr::IrrlichtDevice const& device() const;
@@ -44,5 +48,6 @@ namespace engine {
 		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
 		std::stack<Scene> _scenes;
+		SceneModels _sceneModels;
 	};
 }
