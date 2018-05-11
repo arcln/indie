@@ -20,7 +20,7 @@ namespace engine {
 	class Entity {
 	public:
 		Entity();
-		explicit Entity(ComponentPool* componentPool);
+		Entity(EntityId entityId, ComponentPool* componentPool);
 		Entity(Entity const& entity);
 		Entity& operator=(Entity const& entity);
 		virtual ~Entity();
@@ -49,8 +49,6 @@ namespace engine {
 		}
 
 		size_t getId() const;
-
-		static EntityId _nextId;
 
 	private:
 		EntityId _id;

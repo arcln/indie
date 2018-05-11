@@ -8,6 +8,8 @@
 #include "engine/core/Scene.hpp"
 #include "engine/core/Game.hpp"
 
+engine::EntityId engine::Scene::_lastSpawnedEntityId = 0;
+
 engine::Scene::Scene() : _running(true)
 {
 }
@@ -28,24 +30,19 @@ engine::Scene::spawnEntity(std::string const& name)
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("model '" + name + "' not found");
 
-	auto entity = Entity(&this->componentPool);
-	_entities[entity.getId()] = _models[name](entity);
-	return entity.getId();
+	_entities.push_back(++_lastSpawnedEntityId);
+	return _lastSpawnedEntityId;
 }
 
 
 engine::EntityId
 engine::Scene::spawnEntity(std::string const& name, EntityEdition const& initialisation)
 {
-	return initialisation(this->getEntity(spawnEntity(name))).getId();
-}
+	EntityId entityId = this->spawnEntity(name);
 
-engine::Entity const&
-engine::Scene::getEntity(EntityId id) const
-{
-	return _entities.at(id);
+	initialisation(Entity(entityId, &componentPool));
+	return entityId;
 }
-
 
 bool
 engine::Scene::isRunning() const

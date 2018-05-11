@@ -8,13 +8,11 @@
 #include <memory>
 #include "Entity.hpp"
 
-engine::EntityId engine::Entity::_nextId = -1;
-
-engine::Entity::Entity() : _componentPool((engine::ComponentPool*)42)
+engine::Entity::Entity() : _componentPool(nullptr)
 {}
 
-engine::Entity::Entity(ComponentPool* componentPool)
-	: _id(++Entity::_nextId), _componentPool(componentPool)
+engine::Entity::Entity(EntityId entityId, ComponentPool* componentPool)
+	: _id(entityId), _componentPool(componentPool)
 {}
 
 engine::Entity::Entity(engine::Entity const& entity)

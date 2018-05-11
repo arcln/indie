@@ -17,7 +17,7 @@
 
 namespace engine {
 
-	using Entities = std::unordered_map<EntityId, Entity>;
+	using Entities = std::vector<EntityId>;
 
 	/**
 	 * Holds models, entities and components.
@@ -55,13 +55,6 @@ namespace engine {
 		 */
 		EntityId spawnEntity(std::string const& name, EntityEdition const& initialisation);
 
-		/**
-		 * Get an entity by its id
-		 * @param id Entity's id
-		 * @return the entity
-		 */
-		Entity const& getEntity(EntityId id) const;
-
 		bool isRunning() const;
 
 		ComponentPool componentPool;
@@ -74,5 +67,7 @@ namespace engine {
 		Models _models;
 
 		bool _running = true;
+
+		static EntityId _lastSpawnedEntityId;
 	};
 }
