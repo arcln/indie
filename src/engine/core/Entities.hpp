@@ -13,12 +13,16 @@ namespace engine {
 
 	class Entities {
 	public:
+		using Roots = std::map<EntityId, Entity>;
+		using Childs = std::multimap<EntityId, Entity>;
+
 		void add(Entity const& entity);
 		void add(Entity const&& entity);
-		Entity const& get(EntityId id);
+		Roots const& getRoots() const;
+		Childs::iterator getChilds(EntityId id);
 		void remove(EntityId id);
 	private:
-		std::map<EntityId, Entity> _entities;
-		std::multimap<EntityId, Entity> _childs;
+		Roots _roots;
+		Childs _childs;
 	};
 }

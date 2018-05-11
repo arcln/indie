@@ -5,6 +5,7 @@
 ** A file for worms - Paul Laffitte
 */
 
+#include "Entity.hpp"
 #include "Entities.hpp"
 
 void
@@ -12,7 +13,7 @@ engine::Entities::add(engine::Entity const& entity)
 {
 	EntityId parentId = entity.getParentId();
 
-	_entities.emplace(parentId, entity);
+	_roots.emplace(parentId, entity);
 	_childs.emplace(parentId, entity);
 }
 
@@ -21,18 +22,26 @@ engine::Entities::add(engine::Entity const&& entity)
 {
 	EntityId parentId = entity.getParentId();
 
-	_entities.emplace(parentId, entity);
+	if (parentId == engine::Entity::nullId)
+		_roots.emplace(parentId, entity);
 	_childs.emplace(parentId, entity);
 }
-engine::Entity const&
-engine::Entities::get(engine::EntityId id)
+
+engine::Entities::Roots const&
+engine::Entities::getRoots() const
 {
-	return _entities[id];
+	return _roots;
+}
+
+engine::Entities::Childs::iterator
+engine::Entities::getChilds(EntityId id)
+{
+	return _childs.find(id);
 }
 
 void engine::Entities::remove(engine::EntityId id)
 {
-	Entity& entity = _entities[id];
+	Entity& entity = _roots[id];
 	auto entityIt = _childs.find(entity.getParentId());
 
 	for (; entityIt->first == entity.getParentId (); entityIt++);
@@ -40,6 +49,6 @@ void engine::Entities::remove(engine::EntityId id)
 	if (entity.getParentId() != entityIt->first)
 		throw std::runtime_error("unable to kill entity " + entity.getId());
 
-	_entities.erase(id);
+	_roots.erase(id);
 	_childs.erase(entityIt);
 }
