@@ -30,7 +30,7 @@ engine::Scene::spawnEntity(std::string const& name)
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("model '" + name + "' not found");
 
-	_entities.emplace(engine::Entity::nullId, engine::Entity(++_lastSpawnedEntityId, engine::Entity::nullId, &_entities, &componentPool));
+	_entities.emplace(engine::Entity::nullId, _models[name](engine::Entity(++_lastSpawnedEntityId, engine::Entity::nullId, &_entities, &componentPool)));
 	return _lastSpawnedEntityId;
 }
 
