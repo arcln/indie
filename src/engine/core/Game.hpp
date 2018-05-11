@@ -33,6 +33,8 @@ namespace engine {
 
 	private:
 		irr::IrrlichtDevice* _device = nullptr;
+		Event<KeyState> _keyEvents;
+		EventsReceiver _eventReceiver;
 		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
 	};

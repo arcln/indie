@@ -8,9 +8,9 @@
 #include "engine/systems/System.hpp"
 #include "Game.hpp"
 
-engine::Game::Game()
+engine::Game::Game() : _eventReceiver(_keyEvents), _eventHandler(_keyEvents)
 {
-	_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false, &_eventHandler);
+	_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false, &_eventReceiver);
 	if (!_device) {
 		throw std::runtime_error("fatal: failed to initialize irrlicht");
 	}
@@ -20,8 +20,8 @@ engine::Game::Game()
 		return this->_device->getSceneManager()->getMesh(asset.c_str());
 	});
 
-	_eventHandler.keyEvents.subscribe([&](KeyState const& keyState) -> int {
-		if (keyState.Key == engine::KeyCode::KEY_ESCAPE)
+	_eventHandler.subscribe([&](KeyState const& keyState) -> int {
+		if (keyState.Key == engine::KeyCode::KEY_ESCAPE && !keyState.PressedDown)
 			_device->closeDevice();
 		return 0;
 	});
