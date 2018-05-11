@@ -19,19 +19,21 @@ namespace engine { namespace network {
 
 	class Selector {
 	public:
-		template <typename DataType>
-		using DataHandlerType = std::function<void (ClientSocket const&, DataType const&)>;
+		using DataHandlerType = std::function<void (ClientSocket const&, void*)>;
+		using DataHandlersType = std::unordered_map<std::type_index, DataHandlerType>;
 
 		template <typename DataType>
-		void onData(DataHandlerType<DataType> const& handler) {
+		void onData(DataHandlerType const& handler) {
 			_handlers[typeid(DataType)] = handler;
 		}
 
-		void run();
+		std::thread run();
 
 	private:
 		ServerSocket _serverSocket;
-		std::vector<std::pair<ClientSocket, std::thread>> _clients;
-		std::unordered_map<std::type_index, std::function<void ()>> _handlers;
+		std::thread _masterThread;
+		std::mutex _clientsMutex;
+		std::vector<std::thread> _clients;
+		DataHandlersType _handlers;
 	};
 }}

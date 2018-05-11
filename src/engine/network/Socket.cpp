@@ -91,13 +91,16 @@ engine::network::Socket::send<std::string>(std::string const& data) const
 {
 	TextMessage msg;
 
+	msg.size = sizeof(TextMessage);
 	std::sprintf(msg.text, "%s", data.c_str());
 	this->send<TextMessage>(msg);
 }
 
-engine::network::Socket::~Socket()
+engine::network::Socket&
+engine::network::Socket::destroy()
 {
 	closesocket(_socket);
+	return *this;
 }
 
 engine::network::ServerSocket::ServerSocket()

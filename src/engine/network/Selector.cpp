@@ -6,23 +6,43 @@
 //
 
 #include <thread>
+#include <iostream>
 #include "Selector.hpp"
 #include "Message.hpp"
 
-void
+std::thread
 engine::network::Selector::run()
 {
-	auto clientHandler = [](ClientSocket* client) {};
+	auto handler = [](ClientSocket client, DataHandlersType dataHandlers) {
+		try {
+			auto clientVersion = client.receive<TextMessage>();
+
+			if (clientVersion.text == std::string("v0.1")) {
+				client.send<std::string>("OK");
+			} else {
+				client.send<std::string>("KO");
+			}
+
+			while (true) {
+				auto msg = client.receive<TextMessage>();
+				dataHandlers[typeid(TextMessage)](client, &msg);
+			}
+		} catch (std::exception& e) {
+			std::cerr << "worms-server: " << e.what() << std::endl;
+			client.destroy();
+		}
+	};
 
 	std::thread master([&]() {
 		do {
-			auto t = std::thread(clientHandler, _clients.back().first);
+			ClientSocket client;
 
-			_clients.emplace_back(ClientSocket(), t);
-			_serverSocket.accept(_clients.back().first);
-			_clients.back().second.detach();
+			_serverSocket.accept(client);
+			_clients.emplace_back(std::thread(handler, std::move(client), _handlers));
 		} while (_clients.size() < NET_MAX_CONNECTIONS);
+
+		_serverSocket.destroy();
 	});
 
-	master.detach();
+	return master;
 }

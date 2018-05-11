@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <string>
+#include <csignal>
 #include "engine/core/Event.hpp"
 #include "engine/core/Scene.hpp"
 #include "game/TestScene.hpp"
@@ -15,19 +16,30 @@
 #include "engine/systems/DisplaySystem.hpp"
 #include "engine/network/Socket.hpp"
 #include "engine/network/Message.hpp"
+#include "engine/network/Selector.hpp"
+
+void sighandler(int signum) {
+	exit(0);
+}
+
+using namespace engine::network;
 
 int
 main(int const, char const *[])
 {
-	engine::network::ServerSocket master;
-	engine::network::ClientSocket client;
+	signal(SIGINT, &sighandler);
 
-	master.accept(client);
+	Selector master;
+	
+	master.onData<TextMessage>([](ClientSocket const& client, void* msg) {
+		std::cout << reinterpret_cast<TextMessage*>(msg)->text << std::endl;
+	});
 
-	engine::network::TextMessage message;
+	master.run().join();
 
-	std::sprintf(message.text, "salut");
-	client.send<engine::network::TextMessage>(message);
+	std::cout << "all clients connected." << std::endl;
+	while (true);
+
 
 //	engine::Game game;
 //

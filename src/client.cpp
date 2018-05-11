@@ -35,7 +35,10 @@ main(int const, char const *[])
 
 	socket.create().connect("localhost");
 
+	socket.send<std::string>("v0.1");
 	auto res = socket.receive<engine::network::TextMessage>();
+	socket.send<std::string>("vhjisuhvuishviushuishiv");
+	res = socket.receive<engine::network::TextMessage>();
 
 	std::cout << res.text << std::endl;
 

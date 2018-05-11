@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <cstring>
 #include "engine/network/Network.hpp"
 #include "engine/network/Message.hpp"
 
@@ -15,9 +16,9 @@ namespace engine { namespace network {
 	class Socket {
 	public:
 		Socket();
-		~Socket();
 
 		Socket& create();
+		Socket& destroy();
 		Socket const& bind() const;
 		Socket const& listen() const;
 		Socket const& accept(Socket& socket) const;
@@ -33,8 +34,12 @@ namespace engine { namespace network {
 		template <typename MessageType>
 		MessageType receive() const {
 			char buffer[NET_MAX_MSG_SIZE];
-			if (::recv(_socket, buffer, NET_MAX_MSG_SIZE, 0) < 0) {
-				throw std::runtime_error("failed to read into socket.");
+			int recvSize = -2;
+
+			if ((recvSize = ::recv(_socket, buffer, NET_MAX_MSG_SIZE, 0)) < 0) {
+				throw std::runtime_error("failed to read into socket");
+			} else if (recvSize == 0) {
+				throw std::runtime_error("connection was closed by remote host");
 			}
 
 			auto data = *reinterpret_cast<MessageType*>(buffer);
