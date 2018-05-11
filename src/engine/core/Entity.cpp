@@ -32,13 +32,6 @@ engine::Entity::~Entity()
 {
 }
 
-engine::Entity&
-engine::Entity::copyComponents(engine::Entity const& entity)
-{
-	engine::ComponentPool::instance().copyComponents(_id, entity._id);
-	return *this;
-}
-
 void engine::Entity::kill()
 {
 	auto entityIt = _entities->find(_parentId);
@@ -48,7 +41,6 @@ void engine::Entity::kill()
 	if (_parentId != entityIt->first)
 		throw std::runtime_error("unable to kill entity " + _id);
 
-	engine::ComponentPool::instance().removeComponents(_id);
 	_entities->erase(entityIt);
 }
 

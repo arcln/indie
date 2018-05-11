@@ -18,7 +18,7 @@ engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 }
 
 void
-engine::DisplaySystem::update(ComponentPool&)
+engine::DisplaySystem::update()
 {
 	_game.device().run();
 	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));

@@ -8,7 +8,6 @@ find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(GTest REQUIRED)
-find_package(Boost 1.58 REQUIRED)
 
 if (APPLE)
 	find_package(OpenGl)
@@ -37,7 +36,6 @@ include_directories(
 	${ZLIB_INCLUDE_DIR}
 	${IOKIT_INCLUDE_DIR}
 	${GTEST_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIR}
 	./src
 )
 
@@ -55,8 +53,6 @@ endif (APPLE)
 
 add_executable(worms src/main.cpp)
 
-target_link_libraries(worms LINK_PUBLIC
-        ${Boost_LIBRARIES})
 target_link_libraries(worms
 	game engine Irrlicht
 	${OPENGL_LIBRARIES}

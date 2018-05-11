@@ -27,29 +27,27 @@ namespace engine {
 		Entity& operator=(Entity const& entity);
 		virtual ~Entity();
 
-		Entity& copyComponents(engine::Entity const& entity);
-
 		void kill();
 
 		template <typename ComponentType>
 		ComponentType&
 		addComponent() const
 		{
-			return ComponentPool::instance().addComponent<ComponentType>(_id);
+			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().addComponent(_id);
 		}
 
 		template <typename ComponentType>
 		ComponentType&
 		getComponent() const
 		{
-			return ComponentPool::instance().getComponent<ComponentType>(_id);
+			return ComponentPool<engine::UniqueComponentContainer<ComponentType>, ComponentType>::instance().getComponent(_id);
 		}
 
 		template <typename ComponentType>
-		typename EntityComponents<ComponentType>::iterator
+		typename engine::ComponentContainer<ComponentType>::iterator
 		getComponents() const
 		{
-			return ComponentPool::instance().getComponents<ComponentType>(_id);
+			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().getComponents(_id);
 		}
 
 		size_t getId() const;

@@ -18,6 +18,6 @@ namespace engine {
 	public:
 		virtual ~System() = default;
 
-		virtual void update(ComponentPool& componentPool) = 0;
+		virtual void update() = 0;
 	};
 }

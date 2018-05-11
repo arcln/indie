@@ -36,7 +36,7 @@ engine::Game::play(engine::Scene& scene)
 {
 	while (_device->run() && scene.isRunning()) {
 		for (auto& s : _systems) {
-			s.second->update(engine::ComponentPool::instance());
+			s.second->update();
 		}
 
 		scene.update();
