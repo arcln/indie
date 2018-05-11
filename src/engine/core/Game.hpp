@@ -11,6 +11,7 @@
 #include <irrlicht/irrlicht.h>
 #include "engine/core/Scene.hpp"
 #include "engine/resource/ResourceManager.hpp"
+#include "EventsHandler.hpp"
 
 namespace engine {
 
@@ -32,6 +33,9 @@ namespace engine {
 
 	private:
 		irr::IrrlichtDevice* _device = nullptr;
+		Event<KeyState> _keyEvents;
+		EventsReceiver _eventReceiver;
+		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
 	};
 }

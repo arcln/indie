@@ -7,16 +7,13 @@
 
 #include <iostream>
 #include "TestScene.hpp"
-#include "engine/core/Game.hpp"
-#include "engine/components/TestComponent.hpp"
-#include "engine/components/DisplayComponent.hpp"
 
-testGame::TestScene::TestScene(engine::Game* game) : engine::Scene(game)
+testGame::TestScene::TestScene(engine::Game* game) : engine::Scene()
 {
-	this->registerModel("map", [&](engine::Entity const& e) -> engine::Entity const& {
-		auto& displayComponent = e.addComponent<engine::DisplayComponent>();
+	this->registerModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
+		auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
 		displayComponent.init(game, "plant.md3");
-		return e;
+		return entity;
 	});
 
 	this->spawnEntity("map");
@@ -28,4 +25,5 @@ testGame::TestScene::~TestScene()
 
 void
 testGame::TestScene::update()
-{}
+{
+}

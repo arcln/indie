@@ -8,9 +8,9 @@
 #pragma once
 
 #include <irrlicht/irrlicht.h>
-#include "System.hpp"
-#include "engine/resource/ResourceManager.hpp"
 #include "engine/core/Game.hpp"
+#include "engine/resource/ResourceManager.hpp"
+#include "engine/systems/System.hpp"
 
 namespace engine {
 
@@ -25,8 +25,8 @@ namespace engine {
 		Game& _game;
 		ResourceManager<irr::scene::IAnimatedMeshSceneNode*> _nodesManager;
 
-		irr::video::IVideoDriver* _driver = nullptr;
-		irr::scene::ISceneManager* _smgr = nullptr;
-		irr::gui::IGUIEnvironment* _guienv = nullptr;
+		irr::video::IVideoDriver* _videoDriver;
+		irr::scene::ISceneManager* _sceneManager;
+		irr::gui::IGUIEnvironment* _guiEnv;
 	};
 }

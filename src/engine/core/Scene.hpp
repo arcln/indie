@@ -24,7 +24,7 @@ namespace engine {
 	 */
 	class Scene {
 	public:
-		Scene(class Game* device);
+		Scene();
 		virtual ~Scene();
 
 		virtual void update() = 0;
@@ -41,14 +41,14 @@ namespace engine {
 		void registerModel(std::string const& name, EntityEdition const& composition);
 
 		/**
-		 * Spawn an entity based on the model designated by his name
+		 * Spawn an entity based on the model designated by its name
 		 * @param name Model's name
 		 * @return the spawned entity
 		 */
 		EntityId spawnEntity(std::string const& name);
 
 		/**
-		 * Spawn an entity based on the model designated by his name
+		 * Spawn an entity based on the model designated by its name
 		 * @param name Model's name
 		 * @param initialisation Function that modify the spawned entity
 		 * @return the spawned entity
@@ -68,8 +68,6 @@ namespace engine {
 
 	protected:
 		void previousScene();
-
-		class Game* _game;
 
 	private:
 		Entities _entities;

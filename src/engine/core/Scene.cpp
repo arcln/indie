@@ -5,9 +5,10 @@
 ** A file for bomberman - Paul Laffitte
 */
 
-#include "Scene.hpp"
+#include "engine/core/Scene.hpp"
+#include "engine/core/Game.hpp"
 
-engine::Scene::Scene(engine::Game* game) : _game(game), _running(true)
+engine::Scene::Scene() : _running(true)
 {
 }
 
@@ -26,6 +27,7 @@ engine::Scene::spawnEntity(std::string const& name)
 {
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("model '" + name + "' not found");
+
 	auto entity = Entity(&this->componentPool);
 	_entities[entity.getId()] = _models[name](entity);
 	return entity.getId();
