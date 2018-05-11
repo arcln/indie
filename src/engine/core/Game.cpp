@@ -34,13 +34,31 @@ engine::Game::~Game()
 void
 engine::Game::play(engine::Scene& scene)
 {
-	while (_device->run() && scene.isRunning()) {
+	this->pushScene(scene);
+
+	while (_device->run() && !_scenes.empty()) {
 		for (auto& s : _systems) {
 			s.second->update();
 		}
-
-		scene.update();
 	}
+}
+
+void engine::Game::replaceScene(engine::Scene& scene)
+{
+	if (!_scenes.empty())
+		_scenes = std::stack<engine::Scene>();
+
+	_scenes.push(scene);
+}
+
+void engine::Game::pushScene(engine::Scene& scene)
+{
+	_scenes.push(scene);
+}
+
+void engine::Game::popScene()
+{
+	_scenes.pop();
 }
 
 void

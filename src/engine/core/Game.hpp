@@ -9,6 +9,7 @@
 
 #include <unordered_map>
 #include <irrlicht/irrlicht.h>
+#include <stack>
 #include "engine/core/Scene.hpp"
 #include "engine/resource/ResourceManager.hpp"
 #include "EventsHandler.hpp"
@@ -24,6 +25,11 @@ namespace engine {
 		virtual ~Game();
 
 		void play(Scene& scene);
+
+		void replaceScene(Scene& scene);
+		void pushScene(Scene& scene);
+		void popScene();
+
 		void registerSystem(std::string const& name, System* system);
 
 		irr::IrrlichtDevice& device();
@@ -37,5 +43,6 @@ namespace engine {
 		EventsReceiver _eventReceiver;
 		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
+		std::stack<Scene> _scenes;
 	};
 }

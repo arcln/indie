@@ -19,9 +19,9 @@ engine::Scene::~Scene()
 }
 
 void
-engine::Scene::registerModel(std::string const& name, EntityEdition const& composition)
+engine::Scene::registerEntityModel(std::string const& name, EntityModel const& model)
 {
-	_models[name] = composition;
+	_models[name] = model;
 }
 
 engine::EntityId
@@ -35,15 +35,13 @@ engine::Scene::spawnEntity(std::string const& name)
 }
 
 engine::EntityId
-engine::Scene::spawnEntity(std::string const& name, EntityEdition const& initialisation)
+engine::Scene::spawnEntity(std::string const& name, EntityModel const& initialisation)
 {
 	EntityId entityId = this->spawnEntity(name);
 
 	initialisation(Entity(entityId, engine::Entity::nullId, &_entities));
 	return entityId;
 }
-
-// TODO getEntity
 
 bool
 engine::Scene::isRunning() const

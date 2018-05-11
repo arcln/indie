@@ -25,18 +25,16 @@ namespace engine {
 		Scene();
 		virtual ~Scene();
 
-		virtual void update() = 0;
-
-		using EntityEdition = std::function<Entity const& (Entity const&)>;
-		using Models = std::unordered_map<std::string, EntityEdition>;
+		using EntityModel = std::function<Entity const& (Entity const&)>;
+		using EntityModels = std::unordered_map<std::string, EntityModel>;
 
 		/**
 		 * Register a model to spawn it later
 		 * @param name Name of the model to register
-		 * @param composition Function that model an entity
+		 * @param model Function that model an entity
 		 * @return the model
 		 */
-		void registerModel(std::string const& name, EntityEdition const& composition);
+		void registerEntityModel(std::string const& name, EntityModel const& model);
 
 		/**
 		 * Spawn an entity based on the model designated by its name
@@ -51,7 +49,7 @@ namespace engine {
 		 * @param initialisation Function that modify the spawned entity
 		 * @return the spawned entity
 		 */
-		EntityId spawnEntity(std::string const& name, EntityEdition const& initialisation);
+		EntityId spawnEntity(std::string const& name, EntityModel const& initialisation);
 
 		bool isRunning() const;
 
@@ -61,7 +59,7 @@ namespace engine {
 	private:
 		static EntityId _lastSpawnedEntityId;
 
-		Models _models;
+		EntityModels _models;
 		Entities _entities;
 		bool _running;
 	};

@@ -10,7 +10,7 @@
 
 testGame::TestScene::TestScene(engine::Game* game) : engine::Scene()
 {
-	this->registerModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
+	this->registerEntityModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
 		auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
 		displayComponent.init(game, "plant.md3");
 		return entity;
@@ -20,10 +20,5 @@ testGame::TestScene::TestScene(engine::Game* game) : engine::Scene()
 }
 
 testGame::TestScene::~TestScene()
-{
-}
-
-void
-testGame::TestScene::update()
 {
 }
