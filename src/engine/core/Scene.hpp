@@ -17,8 +17,6 @@
 
 namespace engine {
 
-	using Entities = std::vector<EntityId>;
-
 	/**
 	 * Holds models, entities and components.
 	 */
@@ -63,11 +61,10 @@ namespace engine {
 		void previousScene();
 
 	private:
-		Entities _entities;
-		Models _models;
-
-		bool _running = true;
-
 		static EntityId _lastSpawnedEntityId;
+
+		Models _models;
+		Entities _entities;
+		bool _running;
 	};
 }

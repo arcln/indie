@@ -39,7 +39,6 @@ namespace engine {
 	 */
 	class ComponentPool {
 	public:
-
 		template <typename ComponentType>
 		ComponentType&
 		addComponent(EntityId entityId)
@@ -82,7 +81,18 @@ namespace engine {
 			return _components[typeid(ComponentType)];
 		}
 
+		/**
+		 * Copy all component from an entity to another
+		 * @param dest Entity destination
+		 * @param src Entity source
+		 */
 		void copyComponents(EntityId dest, EntityId src);
+
+		/**
+		 * Remove all components of an entity by its id
+		 * @param entityId Entity's id to remove
+		 */
+		void removeComponents(EntityId entityId);
 
 	private:
 		Components<AnyComponent> _components;

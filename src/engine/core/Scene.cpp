@@ -40,9 +40,11 @@ engine::Scene::spawnEntity(std::string const& name, EntityEdition const& initial
 {
 	EntityId entityId = this->spawnEntity(name);
 
-	initialisation(Entity(entityId, &componentPool));
+	initialisation(Entity(entityId, &_entities, &componentPool));
 	return entityId;
 }
+
+// TODO getEntity
 
 bool
 engine::Scene::isRunning() const

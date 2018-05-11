@@ -9,7 +9,8 @@
 #include <iostream>
 #include "engine/components/ComponentPool.hpp"
 
-void engine::ComponentPool::copyComponents(EntityId dest, EntityId src)
+void
+engine::ComponentPool::copyComponents(EntityId dest, EntityId src)
 {
 	for (auto& componentTypeIt : _components) {
 		EntityComponents<AnyComponent>& entityComponents = componentTypeIt.second;
@@ -19,4 +20,10 @@ void engine::ComponentPool::copyComponents(EntityId dest, EntityId src)
 			}
 		}
 	}
+}
+
+void
+engine::ComponentPool::removeComponents(engine::EntityId entityId)
+{
+	// TODO remove all components of an entity by its id
 }

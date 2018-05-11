@@ -11,8 +11,8 @@
 engine::Entity::Entity() : _componentPool(nullptr)
 {}
 
-engine::Entity::Entity(EntityId entityId, ComponentPool* componentPool)
-	: _id(entityId), _componentPool(componentPool)
+engine::Entity::Entity(EntityId entityId, Entities* entities, ComponentPool* componentPool)
+	: _id(entityId), _entities(entities), _componentPool(componentPool)
 {}
 
 engine::Entity::Entity(engine::Entity const& entity)
@@ -42,4 +42,14 @@ engine::EntityId
 engine::Entity::getId() const
 {
 	return _id;
+}
+
+void engine::Entity::kill()
+{
+	auto const& entityIt = std::find(std::begin(*_entities), std::end(*_entities), _id);
+
+	if (entityIt != std::end(*_entities)) {
+		_componentPool->removeComponents(_id);
+		_entities->erase(entityIt);
+	}
 }

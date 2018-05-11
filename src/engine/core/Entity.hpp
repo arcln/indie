@@ -14,18 +14,22 @@
 
 namespace engine {
 
+	using Entities = std::vector<EntityId>;
+
 	/**
 	 * An entity composed of components. The smallest logic unit in a game
 	 */
 	class Entity {
 	public:
 		Entity();
-		Entity(EntityId entityId, ComponentPool* componentPool);
+		Entity(EntityId entityId, Entities* entities, ComponentPool* componentPool);
 		Entity(Entity const& entity);
 		Entity& operator=(Entity const& entity);
 		virtual ~Entity();
 
 		Entity& copyComponents(engine::Entity const& entity);
+
+		void kill();
 
 		template <typename ComponentType>
 		ComponentType&
@@ -52,6 +56,7 @@ namespace engine {
 
 	private:
 		EntityId _id;
+		Entities* _entities;
 		ComponentPool* _componentPool;
 	};
 }
