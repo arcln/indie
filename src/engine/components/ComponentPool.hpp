@@ -17,21 +17,21 @@
 
 namespace engine {
 
+	/**
+	 * Container holding components with an 1-N relation between an entity and themselves
+	 * @tparam ComponentType Type of the components handled by the container, can be anything
+	 */
 	template <typename ComponentType>
 	using ComponentContainer = std::multimap<EntityId, ComponentType>;
 
-	template <typename ComponentType>
-	using UniqueComponentContainer = std::map<EntityId, ComponentType>;
-
 	/**
-	 * Singleton that contains all the components of a type
-	 * @tparam ContainerType Type of the container used to store the components, can be either ComponentContainer or UniqueComponentContainer
+	 * Singleton that contains all components of a type
 	 * @tparam ComponentType Type of the components handled by the pool, can be anything
 	 */
-	template <typename ContainerType, typename ComponentType>
+	template <typename ComponentType>
 	class ComponentPool {
 	public:
-		using Components = ContainerType;
+		using Container = ComponentContainer<ComponentType>;
 
 		ComponentPool(ComponentPool const&) = delete;
 		ComponentPool(ComponentPool&&) = delete;
@@ -39,41 +39,26 @@ namespace engine {
 		ComponentPool& operator=(ComponentPool &&) = delete;
 
 		/**
-		 * Copy all component from an entity to another
-		 * @param dest Entity destination
-		 * @param src Entity source
+		 * Add a component to an entity
+		 * @param entityId Entity's id
+		 * @return the component
 		 */
-		void copyComponents(EntityId dest, EntityId src);
-
-		/**
-		 * Remove all components of an entity by its id
-		 * @param entityId Entity's id to remove
-		 */
-		void removeComponents(EntityId entityId);
-
 		ComponentType&
 		addComponent(EntityId entityId)
 		{
-			typename Components::iterator componentIt = _components.emplace(entityId, ComponentType());
+			typename Container::iterator componentIt = _components.emplace(entityId, ComponentType());
 
 			if (componentIt == std::end(_components))
 				throw std::runtime_error("unable to add a new component");
 			return componentIt->second;
 		}
 
-		ComponentType&
-		getComponent(EntityId entityId)
-		{
-			typename Components::iterator componentIt = _components.find(entityId);
-
-			if (componentIt == std::end(_components))
-				throw std::runtime_error("component not found");
-			return componentIt->second;
-
-		}
-
-		typename Components::iterator
-		getComponents(EntityId entityId)
+		/**
+		 * Get a component by entity id
+		 * @param entityId Entity's id
+		 * @return the component
+		 */
+		typename Container::iterator getComponents(EntityId entityId)
 		{
 			return _components.find(entityId);
 		}
@@ -89,7 +74,7 @@ namespace engine {
 		}
 
 	private:
-		Components _components;
+		Container _components;
 
 		ComponentPool() = default;
 	};

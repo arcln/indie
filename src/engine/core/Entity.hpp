@@ -11,6 +11,7 @@
 #include <engine/core/Event.hpp>
 #include <engine/core/EntityId.hpp>
 #include <engine/components/ComponentPool.hpp>
+#include <engine/components/UniqueComponentPool.hpp>
 
 namespace engine {
 
@@ -31,23 +32,30 @@ namespace engine {
 
 		template <typename ComponentType>
 		ComponentType&
+		setComponent() const
+		{
+			return UniqueComponentPool<ComponentType>::instance().setComponent(_id);
+		}
+
+		template <typename ComponentType>
+		ComponentType&
 		addComponent() const
 		{
-			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().addComponent(_id);
+			return ComponentPool<ComponentType>::instance().addComponent(_id);
 		}
 
 		template <typename ComponentType>
 		ComponentType&
 		getComponent() const
 		{
-			return ComponentPool<engine::UniqueComponentContainer<ComponentType>, ComponentType>::instance().getComponent(_id);
+			return UniqueComponentPool<ComponentType>::instance().getComponent(_id);
 		}
 
 		template <typename ComponentType>
 		typename engine::ComponentContainer<ComponentType>::iterator
 		getComponents() const
 		{
-			return ComponentPool<engine::ComponentContainer<ComponentType>, ComponentType>::instance().getComponents(_id);
+			return ComponentPool<ComponentType>::instance().getComponents(_id);
 		}
 
 		EntityId getId() const;
