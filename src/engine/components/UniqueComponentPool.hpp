@@ -54,6 +54,16 @@ namespace engine {
 		}
 
 		/**
+		 * Check if an entity have a component
+		 * @param entityId Entity's id
+		 * @return whether the entity have a component or not
+		 */
+		bool haveComponent(EntityId entityId)
+		{
+			return (_components.find(entityId) != std::end(_components));
+		}
+
+		/**
 		 * Get a component by entity id
 		 * @param entityId Entity's id
 		 * @return the component
