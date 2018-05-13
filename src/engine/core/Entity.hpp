@@ -45,6 +45,13 @@ namespace engine {
 		}
 
 		template <typename ComponentType>
+		bool
+		hasComponent() const
+		{
+			return UniqueComponentPool<ComponentType>::instance().hasComponent(_id);
+		}
+
+		template <typename ComponentType>
 		ComponentType&
 		getComponent() const
 		{
