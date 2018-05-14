@@ -53,7 +53,7 @@ endif (APPLE)
 
 add_executable(worms src/client.cpp)
 target_link_libraries(worms
-	game engine Irrlicht
+	game engine Irrlicht pthread
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
@@ -63,7 +63,7 @@ target_link_libraries(worms
 
 add_executable(worms-server src/server.cpp)
 target_link_libraries(worms-server
-	game engine Irrlicht
+	game engine Irrlicht pthread
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
