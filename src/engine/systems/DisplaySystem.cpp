@@ -30,6 +30,4 @@ engine::DisplaySystem::update(Entities const&)
 }
 
 engine::DisplaySystem::~DisplaySystem()
-{
-	_game.device().drop();
-}
+{}

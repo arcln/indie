@@ -5,6 +5,7 @@
 ** A file for bomberman - Paul Laffitte
 */
 
+#include <string>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Game.hpp"
 
@@ -55,7 +56,23 @@ engine::Scene::previousScene()
 	_running = false;
 }
 
-const engine::Entities& engine::Scene::getEntities() const
+engine::Entities const&
+engine::Scene::getEntities() const
 {
 	return _entities;
+}
+
+void
+engine::Scene::synchonizeWith(std::string const& hostname)
+{
+	this->socket.create().connect(hostname);
+
+	this->socket.send<std::string>(engine::network::version);
+	auto res = this->socket.receive<engine::network::TextMessage>();
+
+	if (std::string(res.text) != engine::network::version) {
+		throw std::runtime_error(std::string("server version ") + res.text + " does not match current version " + engine::network::version);
+	}
+
+	std::cout << "worms: network: successfuly connected to " << hostname << std::endl;
 }

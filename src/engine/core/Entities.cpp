@@ -48,7 +48,7 @@ void engine::Entities::remove(engine::EntityId id)
 	for (; entityIt->first == entity.getParentId (); entityIt++);
 
 	if (entity.getParentId() != entityIt->first)
-		throw std::runtime_error("unable to kill entity " + entity.getId());
+		throw std::runtime_error("unable to kill entity " + std::to_string(entity.getId()));
 
 	_roots.erase(id);
 	_childs.erase(entityIt);

@@ -7,10 +7,13 @@
 
 #pragma once
 
+#include <iostream>
 #include <vector>
 #include <functional>
 
 namespace engine {
+
+	using GenericEvent = int;
 
 	template <typename PayloadType, typename ResponseType = int>
 	class Event {
@@ -32,7 +35,7 @@ namespace engine {
 			_subscribers.push_back(callback);
 		}
 
-	private:
+	protected:
 		std::vector<CallbackType> _subscribers;
 	};
 }

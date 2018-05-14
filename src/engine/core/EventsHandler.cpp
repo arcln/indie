@@ -28,8 +28,7 @@ engine::EventsHandler::subscribe(engine::Event<engine::KeyState>::CallbackType c
 }
 
 engine::EventsReceiver::EventsReceiver(engine::Event<engine::KeyState>& keyEvents) : _keyEvents(keyEvents)
-{
-}
+{}
 
 bool
 engine::EventsReceiver::OnEvent(irr::SEvent const& event)
@@ -37,5 +36,6 @@ engine::EventsReceiver::OnEvent(irr::SEvent const& event)
 	if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
 		_keyEvents.emit(engine::KeyState(event.KeyInput));
 	}
+
 	return false;
 }

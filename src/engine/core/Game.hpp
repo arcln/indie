@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <list>
+#include <vector>
 #include <unordered_map>
 #include <irrlicht/irrlicht.h>
 #include <stack>
@@ -21,7 +23,7 @@ namespace engine {
 
 	class Game {
 	public:
-		Game();
+		Game(bool enableVideo = true);
 		virtual ~Game();
 
 		using SceneModel = std::function<Scene& (Scene&)>;
@@ -39,15 +41,18 @@ namespace engine {
 		irr::IrrlichtDevice& device();
 		irr::IrrlichtDevice const& device() const;
 
+	private:
+		Event<KeyState> _keyEvents;
+
+	public:
+		EventsHandler eventsHandler;
 		ResourceManager<MeshNode*> meshManager;
 
 	private:
-		irr::IrrlichtDevice* _device = nullptr;
-		Event<KeyState> _keyEvents;
+		irr::IrrlichtDevice* _device;
 		EventsReceiver _eventReceiver;
-		EventsHandler _eventHandler;
 		std::unordered_map<std::string, System*> _systems;
-		std::vector<Scene> _scenes;
+		std::list<Scene> _scenes;
 		SceneModels _sceneModels;
 
 		void _updateScenes();

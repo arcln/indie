@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(worms)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-W -Wall -Wextra -g")
+set(CMAKE_CXX_FLAGS "-W -Wall -Wextra -Wno-unused-parameter -g")
 
 find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
@@ -51,10 +51,19 @@ if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
-add_executable(worms src/main.cpp)
-
+add_executable(worms src/client.cpp)
 target_link_libraries(worms
-	game engine Irrlicht
+	game engine Irrlicht pthread
+	${OPENGL_LIBRARIES}
+	${X11_LIBRARIES}
+	${GLUT_LIBRARIES}
+	${ZLIB_LIBRARIES}
+	${IOKIT_LIBRARIES}
+	${IOKIT_LIBRARIES})
+
+add_executable(worms-server src/server.cpp)
+target_link_libraries(worms-server
+	game engine Irrlicht pthread
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
