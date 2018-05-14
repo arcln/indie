@@ -13,9 +13,11 @@
 #include "engine/core/Game.hpp"
 #include "engine/components/DisplayComponent.hpp"
 #include "engine/systems/DisplaySystem.hpp"
+#include "engine/network/Socket.hpp"
+#include "engine/network/Message.hpp"
 
 int
-main(int const, char const *[])
+main()
 {
 	engine::Game game;
 
@@ -24,8 +26,8 @@ main(int const, char const *[])
 		game.registerSystem("display", &display);
 
 		testGame::TestScene scene(&game);
-		game.registerSceneModel("worms", scene.getSceneModel());
-		game.play("worms");
+		game.registerSceneModel("main", scene.getSceneModel());
+		game.play("main");
 	} catch (std::exception& e) {
 		std::cerr << "worms: ERROR: " << e.what() << std::endl;
 	}

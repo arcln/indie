@@ -1,0 +1,9 @@
+*.o
+*.a
+*.info
+
+build
+cmake-build-debug
+
+.clang_complete
+.idea

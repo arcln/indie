@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(worms)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-W -Wall -Wextra -Wno-unused-parameter -g")
+set(CMAKE_CXX_FLAGS "-W -Wall -Wextra")
 
 find_package(Threads REQUIRED)
 find_package(GLUT REQUIRED)
@@ -14,7 +14,7 @@ if (APPLE)
 endif (APPLE)
 
 if (WIN32)
-	set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage")
+	set(CMAKE_CXX_FLAGS "")
 	find_package(X11 REQUIRED)
 endif (WIN32)
 
@@ -41,34 +41,20 @@ include_directories(
 
 link_directories(/usr/local/lib)
 
-file(GLOB_RECURSE GAME_SRCS src/game/*)
-add_library(game STATIC ${GAME_SRCS})
-
-file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
-add_library(engine STATIC ${ENGINE_SRCS})
-
 if (APPLE)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework IOKit")
 endif (APPLE)
 
-add_executable(worms src/client.cpp)
-target_link_libraries(worms
-	game engine Irrlicht pthread
+enable_testing()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
+file(GLOB_RECURSE TESTS_SRCS ./*)
+add_executable(tests-engine ${TESTS_SRCS})
+target_link_libraries(tests-engine
+	engine Irrlicht
 	${OPENGL_LIBRARIES}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARIES}
-	${IOKIT_LIBRARIES})
-
-add_executable(worms-server src/server.cpp)
-target_link_libraries(worms-server
-	game engine Irrlicht pthread
-	${OPENGL_LIBRARIES}
-	${X11_LIBRARIES}
-	${GLUT_LIBRARIES}
-	${ZLIB_LIBRARIES}
-	${IOKIT_LIBRARIES}
-	${IOKIT_LIBRARIES})
-
-add_subdirectory(tests)
+	${GTEST_BOTH_LIBRARIES} pthread
+)
