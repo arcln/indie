@@ -13,13 +13,14 @@
 std::thread
 engine::network::Selector::run()
 {
-	auto handler = [](ClientSocket client, DataHandlersType dataHandlers) {
+	auto handler = [](ClientSocket client, DataHandlers dataHandlers) {
 		try {
 			auto clientVersion = client.receive<TextMessage>();
 
-			if (clientVersion.text == std::string("v0.1")) {
-				client.send<std::string>("v0.1");
+			if (clientVersion.text == std::string(engine::network::version)) {
+				client.send<std::string>(engine::network::version);
 			} else {
+				client.destroy();
 				return;
 			}
 

@@ -20,11 +20,11 @@ namespace engine { namespace network {
 
 	class Selector {
 	public:
-		using DataHandlerType = std::function<void (ClientSocket const&, void*)>;
-		using DataHandlersType = std::unordered_map<std::type_index, DataHandlerType>;
+		using DataHandler = std::function<void (ClientSocket const&, void*)>;
+		using DataHandlers = std::unordered_map<std::type_index, DataHandler>;
 
 		template <typename DataType>
-		void onData(DataHandlerType const& handler) {
+		void onData(DataHandler const& handler) {
 			_handlers[typeid(DataType)] = handler;
 		}
 
@@ -35,6 +35,6 @@ namespace engine { namespace network {
 		std::thread _masterThread;
 		std::mutex _clientsMutex;
 		std::vector<std::thread> _clients;
-		DataHandlersType _handlers;
+		DataHandlers _handlers;
 	};
 }}

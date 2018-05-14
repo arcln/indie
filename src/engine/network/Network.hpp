@@ -13,6 +13,7 @@
 
 #else
 
+#include <string>
 #include <unistd.h>
 #include <netdb.h>
 #include <sys/types.h>
@@ -32,5 +33,9 @@ typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 typedef struct in_addr IN_ADDR;
+
+namespace engine { namespace network {
+	static const std::string version = "v0.1";
+}}
 
 #endif
