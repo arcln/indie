@@ -30,7 +30,7 @@ testGame::TestScene::getSceneModel()
 
 		_game->eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
 			if (keystate.Key == engine::KeyCode::KEY_KEY_E && keystate.PressedDown) {
-				scene.triggerEvent("display map", 0);
+				scene.triggerEvent<int>("display map", 0);
 			}
 
 			return 0;
@@ -42,6 +42,7 @@ testGame::TestScene::getSceneModel()
 //			_game->registerSystem("network", _cns.get());
 //		}
 
+		scene.triggerEvent<int>("display map", 0);
 		return scene;
 	};
 }

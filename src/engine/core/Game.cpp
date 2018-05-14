@@ -65,7 +65,8 @@ void engine::Game::pushScene(std::string const& name)
 	if (_sceneModels.find(name) == std::end(_sceneModels))
 		throw std::runtime_error("scene model '" + name + "' not found");
 
-	_scenes.push_back(_sceneModels[name](scene));
+	_scenes.emplace_back(scene);
+	_sceneModels[name](_scenes.back());
 }
 
 void engine::Game::popScene()
