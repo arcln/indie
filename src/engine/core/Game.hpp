@@ -42,11 +42,15 @@ namespace engine {
 		irr::IrrlichtDevice const& device() const;
 
 		ResourceManager<MeshNode*> meshManager;
+
+	private:
+		Event<KeyState> _keyEvents;
+
+	public:
 		EventsHandler eventsHandler;
 
 	private:
 		irr::IrrlichtDevice* _device = nullptr;
-		Event<KeyState> _keyEvents;
 		EventsReceiver _eventReceiver;
 		std::unordered_map<std::string, System*> _systems;
 		std::list<Scene> _scenes;

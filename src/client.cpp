@@ -19,18 +19,15 @@
 int
 main()
 {
-	std::cout << "ok" << std::endl;
 	engine::Game game;
-
-
 
 	try {
 		engine::DisplaySystem display(game);
-//		game.registerSystem("display", &display);
+		game.registerSystem("display", &display);
 
-//		testGame::TestScene scene(&game);
-//		game.registerSceneModel("main", scene.getSceneModel());
-//		game.play("main");
+		testGame::TestScene scene(&game);
+		game.registerSceneModel("main", scene.getSceneModel());
+		game.play("main");
 	} catch (std::exception& e) {
 		std::cerr << "worms: ERROR: " << e.what() << std::endl;
 	}
@@ -43,8 +40,6 @@ main()
 //	auto res = socket.receive<engine::network::TextMessage>();
 //	socket.send<std::string>("vhjisuhvuishviushuishiv");
 //	res = socket.receive<engine::network::TextMessage>();
-//
-//	std::cout << res.text << std::endl;
 
 	return 0;
 }

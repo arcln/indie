@@ -10,7 +10,6 @@
 
 engine::Game::Game() : eventsHandler(_keyEvents), _eventReceiver(_keyEvents)
 {
-	std::cout << "ok" << std::endl;
 	_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false, &_eventReceiver);
 	if (!_device) {
 		throw std::runtime_error("fatal: failed to initialize irrlicht");
@@ -30,6 +29,7 @@ engine::Game::Game() : eventsHandler(_keyEvents), _eventReceiver(_keyEvents)
 
 engine::Game::~Game()
 {
+	this->device().drop();
 }
 
 void
@@ -37,7 +37,11 @@ engine::Game::play(std::string const& name)
 {
 	this->pushScene(name);
 
-	while (_device->run() && !_scenes.empty()) {
+	while (!_scenes.empty()) {
+		if (!_device->run()) {
+			return;
+		}
+
 		_updateScenes();
 	}
 }

@@ -25,12 +25,10 @@ testGame::TestScene::getSceneModel()
 		});
 
 		scene.registerEvent<int>("display map", [&](void const*) {
-			std::cout << "ok" << std::endl;
 			scene.spawnEntity("map");
 		});
 
 		_game->eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			std::cout << "hey" << std::endl;
 			if (keystate.Key == engine::KeyCode::KEY_KEY_E && keystate.PressedDown) {
 				scene.triggerEvent("display map", 0);
 			}
