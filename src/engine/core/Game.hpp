@@ -16,10 +16,6 @@
 #include "engine/resource/ResourceManager.hpp"
 #include "EventsHandler.hpp"
 
-#ifndef ENGINE_VIDEO_MODE
-	#define ENGINE_VIDEO_MODE	irr::video::EDT_OPENGL
-#endif
-
 namespace engine {
 
 	class System;
