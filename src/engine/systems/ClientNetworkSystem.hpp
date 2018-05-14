@@ -18,7 +18,7 @@ namespace engine {
 
 	class ClientNetworkSystem : public System {
 	public:
-		explicit ClientNetworkSystem(network::ClientSocket& socket, Events const& events);
+		explicit ClientNetworkSystem(network::ClientSocket const& socket, Events const& events);
 		~ClientNetworkSystem();
 
 		void update(Entities const& entities) override;

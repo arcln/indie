@@ -8,8 +8,8 @@
 #include <iostream>
 #include "ClientNetworkSystem.hpp"
 
-engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket& socket, Events const&)
-	: System(), _netThread([&]() {
+engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket const& socket, Events const&)
+	: System(), _netThread([socket]() {
 		while (true) {
 			auto msg = socket.receive<network::TextMessage>();
 			std::cout << msg.text << std::endl;
@@ -18,6 +18,7 @@ engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket& 
 
 engine::ClientNetworkSystem::~ClientNetworkSystem()
 {
+	_netThread.detach();
 }
 
 void
