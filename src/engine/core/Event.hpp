@@ -19,21 +19,23 @@ namespace engine {
 		using ResponseCallbackType = std::function<void (ResponseType const&)>;
 		using CallbackType = std::function<ResponseType (PayloadType const&)>;
 
-		void emit(PayloadType const& payload, ResponseCallbackType const& callback) {
+		virtual ~Event() = default;
+
+		virtual void emit(PayloadType const& payload, ResponseCallbackType const& callback) {
 			for (auto& sub : _subscribers) {
 				callback(sub(payload));
 			}
 		}
 
-		void emit(PayloadType const& payload) {
+		virtual void emit(PayloadType const& payload) {
 			this->emit(payload, [](ResponseType const&) {});
 		}
 
-		void subscribe(CallbackType const& callback) {
+		virtual void subscribe(CallbackType const& callback) {
 			_subscribers.push_back(callback);
 		}
 
-	private:
+	protected:
 		std::vector<CallbackType> _subscribers;
 	};
 }

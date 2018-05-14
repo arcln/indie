@@ -17,6 +17,7 @@
 #include "engine/core/Entity.hpp"
 #include "engine/core/Entities.hpp"
 #include "engine/network/Message.hpp"
+#include "engine/network/Socket.hpp"
 
 namespace engine {
 
@@ -73,6 +74,16 @@ namespace engine {
 			_events[name].emit("context");
 		}
 
+		template <typename ContextType>
+		void triggerSyncedEvent(std::string const& name, ContextType const& context) {
+			this->triggerEvent(name, context);
+
+			// TODO: Serialize context
+			_socket.send<std::string>("context");
+		}
+
+		void synchonizeWith(std::string const& hostname);
+
 		bool isRunning() const;
 
 	protected:
@@ -81,6 +92,7 @@ namespace engine {
 	private:
 		static EntityId _lastSpawnedEntityId;
 
+		network::ClientSocket _socket;
 		std::unordered_map<std::string, EventHandler> _eventHandlers;
 		std::unordered_map<std::string, Event<std::string>> _events;
 		EntityModels _models;

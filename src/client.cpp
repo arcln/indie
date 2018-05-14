@@ -32,14 +32,5 @@ main()
 		std::cerr << "worms: ERROR: " << e.what() << std::endl;
 	}
 
-//	engine::network::Socket socket;
-//
-//	socket.create().connect("localhost");
-//
-//	socket.send<std::string>("v0.1");
-//	auto res = socket.receive<engine::network::TextMessage>();
-//	socket.send<std::string>("vhjisuhvuishviushuishiv");
-//	res = socket.receive<engine::network::TextMessage>();
-
 	return 0;
 }

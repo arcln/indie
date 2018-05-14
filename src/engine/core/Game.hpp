@@ -41,13 +41,12 @@ namespace engine {
 		irr::IrrlichtDevice& device();
 		irr::IrrlichtDevice const& device() const;
 
-		ResourceManager<MeshNode*> meshManager;
-
 	private:
 		Event<KeyState> _keyEvents;
 
 	public:
 		EventsHandler eventsHandler;
+		ResourceManager<MeshNode*> meshManager;
 
 	private:
 		irr::IrrlichtDevice* _device = nullptr;
