@@ -13,6 +13,8 @@
 
 namespace engine {
 
+	using GenericEvent = int;
+
 	template <typename PayloadType, typename ResponseType = int>
 	class Event {
 	public:

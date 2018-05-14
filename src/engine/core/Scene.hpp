@@ -13,6 +13,7 @@
 #include <functional>
 #include <unordered_map>
 #include <map>
+#include <memory>
 #include "engine/core/Event.hpp"
 #include "engine/core/Entity.hpp"
 #include "engine/core/Entities.hpp"
@@ -61,7 +62,8 @@ namespace engine {
 		template <typename ContextType>
 		void registerEvent(std::string const& name, EventHandler const& handler) {
 			_eventHandlers[name] = handler;
-			_events[name].subscribe([&](std::string const& context) -> int {
+			reinterpret_cast<Event<ContextType>*>(_events[name].get())
+				->subscribe([&](ContextType const& context) -> int {
 				// TODO: Deserialize context
 				_eventHandlers[name](&context);
 				return 0;
@@ -70,8 +72,7 @@ namespace engine {
 
 		template <typename ContextType>
 		void triggerEvent(std::string const& name, ContextType const& context) {
-			// TODO: Serialize context
-			_events[name].emit("context");
+			reinterpret_cast<Event<ContextType>*>(_events[name].get())->emit(context);
 		}
 
 		template <typename ContextType>
@@ -79,7 +80,7 @@ namespace engine {
 			this->triggerEvent(name, context);
 
 			// TODO: Serialize context
-			_socket.send<std::string>("context");
+			_socket.send<std::string>(name);
 		}
 
 		void synchonizeWith(std::string const& hostname);
@@ -94,7 +95,7 @@ namespace engine {
 
 		network::ClientSocket _socket;
 		std::unordered_map<std::string, EventHandler> _eventHandlers;
-		std::unordered_map<std::string, Event<std::string>> _events;
+		std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>> _events;
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
