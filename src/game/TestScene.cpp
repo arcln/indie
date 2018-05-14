@@ -36,11 +36,11 @@ testGame::TestScene::getSceneModel()
 			return 0;
 		});
 
-		if (!_isServer) {
-			scene.synchonizeWith("localhost");
-			_cns = std::make_unique<engine::ClientNetworkSystem>(scene.socket, scene.events);
-			_game->registerSystem("network", _cns.get());
-		}
+//		if (!_isServer) {
+//			scene.synchonizeWith("localhost");
+//			_cns = std::make_unique<engine::ClientNetworkSystem>(scene.socket, scene.events);
+//			_game->registerSystem("network", _cns.get());
+//		}
 
 		return scene;
 	};

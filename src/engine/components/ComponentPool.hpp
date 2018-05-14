@@ -18,6 +18,10 @@
 namespace engine {
 
 	namespace internal {
+
+		/**
+		 * An event to reset all the component pools by emitting true
+		 */
 		extern Event<bool, bool> componentPoolReset;
 	}
 
