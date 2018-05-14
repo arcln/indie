@@ -17,6 +17,10 @@
 
 namespace engine {
 
+	namespace internal {
+		extern Event<bool, bool> componentPoolReset;
+	}
+
 	/**
 	 * Container holding components with an 1-N relation between an entity and themselves
 	 * @tparam ComponentType Type of the components handled by the container, can be anything
@@ -67,8 +71,8 @@ namespace engine {
 		 * Singleton getter
 		 * @return the component pool singleton itself
 		 */
-		static ComponentPool& instance() {
-			static ComponentPool componentPool;
+		static ComponentPool<ComponentType>& instance() {
+			static ComponentPool<ComponentType> componentPool;
 
 			return componentPool;
 		}
@@ -76,6 +80,16 @@ namespace engine {
 	private:
 		Container _components;
 
-		ComponentPool() = default;
+		/**
+		 * Constructor. Register to the componentPoolReset event
+		 */
+		ComponentPool() {
+			internal::componentPoolReset.subscribe([&](bool reset) -> int {
+				if (reset) {
+					_components.clear();
+				}
+				return reset;
+			});
+		}
 	};
 }

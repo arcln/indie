@@ -54,7 +54,7 @@ void engine::Game::replaceScene(std::string const& name)
 	if (!_scenes.empty()) {
 		_scenes.clear();
 	}
-
+	engine::internal::componentPoolReset.emit(true);
 	this->pushScene(name);
 }
 
