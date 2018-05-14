@@ -65,10 +65,10 @@ engine::Scene::getEntities() const
 void
 engine::Scene::synchonizeWith(std::string const& hostname)
 {
-	_socket.create().connect(hostname);
+	this->socket.create().connect(hostname);
 
-	_socket.send<std::string>("v0.1");
-	auto res = _socket.receive<engine::network::TextMessage>();
+	this->socket.send<std::string>("v0.1");
+	auto res = this->socket.receive<engine::network::TextMessage>();
 
 	if (std::string(res.text) != "v0.1") {
 		throw std::runtime_error(std::string("server version ") + res.text + " does not match current version v0.1");

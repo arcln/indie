@@ -8,9 +8,12 @@
 #include "engine/systems/System.hpp"
 #include "Game.hpp"
 
-engine::Game::Game() : eventsHandler(_keyEvents), _eventReceiver(_keyEvents)
+engine::Game::Game(bool enableVideo) : eventsHandler(_keyEvents), _eventReceiver(_keyEvents)
 {
-	_device = irr::createDevice(irr::video::EDT_OPENGL, irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false, &_eventReceiver);
+	_device = irr::createDevice(enableVideo ? irr::video::EDT_OPENGL : irr::video::EDT_NULL,
+								irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false,
+								&_eventReceiver);
+
 	if (!_device) {
 		throw std::runtime_error("fatal: failed to initialize irrlicht");
 	}

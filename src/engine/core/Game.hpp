@@ -16,6 +16,10 @@
 #include "engine/resource/ResourceManager.hpp"
 #include "EventsHandler.hpp"
 
+#ifndef ENGINE_VIDEO_MODE
+	#define ENGINE_VIDEO_MODE	irr::video::EDT_OPENGL
+#endif
+
 namespace engine {
 
 	class System;
@@ -23,7 +27,7 @@ namespace engine {
 
 	class Game {
 	public:
-		Game();
+		Game(bool enableVideo = true);
 		virtual ~Game();
 
 		using SceneModel = std::function<Scene& (Scene&)>;
@@ -49,7 +53,7 @@ namespace engine {
 		ResourceManager<MeshNode*> meshManager;
 
 	private:
-		irr::IrrlichtDevice* _device = nullptr;
+		irr::IrrlichtDevice* _device;
 		EventsReceiver _eventReceiver;
 		std::unordered_map<std::string, System*> _systems;
 		std::list<Scene> _scenes;

@@ -8,7 +8,7 @@
 #include <iostream>
 #include "TestScene.hpp"
 
-testGame::TestScene::TestScene(engine::Game* game) : _game(game)
+testGame::TestScene::TestScene(engine::Game* game, bool isServer) : _game(game), _isServer(isServer)
 {}
 
 testGame::TestScene::~TestScene()
@@ -35,6 +35,12 @@ testGame::TestScene::getSceneModel()
 
 			return 0;
 		});
+
+		if (!_isServer) {
+			scene.synchonizeWith("localhost");
+			_cns = std::make_unique<engine::ClientNetworkSystem>(scene.socket, scene.events);
+			_game->registerSystem("network", _cns.get());
+		}
 
 		return scene;
 	};

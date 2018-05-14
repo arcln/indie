@@ -18,10 +18,12 @@ engine::network::Selector::run()
 			auto clientVersion = client.receive<TextMessage>();
 
 			if (clientVersion.text == std::string("v0.1")) {
-				client.send<std::string>("OK");
+				client.send<std::string>("v0.1");
 			} else {
-				client.send<std::string>("KO");
+				return;
 			}
+
+			std::cout << "worms-server: client connected" << std::endl;
 
 			while (true) {
 				auto msg = client.receive<TextMessage>();

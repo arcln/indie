@@ -33,6 +33,7 @@ namespace engine {
 		using EntityModel = std::function<Entity const& (Entity const&)>;
 		using EntityModels = std::unordered_map<std::string, EntityModel>;
 		using EventHandler = std::function<void (void const*)>;
+		using Events = std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>>;
 
 		/**
 		 * Register a model to spawn it later
@@ -62,7 +63,8 @@ namespace engine {
 		template <typename ContextType>
 		void registerEvent(std::string const& name, EventHandler const& handler) {
 			_eventHandlers[name] = handler;
-			reinterpret_cast<Event<ContextType>*>(_events[name].get())
+			this->events[name] = std::make_shared<Event<ContextType>>();
+			reinterpret_cast<Event<ContextType>*>(this->events[name].get())
 				->subscribe([&](ContextType const& context) -> int {
 				// TODO: Deserialize context
 				_eventHandlers[name](&context);
@@ -72,7 +74,7 @@ namespace engine {
 
 		template <typename ContextType>
 		void triggerEvent(std::string const& name, ContextType const& context) {
-			reinterpret_cast<Event<ContextType>*>(_events[name].get())->emit(context);
+			reinterpret_cast<Event<ContextType>*>(this->events[name].get())->emit(context);
 		}
 
 		template <typename ContextType>
@@ -80,12 +82,15 @@ namespace engine {
 			this->triggerEvent(name, context);
 
 			// TODO: Serialize context
-			_socket.send<std::string>(name);
+			this->socket.send<std::string>(name);
 		}
 
 		void synchonizeWith(std::string const& hostname);
 
 		bool isRunning() const;
+
+		Events events;
+		network::ClientSocket socket;
 
 	protected:
 		void previousScene();
@@ -93,9 +98,7 @@ namespace engine {
 	private:
 		static EntityId _lastSpawnedEntityId;
 
-		network::ClientSocket _socket;
 		std::unordered_map<std::string, EventHandler> _eventHandlers;
-		std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>> _events;
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
