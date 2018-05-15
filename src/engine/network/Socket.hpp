@@ -42,12 +42,12 @@ namespace engine { namespace network {
 				throw std::runtime_error("connection was closed by remote host");
 			}
 
-			auto data = *reinterpret_cast<MessageType*>(buffer);
-			if (data.size != sizeof(MessageType)) {
+			auto data = reinterpret_cast<MessageType*>(buffer);
+			if (data->size != sizeof(MessageType)) {
 				throw std::runtime_error("corrupted packet");
 			}
 
-			return data;
+			return *data;
 		}
 
 	private:

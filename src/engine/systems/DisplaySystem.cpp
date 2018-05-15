@@ -14,7 +14,7 @@ engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 	_sceneManager = _game.device()->getSceneManager();
 	_guiEnv = _game.device()->getGUIEnvironment();
 
-	_sceneManager->addCameraSceneNode(0, irr::core::vector3df(0, 30, -40), irr::core::vector3df(0, 5, 0));
+	_sceneManager->addCameraSceneNode(0, irr::core::vector3df(0, 30, -200), irr::core::vector3df(0, 5, 0));
 }
 
 void

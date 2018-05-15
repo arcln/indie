@@ -26,7 +26,7 @@ namespace engine {
 		Game(bool enableVideo = true);
 		virtual ~Game();
 
-		using SceneModel = std::function<Scene& (Scene&)>;
+		using SceneModel = std::function<void (Game&, Scene&)>;
 		using SceneModels = std::unordered_map<std::string, SceneModel>;
 
 		void play(std::string const& name);

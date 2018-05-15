@@ -9,8 +9,10 @@
 #include "Entities.hpp"
 
 void
-engine::Entities::add(engine::Entity const& entity)
+engine::Entities::add(engine::Entity const& entity, EntityModel const& model)
 {
+	model(entity);
+
 	EntityId parentId = entity.getParentId();
 
 	_roots.emplace(parentId, entity);
@@ -18,8 +20,10 @@ engine::Entities::add(engine::Entity const& entity)
 }
 
 void
-engine::Entities::add(engine::Entity const&& entity)
+engine::Entities::add(engine::Entity const&& entity, EntityModel const& model)
 {
+	model(entity);
+
 	EntityId parentId = entity.getParentId();
 
 	if (parentId == engine::Entity::nullId)

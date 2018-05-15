@@ -49,7 +49,8 @@ engine::Game::play(std::string const& name)
 	}
 }
 
-void engine::Game::replaceScene(std::string const& name)
+void
+engine::Game::replaceScene(std::string const& name)
 {
 	if (!_scenes.empty()) {
 		_scenes.clear();
@@ -58,15 +59,15 @@ void engine::Game::replaceScene(std::string const& name)
 	this->pushScene(name);
 }
 
-void engine::Game::pushScene(std::string const& name)
+void
+engine::Game::pushScene(std::string const& name)
 {
-	engine::Scene scene;
-
-	if (_sceneModels.find(name) == std::end(_sceneModels))
+	if (_sceneModels.find(name) == std::end(_sceneModels)) {
 		throw std::runtime_error("scene model '" + name + "' not found");
+	}
 
-	_scenes.emplace_back(scene);
-	_sceneModels[name](_scenes.back());
+	_scenes.emplace_back();
+	_sceneModels[name](*this, _scenes.back());
 }
 
 void engine::Game::popScene()
@@ -80,7 +81,8 @@ engine::Game::registerSystem(std::string const& name, System* system)
 	_systems[name] = system;
 }
 
-void engine::Game::registerSceneModel(std::string const& name, engine::Game::SceneModel const& sceneModel)
+void
+engine::Game::registerSceneModel(std::string const& name, engine::Game::SceneModel const& sceneModel)
 {
 	_sceneModels[name] = sceneModel;
 }
