@@ -48,13 +48,16 @@ namespace engine {
 
 		/**
 		 * Add a component to an entity
+		 * @tparam CtorArgsTypes Types of the Component ctor's parameters
 		 * @param entityId Entity's id
+		 * @param ctorArgs Component ctor's parameters
 		 * @return the component
 		 */
+		template <typename... CtorArgsTypes>
 		ComponentType&
-		addComponent(EntityId entityId)
+		addComponent(EntityId entityId, CtorArgsTypes... ctorArgs)
 		{
-			typename Container::iterator componentIt = _components.emplace(entityId, ComponentType());
+			typename Container::iterator componentIt = _components.emplace(entityId, ComponentType(std::forward<CtorArgsTypes>(ctorArgs)...));
 
 			if (componentIt == std::end(_components))
 				throw std::runtime_error("unable to add a new component");

@@ -19,8 +19,7 @@ testGame::TestScene::getSceneModel()
 {
 	return [&](engine::Scene& scene) -> engine::Scene& {
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
-			auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
-			displayComponent.init(_game, "plant.md3");
+			entity.addComponent<engine::DisplayComponent>(_game, "plant.md3");
 			return entity;
 		});
 

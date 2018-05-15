@@ -30,18 +30,18 @@ namespace engine {
 
 		void kill();
 
-		template <typename ComponentType>
+		template <typename ComponentType, typename... CtorArgsTypes>
 		ComponentType&
-		setComponent() const
+		setComponent(CtorArgsTypes... ctorArgs) const
 		{
-			return UniqueComponentPool<ComponentType>::instance().setComponent(_id);
+			return UniqueComponentPool<ComponentType>::instance().setComponent(_id, std::forward<CtorArgsTypes>(ctorArgs)...);
 		}
 
-		template <typename ComponentType>
+		template <typename ComponentType, typename... CtorArgsTypes>
 		ComponentType&
-		addComponent() const
+		addComponent(CtorArgsTypes... ctorArgs) const
 		{
-			return ComponentPool<ComponentType>::instance().addComponent(_id);
+			return ComponentPool<ComponentType>::instance().addComponent(_id, std::forward<CtorArgsTypes>(ctorArgs)...);
 		}
 
 		template <typename ComponentType>

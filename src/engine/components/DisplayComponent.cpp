@@ -8,8 +8,10 @@
 #include "engine/core/Game.hpp"
 #include "DisplayComponent.hpp"
 
-void
-engine::DisplayComponent::init(Game* game, std::string const& asset)
+engine::DisplayComponent::DisplayComponent()
+{}
+
+engine::DisplayComponent::DisplayComponent(Game* game, std::string const& asset)
 {
 	auto mesh = game->meshManager.get(asset);
 

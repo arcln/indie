@@ -13,7 +13,9 @@
 namespace engine {
 
 	struct DisplayComponent {
-		void init(class Game* game, std::string const& asset);
+		DisplayComponent();
+		DisplayComponent(class Game* game, std::string const& asset);
+
 		irr::scene::IAnimatedMeshSceneNode* node = nullptr;
 	};
 }
