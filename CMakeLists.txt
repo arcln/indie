@@ -32,6 +32,8 @@ else (CMAKE_CXX_FLAGS_DEBUG)
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/release)
 endif (CMAKE_CXX_FLAGS_DEBUG)
 
+file(GLOB_RECURSE GAME_SRCS src/game/*)
+
 include_directories(
 	${OPENGL_INCLUDE_DIR}
 	${X11_INCLUDE_DIR}
@@ -46,9 +48,9 @@ include_directories(
 link_directories(/usr/local/lib)
 
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
-add_library(engine STATIC ${ENGINE_SRCS})
+add_library(engine STATIC ${ENGINE_SRCS} src/engine/components/LightComponent.cpp src/engine/components/LightComponent.hpp)
 
-add_executable(worms src/client.cpp)
+add_executable(worms src/client.cpp ${GAME_SRCS})
 target_link_libraries(worms
 	${COCOA_LIBRARY}
 	${IRRLICHT_LIBRARIES}
@@ -61,7 +63,7 @@ target_link_libraries(worms
 	engine Irrlicht pthread
 )
 
-add_executable(worms-server src/server.cpp)
+add_executable(worms-server src/server.cpp ${GAME_SRCS})
 target_link_libraries(worms-server
 	Irrlicht
 	${COCOA_LIBRARY}

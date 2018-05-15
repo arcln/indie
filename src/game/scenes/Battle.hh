@@ -8,6 +8,7 @@
 #pragma once
 
 #include <iostream>
+#include <engine/components/LightComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
 
@@ -17,12 +18,17 @@ namespace worms {
 
 		static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 			scene.registerEntityModel("map", [&](engine::Entity const& entity) {
-				entity.addComponent<engine::DisplayComponent>(&game, "plant.md3");
+				entity.addComponent<engine::DisplayComponent>(&game, "plant.md3").node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 			});
 
 			scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
 				auto& displayComponent = entity.addComponent<engine::DisplayComponent>(&game, "plant.md3");
-				displayComponent.node->setPosition(irr::core::vector3df {0.f, -100.f + (std::rand() % 200), 200.f});
+				displayComponent.node->setPosition(irr::core::vector3df {250 - (std::rand() % 500), -250.f + (std::rand() % 500), 0});
+				displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, true);
+			});
+
+			scene.registerEntityModel("blue_light", [&](engine::Entity const& entity) {
+				auto& lightComponent = entity.addComponent<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
 			});
 
 			scene.registerEvent<engine::GenericEvent>("test", [&](engine::GenericEvent const&) {
@@ -38,7 +44,8 @@ namespace worms {
 				return 0;
 			});
 
-			scene.spawnEntity("map");
+//			scene.spawnEntity("map");
+			scene.spawnEntity("blue_light");
 		};
 	}
 }
