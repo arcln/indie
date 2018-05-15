@@ -32,7 +32,6 @@ namespace engine {
 
 		using EntityModel = std::function<Entity const& (Entity const&)>;
 		using EntityModels = std::unordered_map<std::string, EntityModel>;
-		using EventHandler = std::function<void (void const*)>;
 		using Events = std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>>;
 
 		/**
@@ -61,19 +60,17 @@ namespace engine {
 		Entities const& getEntities() const;
 
 		template <typename ContextType>
-		void registerEvent(std::string const& name, EventHandler const& handler) {
-			_eventHandlers[name] = handler;
+		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
 			this->events[name] = std::make_shared<Event<ContextType>>();
-			reinterpret_cast<Event<ContextType>*>(this->events[name].get())
-				->subscribe([&](ContextType const& context) -> int {
-				// TODO: Deserialize context
-				_eventHandlers[name](&context);
-				return 0;
-			});
+			reinterpret_cast<Event<ContextType>*>(this->events[name].get())->subscribe(handler);
 		}
 
 		template <typename ContextType>
 		void triggerEvent(std::string const& name, ContextType const& context) {
+			if (this->events.find(name) == std::end(this->events)) {
+				throw std::runtime_error("event '" + name + "' does not exists");
+			}
+
 			reinterpret_cast<Event<ContextType>*>(this->events[name].get())->emit(context);
 		}
 
@@ -98,7 +95,6 @@ namespace engine {
 	private:
 		static EntityId _lastSpawnedEntityId;
 
-		std::unordered_map<std::string, EventHandler> _eventHandlers;
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
