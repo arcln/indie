@@ -8,8 +8,10 @@
 #include "engine/core/Game.hpp"
 #include "DisplayComponent.hpp"
 
-void
-engine::DisplayComponent::init(Game* game, std::string const& asset)
+engine::DisplayComponent::DisplayComponent()
+{}
+
+engine::DisplayComponent::DisplayComponent(Game* game, std::string const& asset)
 {
 	auto mesh = game->meshManager.get(asset);
 
@@ -17,7 +19,7 @@ engine::DisplayComponent::init(Game* game, std::string const& asset)
 		throw std::runtime_error("failed to load asset: '" + asset + "'");
 	}
 
-	this->node = game->device().getSceneManager()->addAnimatedMeshSceneNode(mesh);
+	this->node = game->device()->getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 	if (this->node == nullptr) {
 		throw std::runtime_error("failed to create node");

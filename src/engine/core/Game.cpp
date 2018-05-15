@@ -32,7 +32,7 @@ engine::Game::Game(bool enableVideo) : eventsHandler(_keyEvents), _eventReceiver
 
 engine::Game::~Game()
 {
-	this->device().drop();
+	_device->drop();
 }
 
 void
@@ -65,7 +65,8 @@ void engine::Game::pushScene(std::string const& name)
 	if (_sceneModels.find(name) == std::end(_sceneModels))
 		throw std::runtime_error("scene model '" + name + "' not found");
 
-	_scenes.push_back(_sceneModels[name](scene));
+	_scenes.emplace_back(scene);
+	_sceneModels[name](_scenes.back());
 }
 
 void engine::Game::popScene()
@@ -84,16 +85,16 @@ void engine::Game::registerSceneModel(std::string const& name, engine::Game::Sce
 	_sceneModels[name] = sceneModel;
 }
 
-irr::IrrlichtDevice&
+irr::IrrlichtDevice*
 engine::Game::device()
 {
-	return *_device;
+	return _device;
 }
 
-irr::IrrlichtDevice const&
+irr::IrrlichtDevice const*
 engine::Game::device() const
 {
-	return *_device;
+	return _device;
 }
 
 void engine::Game::_updateScenes()

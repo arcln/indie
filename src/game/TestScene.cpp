@@ -6,6 +6,7 @@
 */
 
 #include <iostream>
+#include <engine/components/CameraComponent.hpp>
 #include "TestScene.hpp"
 
 testGame::TestScene::TestScene(engine::Game* game, bool isServer) : _game(game), _isServer(isServer)
@@ -19,8 +20,12 @@ testGame::TestScene::getSceneModel()
 {
 	return [&](engine::Scene& scene) -> engine::Scene& {
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
-			auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
-			displayComponent.init(_game, "plant.md3");
+			entity.addComponent<engine::DisplayComponent>(_game, "plant.md3");
+			return entity;
+		});
+
+		scene.registerEntityModel("camera", [&](engine::Entity const& entity) -> engine::Entity const& {
+			entity.addComponent<engine::CameraComponent>(_game->device(), engine::CameraComponent::Coords(0, 0, -500));
 			return entity;
 		});
 
@@ -30,7 +35,7 @@ testGame::TestScene::getSceneModel()
 
 		_game->eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
 			if (keystate.Key == engine::KeyCode::KEY_KEY_E && keystate.PressedDown) {
-				scene.triggerEvent("display map", 0);
+				scene.triggerEvent<int>("display map", 0);
 			}
 
 			return 0;
@@ -42,6 +47,8 @@ testGame::TestScene::getSceneModel()
 //			_game->registerSystem("network", _cns.get());
 //		}
 
+		scene.triggerEvent<int>("display map", 0);
+		scene.spawnEntity("camera");
 		return scene;
 	};
 }
