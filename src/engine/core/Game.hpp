@@ -38,8 +38,8 @@ namespace engine {
 		void registerSystem(std::string const& name, System* system);
 		void registerSceneModel(std::string const& name, SceneModel const& sceneModel);
 
-		irr::IrrlichtDevice& device();
-		irr::IrrlichtDevice const& device() const;
+		irr::IrrlichtDevice* device();
+		irr::IrrlichtDevice const* device() const;
 
 	private:
 		Event<KeyState> _keyEvents;

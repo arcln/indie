@@ -32,7 +32,7 @@ engine::Game::Game(bool enableVideo) : eventsHandler(_keyEvents), _eventReceiver
 
 engine::Game::~Game()
 {
-	this->device().drop();
+	_device->drop();
 }
 
 void
@@ -85,16 +85,16 @@ void engine::Game::registerSceneModel(std::string const& name, engine::Game::Sce
 	_sceneModels[name] = sceneModel;
 }
 
-irr::IrrlichtDevice&
+irr::IrrlichtDevice*
 engine::Game::device()
 {
-	return *_device;
+	return _device;
 }
 
-irr::IrrlichtDevice const&
+irr::IrrlichtDevice const*
 engine::Game::device() const
 {
-	return *_device;
+	return _device;
 }
 
 void engine::Game::_updateScenes()

@@ -6,6 +6,7 @@
 */
 
 #include <iostream>
+#include <engine/components/CameraComponent.hpp>
 #include "TestScene.hpp"
 
 testGame::TestScene::TestScene(engine::Game* game, bool isServer) : _game(game), _isServer(isServer)
@@ -20,6 +21,11 @@ testGame::TestScene::getSceneModel()
 	return [&](engine::Scene& scene) -> engine::Scene& {
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
 			entity.addComponent<engine::DisplayComponent>(_game, "plant.md3");
+			return entity;
+		});
+
+		scene.registerEntityModel("camera", [&](engine::Entity const& entity) -> engine::Entity const& {
+			entity.addComponent<engine::CameraComponent>(_game->device(), engine::CameraComponent::Coords(0, 0, -500));
 			return entity;
 		});
 
@@ -42,6 +48,7 @@ testGame::TestScene::getSceneModel()
 //		}
 
 		scene.triggerEvent<int>("display map", 0);
+		scene.spawnEntity("camera");
 		return scene;
 	};
 }

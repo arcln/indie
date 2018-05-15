@@ -19,7 +19,7 @@ engine::DisplayComponent::DisplayComponent(Game* game, std::string const& asset)
 		throw std::runtime_error("failed to load asset: '" + asset + "'");
 	}
 
-	this->node = game->device().getSceneManager()->addAnimatedMeshSceneNode(mesh);
+	this->node = game->device()->getSceneManager()->addAnimatedMeshSceneNode(mesh);
 
 	if (this->node == nullptr) {
 		throw std::runtime_error("failed to create node");
