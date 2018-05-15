@@ -30,7 +30,6 @@ namespace engine {
 		Scene();
 		virtual ~Scene();
 
-		using EntityModel = std::function<Entity const& (Entity const&)>;
 		using EntityModels = std::unordered_map<std::string, EntityModel>;
 		using Events = std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>>;
 

@@ -16,17 +16,13 @@ namespace worms {
 	namespace scene {
 
 		static const auto battle = [](engine::Game& game, engine::Scene& scene) {
-			scene.registerEntityModel("map", [&](engine::Entity const& entity) -> engine::Entity const& {
-				auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
-				displayComponent.init(&game, "plant.md3");
-				return entity;
+			scene.registerEntityModel("map", [&](engine::Entity const& entity) {
+				entity.addComponent<engine::DisplayComponent>(&game, "plant.md3");
 			});
 
-			scene.registerEntityModel("worm", [&](engine::Entity const& entity) -> engine::Entity const& {
-				auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
-				displayComponent.init(&game, "plant.md3");
+			scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
+				auto& displayComponent = entity.addComponent<engine::DisplayComponent>(&game, "plant.md3");
 				displayComponent.node->setPosition(irr::core::vector3df {0.f, -100.f + (std::rand() % 200), 200.f});
-				return entity;
 			});
 
 			scene.registerEvent<engine::GenericEvent>("test", [&](engine::GenericEvent const&) {
