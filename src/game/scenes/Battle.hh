@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include "engine/core/Scene.hpp"
+#include "engine/core/Event.hpp"
 
 namespace worms {
 
@@ -24,25 +25,24 @@ namespace worms {
 			scene.registerEntityModel("worm", [&](engine::Entity const& entity) -> engine::Entity const& {
 				auto& displayComponent = entity.addComponent<engine::DisplayComponent>();
 				displayComponent.init(&game, "plant.md3");
-				displayComponent.node->setPosition(irr::core::vector3df {0.f, -100.f, 200.f});
+				displayComponent.node->setPosition(irr::core::vector3df {0.f, -100.f + (std::rand() % 200), 200.f});
 				return entity;
 			});
 
-			scene.registerEvent<int>("test", [](int const& val) {
-				std::cout << val << std::endl;
+			scene.registerEvent<engine::GenericEvent>("test", [&](engine::GenericEvent const&) {
+				scene.spawnEntity("worm");
 				return 0;
 			});
 
 			game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
 				if (keystate.Key == engine::KeyCode::KEY_KEY_E && keystate.PressedDown) {
-					scene.triggerEvent<int>("test", 42);
+					scene.triggerEvent<engine::GenericEvent>("test");
 				}
 
 				return 0;
 			});
 
 			scene.spawnEntity("map");
-			scene.spawnEntity("worm");
 		};
 	}
 }

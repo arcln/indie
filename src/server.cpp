@@ -10,7 +10,6 @@
 #include <csignal>
 #include "engine/core/Event.hpp"
 #include "engine/core/Scene.hpp"
-#include "game/TestScene.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/components/DisplayComponent.hpp"
 #include "engine/systems/ServerNetworkSystem.hpp"
@@ -27,20 +26,20 @@ using namespace engine::network;
 int
 main()
 {
-	signal(SIGINT, &sighandler);
-
-	engine::Game game(false);
-
-	try {
-		testGame::TestScene scene(&game, true);
-		engine::ServerNetworkSystem networkSystem;
-
-		game.registerSystem("network", &networkSystem);
-		game.registerSceneModel("main", scene.getSceneModel());
-		game.play("main");
-	} catch (std::exception& e) {
-		std::cerr << "worms-server: ERROR: " << e.what() << std::endl;
-	}
-
-	return 0;
+//	signal(SIGINT, &sighandler);
+//
+//	engine::Game game(false);
+//
+//	try {
+//		testGame::TestScene scene(&game, true);
+//		engine::ServerNetworkSystem networkSystem;
+//
+//		game.registerSystem("network", &networkSystem);
+//		game.registerSceneModel("main", scene.getSceneModel());
+//		game.play("main");
+//	} catch (std::exception& e) {
+//		std::cerr << "worms-server: ERROR: " << e.what() << std::endl;
+//	}
+//
+//	return 0;
 }

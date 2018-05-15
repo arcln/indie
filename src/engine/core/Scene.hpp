@@ -66,7 +66,7 @@ namespace engine {
 		}
 
 		template <typename ContextType>
-		void triggerEvent(std::string const& name, ContextType const& context) {
+		void triggerEvent(std::string const& name, ContextType const& context = ContextType()) {
 			if (this->events.find(name) == std::end(this->events)) {
 				throw std::runtime_error("event '" + name + "' does not exists");
 			}

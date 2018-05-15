@@ -50,7 +50,6 @@ add_library(engine STATIC ${ENGINE_SRCS})
 
 add_executable(worms src/client.cpp)
 target_link_libraries(worms
-	Irrlicht
 	${COCOA_LIBRARY}
 	${IRRLICHT_LIBRARIES}
 	${OPENGL_LIBRARIES}
@@ -59,7 +58,7 @@ target_link_libraries(worms
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARY}
 	${APPKIT_LIBRARY}
-	engine pthread
+	engine Irrlicht pthread
 )
 
 add_executable(worms-server src/server.cpp)
@@ -73,7 +72,7 @@ target_link_libraries(worms-server
 	${ZLIB_LIBRARIES}
 	${IOKIT_LIBRARY}
 	${APPKIT_LIBRARY}
-	engine pthread
+	engine Irrlicht pthread
 )
 
 add_subdirectory(tests)
