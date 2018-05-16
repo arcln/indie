@@ -23,6 +23,10 @@ engine::Game::Game(bool enableVideo) : eventsHandler(_keyEvents), _eventReceiver
 		return this->_device->getSceneManager()->getMesh(asset.c_str());
 	});
 
+	this->textureManager.onLoad([&](std::string const& asset) {
+		return this->_device->getVideoDriver()->getTexture(asset.c_str());
+	});
+
 	this->eventsHandler.subscribe([&](KeyState const& keyState) -> int {
 		if (keyState.Key == engine::KeyCode::KEY_ESCAPE && !keyState.PressedDown)
 			_device->closeDevice();

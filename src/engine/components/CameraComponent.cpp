@@ -13,7 +13,7 @@ engine::CameraComponent::CameraComponent()
 
 engine::CameraComponent::CameraComponent(irr::IrrlichtDevice *device, const Coords& position, const Coords& lookAt)
 {
-	device->getSceneManager()->addCameraSceneNode(nullptr, position, lookAt);
+	this->node = device->getSceneManager()->addCameraSceneNode(nullptr, position, lookAt);
 }
 
 void engine::CameraComponent::move(const engine::CameraComponent::Coords& delta)

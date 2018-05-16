@@ -52,29 +52,28 @@ add_library(engine STATIC ${ENGINE_SRCS} src/engine/components/LightComponent.cp
 
 add_executable(worms src/client.cpp ${GAME_SRCS})
 target_link_libraries(worms
-	${COCOA_LIBRARY}
-	${IRRLICHT_LIBRARIES}
+	Irrlicht
 	${OPENGL_LIBRARIES}
+	${COCOA_LIBRARY}
+	${APPKIT_LIBRARY}
+	${IOKIT_LIBRARY}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
-	${IOKIT_LIBRARY}
-	${APPKIT_LIBRARY}
-	engine Irrlicht pthread
+	engine pthread
 )
 
 add_executable(worms-server src/server.cpp ${GAME_SRCS})
 target_link_libraries(worms-server
 	Irrlicht
-	${COCOA_LIBRARY}
-	${IRRLICHT_LIBRARIES}
 	${OPENGL_LIBRARIES}
+	${COCOA_LIBRARY}
+	${APPKIT_LIBRARY}
+	${IOKIT_LIBRARY}
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
-	${IOKIT_LIBRARY}
-	${APPKIT_LIBRARY}
-	engine Irrlicht pthread
+	engine pthread
 )
 
 add_subdirectory(tests)
