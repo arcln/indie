@@ -31,7 +31,7 @@ namespace engine {
 		virtual ~Scene();
 
 		using EntityModels = std::unordered_map<std::string, EntityModel>;
-		using Events = std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>>;
+		using Events = std::unordered_map<std::string, Event<GenericEvent>*>;
 
 		/**
 		 * Register a model to spawn it later
@@ -60,8 +60,11 @@ namespace engine {
 
 		template <typename ContextType>
 		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
-			this->events[name] = std::make_shared<Event<ContextType>>();
-			reinterpret_cast<Event<ContextType>*>(this->events[name].get())->subscribe(handler);
+			if (this->events.find(name) == std::end(this->events)) {
+				this->events[name] = reinterpret_cast<Event<int>*>(::new Event<ContextType>());
+			}
+
+			reinterpret_cast<Event<ContextType>*>(this->events[name])->subscribe(handler);
 		}
 
 		template <typename ContextType>
@@ -70,7 +73,7 @@ namespace engine {
 				throw std::runtime_error("event '" + name + "' does not exists");
 			}
 
-			reinterpret_cast<Event<ContextType>*>(this->events[name].get())->emit(context);
+			reinterpret_cast<Event<ContextType>*>(this->events[name])->emit(context);
 		}
 
 		template <typename ContextType>
