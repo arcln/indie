@@ -20,5 +20,7 @@ namespace engine {
 		explicit CameraComponent(irr::IrrlichtDevice* device, Coords const& position = Coords(0, 0, 0), Coords const& lookAt = Coords(0, 0, 1));
 
 		irr::scene::ICameraSceneNode* node = nullptr;
+
+		void move(Coords const& delta);
 	};
 }
