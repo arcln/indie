@@ -27,48 +27,48 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
+			scene.registerEvent<engine::CameraComponent::Coords>("set camera lookat", [&](auto const& position) {
+				cameraComponent.node->setTarget(position);
+				return 0;
+			});
+
 			scene.registerEvent<engine::CameraComponent::Coords>("move camera", [&](auto const& offset) {
 				cameraComponent.node->setPosition(cameraComponent.node->getPosition() + offset);
+				cameraComponent.node->setTarget(cameraComponent.node->getTarget() + offset);
 				return 0;
 			});
 		});
 
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
-			auto& displayComponent = entity.addComponent<engine::DisplayComponent>(&game, "map.dae");
+			auto& displayComponent = entity.addComponent<engine::DisplayComponent>(&game, "obj/map.obj");
 			displayComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
-			displayComponent.node->setScale(irr::core::vector3df {10.f, 10.f, 100.f});
 			displayComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
+			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+			displayComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
+			displayComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
 		});
 
 		scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
-			auto& displayComponent = entity.addComponent<engine::DisplayComponent>(&game, "worm/worm.obj");
+			auto& displayComponent = entity.addComponent<engine::DisplayComponent>(&game, "obj/worm.obj");
 			displayComponent.node->setPosition(irr::core::vector3df {0.f, -3.f, 0.f});
+			displayComponent.node->setScale(irr::core::vector3df {.5f, .5f, .5f});
 			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 			displayComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
-			displayComponent.node->setMaterialTexture(0, game.textureManager.get("worm/body.png.001.png"));
-
-//			irr::scene::IMeshCache* cache = game.device()->getSceneManager()->getMeshCache();
-//
-//			for (auto i = 1u; i < cache->getMeshCount(); i++) {
-//				auto* node = game.device()->getSceneManager()->addAnimatedMeshSceneNode(cache->getMeshByIndex(i));
-//				node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-//				node->setMD2Animation(irr::scene::EMAT_STAND);
-//				node->setMaterialTexture(0, game.textureManager.get("worm/body.png.001.png"));
-//			}
+			displayComponent.node->setMaterialTexture(0, game.textureManager.get("texture/worm.png"));
 
 			scene.registerEvent<engine::CameraComponent::Coords>("move player", [&](auto const& offset) {
 				displayComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
 				displayComponent.node->setPosition(displayComponent.node->getPosition() + offset);
+				scene.triggerEvent("set camera lookat", displayComponent.node->getPosition());
 				return 0;
 			});
 		});
 
 		scene.registerEntityModel("blue light", [&](engine::Entity const& entity) {
-			auto& lightComponent = entity.addComponent<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
-			return 0;
+			entity.addComponent<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
 		});
 
-		scene.registerEvent<engine::GenericEvent>("test", [&](engine::GenericEvent const&) {
+		scene.registerEvent<engine::GenericEvent>("spawn worm", [&](engine::GenericEvent const&) {
 			scene.spawnEntity("worm");
 			return 0;
 		});
@@ -83,25 +83,25 @@ namespace worms { namespace scene {
 						scene.triggerEvent<engine::CameraComponent::Coords>("move player", {1.f, 0.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_E:
-						scene.triggerEvent<engine::GenericEvent>("test");
+						scene.triggerEvent<engine::GenericEvent>("spawn worm");
 						break;
 					case engine::KeyCode::KEY_RIGHT:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, -0.5f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {1.f, 0.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_LEFT:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, 0.5f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {-1.f, 0.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_UP:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.5f, 0.f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 1.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_DOWN:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, -0.5f, 0.f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, -1.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_R:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.5f, 0.f, 0.f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, 1.f});
 						break;
 					case engine::KeyCode::KEY_KEY_F:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {-0.5f, 0.f, 0.f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, -1.f});
 						break;
 					default: break;
 				}
