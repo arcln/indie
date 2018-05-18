@@ -14,39 +14,13 @@
 
 namespace engine {
 
-	template<typename ComponentConstraint>
-	struct SimpleFilter {
-		typename ComponentConstraint::ReturnType get(EntityId entityId)
-		{
-			return ComponentConstraint::Pool::instance().get(entityId);
-		}
-	};
-
 	template<typename... ComponentsTypes>
-	class Filter;
-
-	template<typename ComponentType>
-	struct Filter<ComponentType> {
-		using C1 = typename ComponentType::Constraint;
-		using Callback = std::function<void(typename C1::Type&)>;
+	struct Filter {
+		using Callback = std::function<void(typename ComponentsTypes::Constraint::Type&...)>;
 
 		void get(EntityId entityId, Callback const& callback)
 		{
-			callback(SimpleFilter<C1>().get(entityId));
-		}
-	};
-
-	template<typename Component1Type, typename Component2Type>
-	struct Filter<Component1Type, Component2Type> {
-		using C1 = typename Component1Type::Constraint;
-		using C2 = typename Component2Type::Constraint;
-		using Callback = std::function<void(typename C1::Type&,
-						    typename C2::Type&)>;
-
-		void get(EntityId entityId, Callback const& callback)
-		{
-			callback(SimpleFilter<C1>().get(entityId),
-				 SimpleFilter<C2>().get(entityId));
+			callback(ComponentsTypes::Constraint::Pool::instance().get(entityId)...);
 		}
 	};
 }
