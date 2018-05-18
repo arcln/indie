@@ -12,8 +12,7 @@
 #include <map>
 #include <typeindex>
 #include <unordered_map>
-#include "engine/components/TestComponent.hpp"
-#include "engine/components/DisplayComponent.hpp"
+#include "engine/core/EntityId.hpp"
 
 namespace engine {
 
@@ -40,16 +39,19 @@ namespace engine {
 
 		/**
 		 * Set a unique component of an entity
+		 * @tparam CtorArgsTypes Types of the Component ctor's parameters
 		 * @param entityId Entity's id
+ 		 * @param ctorArgs Component ctor's parameters
 		 * @return the component
 		 */
+		template <typename... CtorArgsTypes>
 		ComponentType&
-		setComponent(EntityId entityId)
+		setComponent(EntityId entityId, CtorArgsTypes... ctorArgs)
 		{
-			auto const& componentIt = _components.emplace(entityId, ComponentType());
+			auto const& componentIt = _components.emplace(entityId, ComponentType(std::forward<CtorArgsTypes>(ctorArgs)...));
 
 			if (!componentIt.second)
-				throw std::runtime_error("unable to add a new component");
+				throw std::runtime_error("unable to set a new component");
 			return componentIt.first->second;
 		}
 
@@ -68,7 +70,7 @@ namespace engine {
 		 * @param entityId Entity's id
 		 * @return the component
 		 */
-		ComponentType& getComponent(EntityId entityId)
+		ComponentType& get(EntityId entityId)
 		{
 			typename Container::iterator componentIt = _components.find(entityId);
 

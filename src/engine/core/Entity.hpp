@@ -55,14 +55,14 @@ namespace engine {
 		ComponentType&
 		getComponent() const
 		{
-			return UniqueComponentPool<ComponentType>::instance().getComponent(_id);
+			return UniqueComponentPool<ComponentType>::instance().get(_id);
 		}
 
 		template <typename ComponentType>
 		typename engine::ComponentContainer<ComponentType>::iterator
 		getComponents() const
 		{
-			return ComponentPool<ComponentType>::instance().getComponents(_id);
+			return ComponentPool<ComponentType>::instance().get(_id);
 		}
 
 		EntityId getId() const;

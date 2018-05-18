@@ -12,8 +12,8 @@
 #include <map>
 #include <typeindex>
 #include <unordered_map>
-#include "engine/components/TestComponent.hpp"
-#include "engine/components/DisplayComponent.hpp"
+#include "engine/core/EntityId.hpp"
+#include "engine/core/Event.hpp"
 
 namespace engine {
 
@@ -69,7 +69,7 @@ namespace engine {
 		 * @param entityId Entity's id
 		 * @return the component
 		 */
-		typename Container::iterator getComponents(EntityId entityId)
+		typename Container::iterator get(EntityId entityId)
 		{
 			return _components.find(entityId);
 		}

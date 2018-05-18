@@ -48,11 +48,10 @@ include_directories(
 link_directories(/usr/local/lib)
 
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
-add_library(engine STATIC ${ENGINE_SRCS} src/engine/components/LightComponent.cpp src/engine/components/LightComponent.hpp)
+add_library(engine STATIC ${ENGINE_SRCS})
 
 add_executable(worms src/client.cpp ${GAME_SRCS})
 target_link_libraries(worms
-	Irrlicht
 	${OPENGL_LIBRARIES}
 	${COCOA_LIBRARY}
 	${APPKIT_LIBRARY}
@@ -60,12 +59,11 @@ target_link_libraries(worms
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
-	engine pthread
+	engine pthread Irrlicht
 )
 
 add_executable(worms-server src/server.cpp ${GAME_SRCS})
 target_link_libraries(worms-server
-	Irrlicht
 	${OPENGL_LIBRARIES}
 	${COCOA_LIBRARY}
 	${APPKIT_LIBRARY}
@@ -73,7 +71,7 @@ target_link_libraries(worms-server
 	${X11_LIBRARIES}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
-	engine pthread
+	engine pthread Irrlicht
 )
 
 add_subdirectory(tests)
