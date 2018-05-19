@@ -23,4 +23,13 @@ namespace engine {
 			callback(ComponentsTypes::Constraint::Pool::instance().get(entityId)...);
 		}
 	};
+
+
+	template<typename ComponentType, typename... CtorArgsTypes>
+	struct ComponentSFilter {
+		ComponentType& set(EntityId entityId, CtorArgsTypes... ctorArgs)
+		{
+			return ComponentType::Constraint::Pool::instance().set(entityId, ctorArgs...);
+		}
+	};
 }

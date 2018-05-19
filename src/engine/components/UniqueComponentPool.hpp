@@ -46,23 +46,13 @@ namespace engine {
 		 */
 		template <typename... CtorArgsTypes>
 		ComponentType&
-		setComponent(EntityId entityId, CtorArgsTypes... ctorArgs)
+		set(EntityId entityId, CtorArgsTypes... ctorArgs)
 		{
 			auto const& componentIt = _components.emplace(entityId, ComponentType(std::forward<CtorArgsTypes>(ctorArgs)...));
 
 			if (!componentIt.second)
 				throw std::runtime_error("unable to set a new component");
 			return componentIt.first->second;
-		}
-
-		/**
-		 * Check if an entity has a component
-		 * @param entityId Entity's id
-		 * @return whether the entity has a component or not
-		 */
-		bool hasComponent(EntityId entityId)
-		{
-			return (_components.find(entityId) != std::end(_components));
 		}
 
 		/**

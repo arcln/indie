@@ -9,6 +9,7 @@
 
 #include <irrlicht/IrrlichtDevice.h>
 #include <irrlicht/ILightSceneNode.h>
+#include "engine/components/ComponentConstraint.hpp"
 
 namespace engine {
 
@@ -18,6 +19,8 @@ namespace engine {
 					irr::core::vector3df const& position = irr::core::vector3df(0,0,0),
 					irr::video::SColorf const& color = irr::video::SColorf(1.0f, 1.0f, 1.0f),
 					float radius = 100.0f);
+
+		using Constraint = ComponentConstraint<LightComponent, false>;
 
 		irr::scene::ILightSceneNode* node;
 	};

@@ -20,7 +20,7 @@ namespace engine {
 		CameraComponent();
 		explicit CameraComponent(irr::IrrlichtDevice* device, Coords const& position = Coords(0, 0, 0), Coords const& lookAt = Coords(0, 0, 1));
 
-		using Constraint = engine::ComponentConstraint<engine::CameraComponent, false>;
+		using Constraint = ComponentConstraint<CameraComponent, false>;
 
 		irr::scene::ICameraSceneNode* node = nullptr;
 

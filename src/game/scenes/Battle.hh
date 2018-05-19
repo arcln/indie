@@ -19,10 +19,13 @@ namespace worms { namespace scene {
 
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
-			auto& cameraComponent = entity.setComponent<engine::CameraComponent>(game.device(),
-										engine::CameraComponent::Coords {0.f, 0.f, -10.f},
-										engine::CameraComponent::Coords {0, 0, 0}
-									);
+			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
+										    engine::CameraComponent::Coords {
+											    0.f, 0.f, -10.f},
+										    engine::CameraComponent::Coords {0,
+														     0,
+														     0}
+			);
 
 			scene.registerEvent<engine::CameraComponent::Coords>("set camera position", [&](auto const& position) {
 				cameraComponent.node->setPosition(position);
@@ -42,7 +45,7 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
-			auto& displayComponent = entity.setComponent<engine::DisplayComponent>(&game, "obj/map.obj");
+			auto& displayComponent = entity.set<engine::DisplayComponent>(&game, "obj/map.obj");
 			displayComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
 			displayComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
 			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
@@ -56,7 +59,7 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
-			auto& displayComponent = entity.setComponent<engine::DisplayComponent>(&game, "obj/worm.obj");
+			auto& displayComponent = entity.set<engine::DisplayComponent>(&game, "obj/worm.obj");
 			displayComponent.node->setPosition(irr::core::vector3df {0.f, -3.f, 0.f});
 			displayComponent.node->setScale(irr::core::vector3df {.5f, .5f, .5f});
 			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
@@ -72,7 +75,8 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("blue light", [&](engine::Entity const& entity) {
-			entity.setComponent<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
+			entity.set<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50),
+							   irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
 		});
 
 		scene.registerEvent<engine::GenericEvent>("spawn worm", [&](engine::GenericEvent const&) {

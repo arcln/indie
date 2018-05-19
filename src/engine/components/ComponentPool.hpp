@@ -55,7 +55,7 @@ namespace engine {
 		 */
 		template <typename... CtorArgsTypes>
 		ComponentType&
-		addComponent(EntityId entityId, CtorArgsTypes... ctorArgs)
+		set(EntityId entityId, CtorArgsTypes... ctorArgs)
 		{
 			typename Container::iterator componentIt = _components.emplace(entityId, ComponentType(std::forward<CtorArgsTypes>(ctorArgs)...));
 

@@ -17,7 +17,7 @@ namespace engine {
 		DisplayComponent();
 		DisplayComponent(class Game* game, std::string const& asset);
 
-		using Constraint = engine::ComponentConstraint<engine::DisplayComponent, false>;
+		using Constraint = ComponentConstraint<DisplayComponent, false>;
 
 		irr::scene::IAnimatedMeshSceneNode* node = nullptr;
 	};

@@ -34,16 +34,9 @@ namespace engine {
 
 		template <typename ComponentType, typename... CtorArgsTypes>
 		ComponentType&
-		setComponent(CtorArgsTypes... ctorArgs) const
+		set(CtorArgsTypes... ctorArgs) const
 		{
-			return UniqueComponentPool<ComponentType>::instance().setComponent(_id, std::forward<CtorArgsTypes>(ctorArgs)...);
-		}
-
-		template <typename ComponentType, typename... CtorArgsTypes>
-		ComponentType&
-		addComponent(CtorArgsTypes... ctorArgs) const
-		{
-			return ComponentPool<ComponentType>::instance().addComponent(_id, std::forward<CtorArgsTypes>(ctorArgs)...);
+			return ComponentSFilter<ComponentType, CtorArgsTypes...>().set(_id, ctorArgs...);
 		}
 
 		/**
