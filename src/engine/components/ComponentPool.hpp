@@ -8,12 +8,11 @@
 #pragma once
 
 #include <iostream>
-#include <memory>
 #include <map>
-#include <typeindex>
-#include <unordered_map>
-#include "engine/components/TestComponent.hpp"
-#include "engine/components/DisplayComponent.hpp"
+#include <list>
+#include <engine/exceptions/ComponentPoolException.hpp>
+#include "engine/core/EntityId.hpp"
+#include "engine/core/Event.hpp"
 
 namespace engine {
 
@@ -30,7 +29,7 @@ namespace engine {
 	 * @tparam ComponentType Type of the components handled by the container, can be anything
 	 */
 	template <typename ComponentType>
-	using ComponentContainer = std::multimap<EntityId, ComponentType>;
+	using ComponentContainer = std::map<EntityId, std::vector<ComponentType> >;
 
 	/**
 	 * Singleton that contains all components of a type
@@ -55,23 +54,24 @@ namespace engine {
 		 */
 		template <typename... CtorArgsTypes>
 		ComponentType&
-		addComponent(EntityId entityId, CtorArgsTypes... ctorArgs)
+		set(EntityId entityId, CtorArgsTypes... ctorArgs)
 		{
-			typename Container::iterator componentIt = _components.emplace(entityId, ComponentType(std::forward<CtorArgsTypes>(ctorArgs)...));
-
-			if (componentIt == std::end(_components))
-				throw std::runtime_error("unable to add a new component");
-			return componentIt->second;
+			_components[entityId].push_back(std::forward<CtorArgsTypes>(ctorArgs)...);
+			return _components[entityId].back();
 		}
 
 		/**
-		 * Get a component by entity id
+		 * Get components by entity id
 		 * @param entityId Entity's id
-		 * @return the component
+		 * @return Entity's components
 		 */
-		typename Container::iterator getComponents(EntityId entityId)
+		typename Container::mapped_type get(EntityId entityId)
 		{
-			return _components.find(entityId);
+			typename Container::iterator componentIt = _components.find(entityId);
+
+			if (componentIt == std::end(_components))
+				throw internal::ComponentPoolException("components not found");
+			return componentIt->second;
 		}
 
 		/**
