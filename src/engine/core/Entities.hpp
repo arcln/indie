@@ -8,6 +8,7 @@
 #pragma once
 
 #include <functional>
+#include <map>
 
 namespace engine {
 
@@ -16,17 +17,14 @@ namespace engine {
 	class Entities {
 	public:
 		using Roots = std::map<EntityId, Entity>;
-		using Childs = std::multimap<EntityId, Entity>;
+		using Childs = std::map<EntityId, std::vector<Entity> >;
 
 		void add(Entity const& entity, EntityModel const& model);
 		void add(Entity const&& entity, EntityModel const& model);
 		void remove(EntityId id);
 
 		template <typename... ComponentsTypes>
-		using EachCallback = std::function<void(typename ComponentsTypes::Constraint::Type&...)>;
-
-		template <typename... ComponentsTypes>
-		void each(EachCallback<ComponentsTypes...> const& callback) const
+		void each(typename ComponentFilter<ComponentsTypes...>::Callback const& callback) const
 		{
 			for (auto& root : _roots) {
 				try {
@@ -42,15 +40,20 @@ namespace engine {
 		Childs _childs;
 
 		template <typename... ComponentsTypes>
-		void _eachChilds(EntityId parentId, std::function<void (typename ComponentsTypes::Constraint::Type&...)> const& callback) const
+		void _eachChilds(EntityId parentId, typename ComponentFilter<ComponentsTypes...>::Callback const& callback) const
 		{
-			for (auto child = _childs.find(parentId); child->first == parentId; child++) {
+			Childs::const_iterator childs = _childs.find(parentId);
+
+			if (childs == std::end(_childs))
+				return;
+
+			for (auto& it : childs->second) {
 				try {
-					child->second.get<ComponentsTypes...>(callback);
+					it.get<ComponentsTypes...>(callback);
 				} catch (internal::ComponentPoolException const& e) {
 					continue;
 				}
-				_eachChilds<ComponentsTypes...>(child->first, callback);
+				_eachChilds<ComponentsTypes...>(it.getId(), callback);
 			}
 		}
 	};

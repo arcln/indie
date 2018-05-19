@@ -19,14 +19,12 @@ namespace engine {
 	template<typename ComponentType>
 	struct ComponentConstraint<ComponentType, true> {
 		using Pool = ComponentPool<ComponentType>;
-		using Type = ComponentType;
 		using ReturnType = typename Pool::Container::iterator;
 	};
 
 	template<typename ComponentType>
 	struct ComponentConstraint<ComponentType, false> {
 		using Pool = UniqueComponentPool<ComponentType>;
-		using Type = ComponentType;
 		using ReturnType = ComponentType&;
 	};
 

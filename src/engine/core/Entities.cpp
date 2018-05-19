@@ -11,25 +11,27 @@
 void
 engine::Entities::add(engine::Entity const& entity, engine::EntityModel const& model)
 {
-	model(entity);
-
 	EntityId parentId = entity.getParentId();
 
-	_roots.emplace(parentId, entity);
-	_childs.emplace(parentId, entity);
+	model(entity);
+
+	if (parentId == engine::Entity::nullId)
+		_roots.emplace(parentId, entity);
+
+	_childs[parentId].emplace_back(entity);
 }
 
 void
 engine::Entities::add(engine::Entity const&& entity, engine::EntityModel const& model)
 {
-	model(entity);
-
 	EntityId parentId = entity.getParentId();
 
-	if (parentId == engine::Entity::nullId)
-		_roots.emplace(entity.getId(), entity);
+	model(entity);
 
-	_childs.emplace(parentId, entity);
+	if (parentId == engine::Entity::nullId)
+		_roots.emplace(parentId, entity);
+
+	_childs[parentId].emplace_back(entity);
 }
 
 void engine::Entities::remove(engine::EntityId id)

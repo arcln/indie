@@ -16,7 +16,7 @@ namespace engine {
 
 	template<typename... ComponentsTypes>
 	struct ComponentFilter {
-		using Callback = std::function<void(typename ComponentsTypes::Constraint::Type&...)>;
+		using Callback = std::function<void(ComponentsTypes&...)>;
 
 		void get(EntityId entityId, Callback const& callback)
 		{
