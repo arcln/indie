@@ -12,6 +12,7 @@
 #include <map>
 #include <typeindex>
 #include <unordered_map>
+#include <engine/exceptions/ComponentPoolException.hpp>
 #include "engine/core/EntityId.hpp"
 #include "engine/core/Event.hpp"
 
@@ -60,7 +61,7 @@ namespace engine {
 			typename Container::iterator componentIt = _components.emplace(entityId, ComponentType(std::forward<CtorArgsTypes>(ctorArgs)...));
 
 			if (componentIt == std::end(_components))
-				throw std::runtime_error("unable to add a new component");
+				throw internal::ComponentPoolException("unable to add a new component");
 			return componentIt->second;
 		}
 

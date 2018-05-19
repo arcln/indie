@@ -13,6 +13,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include "engine/core/EntityId.hpp"
+#include <engine/exceptions/ComponentPoolException.hpp>
 
 namespace engine {
 
@@ -65,7 +66,7 @@ namespace engine {
 			typename Container::iterator componentIt = _components.find(entityId);
 
 			if (componentIt == std::end(_components))
-				throw std::runtime_error("component not found");
+				throw internal::ComponentPoolException("component not found");
 			return componentIt->second;
 
 		}

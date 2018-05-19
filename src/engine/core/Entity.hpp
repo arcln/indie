@@ -10,8 +10,6 @@
 #include <cstddef>
 #include <engine/core/Event.hpp>
 #include <engine/core/EntityId.hpp>
-#include <engine/components/ComponentPool.hpp>
-#include <engine/components/UniqueComponentPool.hpp>
 #include <engine/components/ComponentConstraint.hpp>
 #include <engine/components/ComponentFilter.hpp>
 

@@ -9,7 +9,7 @@
 #include "Entities.hpp"
 
 void
-engine::Entities::add(engine::Entity const& entity, EntityModel const& model)
+engine::Entities::add(engine::Entity const& entity, engine::EntityModel const& model)
 {
 	model(entity);
 
@@ -20,7 +20,7 @@ engine::Entities::add(engine::Entity const& entity, EntityModel const& model)
 }
 
 void
-engine::Entities::add(engine::Entity const&& entity, EntityModel const& model)
+engine::Entities::add(engine::Entity const&& entity, engine::EntityModel const& model)
 {
 	model(entity);
 
@@ -32,24 +32,12 @@ engine::Entities::add(engine::Entity const&& entity, EntityModel const& model)
 	_childs.emplace(parentId, entity);
 }
 
-engine::Entities::Roots const&
-engine::Entities::getRoots() const
-{
-	return _roots;
-}
-
-engine::Entities::Childs::iterator
-engine::Entities::getChilds(EntityId id)
-{
-	return _childs.find(id);
-}
-
 void engine::Entities::remove(engine::EntityId id)
 {
 	Entity& entity = _roots[id];
 	auto entityIt = _childs.find(entity.getParentId());
 
-	for (; entityIt->first == entity.getParentId (); entityIt++);
+	for (; entityIt->first == entity.getParentId(); entityIt++);
 
 	if (entity.getParentId() != entityIt->first)
 		throw std::runtime_error("unable to kill entity " + std::to_string(entity.getId()));
