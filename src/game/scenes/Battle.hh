@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include <engine/components/LightComponent.hpp>
-#include <engine/components/Filter.hpp>
+#include <engine/components/ComponentFilter.hpp>
 #include <engine/components/DisplayComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
@@ -48,6 +48,11 @@ namespace worms { namespace scene {
 			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 			displayComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
 			displayComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
+
+			entity.get<engine::DisplayComponent,
+				engine::DisplayComponent>([](engine::DisplayComponent const& displayComponent,
+							    engine::DisplayComponent const& displayComponent2) {
+			});
 		});
 
 		scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
@@ -115,11 +120,6 @@ namespace worms { namespace scene {
 		scene.spawnEntity("blue light");
 		scene.spawnEntity("camera");
 		scene.spawnEntity("worm");
-		engine::EntityId mapId = scene.spawnEntity("map");
-
-		engine::Filter<engine::DisplayComponent, engine::DisplayComponent> filter;
-		filter.get(mapId, [](engine::DisplayComponent &c1, engine::DisplayComponent &c2) -> void {
-			std::cout << "success" << std::endl;
-		});
+		scene.spawnEntity("map");
 	};
 }}

@@ -12,6 +12,8 @@
 #include <engine/core/EntityId.hpp>
 #include <engine/components/ComponentPool.hpp>
 #include <engine/components/UniqueComponentPool.hpp>
+#include <engine/components/ComponentConstraint.hpp>
+#include <engine/components/ComponentFilter.hpp>
 
 namespace engine {
 
@@ -44,25 +46,16 @@ namespace engine {
 			return ComponentPool<ComponentType>::instance().addComponent(_id, std::forward<CtorArgsTypes>(ctorArgs)...);
 		}
 
-		template <typename ComponentType>
-		bool
-		hasComponent() const
+		/**
+		 * Get entity's components through a callback
+		 * @tparam ComponentsTypes Types of components to get
+		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
+		 */
+		template<typename... ComponentsTypes>
+		void
+		get(typename ComponentFilter<ComponentsTypes...>::Callback const& callback) const
 		{
-			return UniqueComponentPool<ComponentType>::instance().hasComponent(_id);
-		}
-
-		template <typename ComponentType>
-		ComponentType&
-		getComponent() const
-		{
-			return UniqueComponentPool<ComponentType>::instance().get(_id);
-		}
-
-		template <typename ComponentType>
-		typename engine::ComponentContainer<ComponentType>::iterator
-		getComponents() const
-		{
-			return ComponentPool<ComponentType>::instance().get(_id);
+			ComponentFilter<ComponentsTypes...>().get(_id, callback);
 		}
 
 		EntityId getId() const;
