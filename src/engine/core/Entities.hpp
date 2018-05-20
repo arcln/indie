@@ -17,30 +17,30 @@ namespace engine {
 	class Entities {
 	public:
 		using Roots = std::map<EntityId, Entity>;
-		using Childs = std::map<EntityId, std::vector<Entity> >;
+		using Siblings = std::vector<Entity>;
+		using Childs = std::map<EntityId, Siblings>;
 
 		void add(Entity const& entity, EntityModel const& model);
 		void add(Entity const&& entity, EntityModel const& model);
 		void remove(EntityId id);
 
+		void attach(EntityId parentId, Entity const& child);
+		void detach(Entity const& entity);
+
 		template <typename... ComponentsTypes>
-		void each(typename ComponentFilter<ComponentsTypes...>::Callback const& callback) const
+		void each(typename Callback<ComponentsTypes...>::Get const& callback, bool doChilds = true) const
 		{
 			for (auto& root : _roots) {
 				try {
-					root.second.get<ComponentsTypes...>(callback);
-				} catch (internal::ComponentPoolException const& e) {
-					continue;
-				}
-				_eachChilds<ComponentsTypes...>(root.first, callback);
+					_getEntityComponents<ComponentsTypes...>(root.second, callback);
+					if (doChilds)
+						this->eachChilds<ComponentsTypes...>(root.first, callback);
+				} catch (internal::ComponentPoolException const& e) {}
 			}
 		}
-	private:
-		Roots _roots;
-		Childs _childs;
 
 		template <typename... ComponentsTypes>
-		void _eachChilds(EntityId parentId, typename ComponentFilter<ComponentsTypes...>::Callback const& callback) const
+		void eachChilds(EntityId parentId, typename Callback<ComponentsTypes...>::Get const& callback) const
 		{
 			Childs::const_iterator childs = _childs.find(parentId);
 
@@ -49,12 +49,23 @@ namespace engine {
 
 			for (auto& it : childs->second) {
 				try {
-					it.get<ComponentsTypes...>(callback);
-				} catch (internal::ComponentPoolException const& e) {
-					continue;
-				}
-				_eachChilds<ComponentsTypes...>(it.getId(), callback);
+					_getEntityComponents<ComponentsTypes...>(it, callback);
+					this->eachChilds<ComponentsTypes...>(it.getId(), callback);
+				} catch (internal::ComponentPoolException const& e) {}
 			}
+		}
+
+	private:
+		Roots _roots;
+		Childs _childs;
+
+		template<typename... ComponentsTypes>
+		void
+		_getEntityComponents(Entity const& entity, typename Callback<ComponentsTypes...>::Get const& callback) const
+		{
+			entity.get<ComponentsTypes...>([&](ComponentsTypes... components) {
+				callback(entity, components...);
+			});
 		}
 	};
 }
