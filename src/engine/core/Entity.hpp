@@ -17,6 +17,11 @@ namespace engine {
 
 	class Entities;
 
+	template<typename... ComponentsTypes>
+	struct Callback {
+		using Get = std::function<void(class Entity const&, ComponentsTypes&...)>;
+	};
+
 	/**
 	 * An entity composed of components. The smallest logic unit in a game
 	 */

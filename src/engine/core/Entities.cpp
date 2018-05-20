@@ -16,7 +16,7 @@ engine::Entities::add(engine::Entity const& entity, engine::EntityModel const& m
 	model(entity);
 
 	if (parentId == engine::Entity::nullId)
-		_roots.emplace(parentId, entity);
+		_roots.emplace(entity.getId(), entity);
 
 	_childs[parentId].emplace_back(entity);
 }
@@ -29,7 +29,7 @@ engine::Entities::add(engine::Entity const&& entity, engine::EntityModel const& 
 	model(entity);
 
 	if (parentId == engine::Entity::nullId)
-		_roots.emplace(parentId, entity);
+		_roots.emplace(entity.getId(), entity);
 
 	_childs[parentId].emplace_back(entity);
 }
