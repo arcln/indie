@@ -17,11 +17,15 @@ namespace engine {
 	class Entities {
 	public:
 		using Roots = std::map<EntityId, Entity>;
-		using Childs = std::map<EntityId, std::vector<Entity> >;
+		using Siblings = std::vector<Entity>;
+		using Childs = std::map<EntityId, Siblings>;
 
 		void add(Entity const& entity, EntityModel const& model);
 		void add(Entity const&& entity, EntityModel const& model);
 		void remove(EntityId id);
+
+		void attach(EntityId parentId, Entity const& child);
+		void detach(Entity const& entity);
 
 		template <typename... ComponentsTypes>
 		void each(typename Callback<ComponentsTypes...>::Get const& callback, bool doChilds = true) const
@@ -50,6 +54,7 @@ namespace engine {
 				} catch (internal::ComponentPoolException const& e) {}
 			}
 		}
+
 	private:
 		Roots _roots;
 		Childs _childs;
