@@ -44,17 +44,19 @@ namespace engine {
 		/**
 		 * Spawn an entity based on the model designated by its name
 		 * @param name Model's name
+		 * @param parentId Id of the Entity to which the spawned one should be attached
 		 * @return the spawned entity
 		 */
-		EntityId spawnEntity(std::string const& name);
+		EntityId spawnEntity(std::string const& name, EntityId parentId = Entity::nullId);
 
 		/**
 		 * Spawn an entity based on the model designated by its name
 		 * @param name Model's name
 		 * @param initialisation Function that modify the spawned entity
+		 * @param parentId Id of the Entity to which the spawned one should be attached
 		 * @return the spawned entity
 		 */
-		EntityId spawnEntity(std::string const& name, EntityModel const& initialisation);
+		EntityId spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId = Entity::nullId);
 
 		Entities const& getEntities() const;
 
