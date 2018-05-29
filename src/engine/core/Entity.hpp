@@ -30,7 +30,7 @@ namespace engine {
 		Entity();
 		Entity(EntityId id, EntityId parentId, Entities* entities);
 		Entity(Entity const& entity);
-		Entity& operator=(Entity const& entity);
+		Entity& operator=(Entity const&);
 		virtual ~Entity();
 
 		/**

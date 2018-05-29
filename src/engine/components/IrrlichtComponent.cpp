@@ -1,17 +1,17 @@
 //
-//  DisplayComponent.cpp
+//  IrrlichtComponent.cpp
 //  engine
 //
 //  Created by Arthur Chaloin on 10/05/2018.
 //
 
 #include "engine/core/Game.hpp"
-#include "DisplayComponent.hpp"
+#include "IrrlichtComponent.hpp"
 
-engine::DisplayComponent::DisplayComponent()
+engine::IrrlichtComponent::IrrlichtComponent()
 {}
 
-engine::DisplayComponent::DisplayComponent(Game* game, std::string const& asset)
+engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& asset)
 {
 	auto mesh = game->meshManager.get(asset);
 

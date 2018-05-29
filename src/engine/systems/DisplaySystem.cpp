@@ -7,6 +7,8 @@
 
 #include "engine/core/Game.hpp"
 #include "engine/systems/DisplaySystem.hpp"
+#include "engine/components/TransformComponent.hpp"
+#include "engine/components/IrrlichtComponent.hpp"
 
 engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 {
@@ -18,10 +20,16 @@ engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 }
 
 void
-engine::DisplaySystem::update(Entities const&)
+engine::DisplaySystem::update(Entities const& entities)
 {
 	_game.device()->run();
 	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+
+	entities.each<TransformComponent, IrrlichtComponent>([](auto const& e, auto& t, auto& i) {
+		i.node->setPosition(t.position);
+		i.node->setRotation(t.rotation);
+		i.node->setScale(t.scale);
+	});
 
 	_sceneManager->drawAll();
 	_guiEnv->drawAll();
