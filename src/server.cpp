@@ -11,7 +11,7 @@
 #include "engine/core/Event.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Game.hpp"
-#include "engine/components/DisplayComponent.hpp"
+#include "engine/components/IrrlichtComponent.hpp"
 #include "engine/systems/ServerNetworkSystem.hpp"
 #include "engine/network/Socket.hpp"
 #include "engine/network/Message.hpp"

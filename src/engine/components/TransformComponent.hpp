@@ -13,12 +13,12 @@
 
 namespace engine {
 
-	struct DisplayComponent {
-		DisplayComponent();
-		DisplayComponent(class Game* game, std::string const& asset);
+	struct TransformComponent {
+		using Constraint = ComponentConstraint<TransformComponent, false>;
 
-		using Constraint = ComponentConstraint<DisplayComponent, false>;
-
-		irr::scene::IAnimatedMeshSceneNode* node = nullptr;
+		irr::core::vector3df position;
+		irr::core::vector3df rotation;
+		irr::core::vector3df scale;
 	};
+
 }

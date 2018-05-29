@@ -10,7 +10,7 @@
 #include <iostream>
 #include <engine/components/LightComponent.hpp>
 #include <engine/components/ComponentFilter.hpp>
-#include <engine/components/DisplayComponent.hpp>
+#include <engine/components/IrrlichtComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
 #include "engine/components/CameraComponent.hpp"
@@ -45,31 +45,31 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
-			auto& displayComponent = entity.set<engine::DisplayComponent>(&game, "obj/map.obj");
-			displayComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
-			displayComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
-			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-			displayComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
-			displayComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
+			auto& IrrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/map.obj");
+			IrrlichtComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
+			IrrlichtComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
+			IrrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+			IrrlichtComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
+			IrrlichtComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
 
-			entity.get<engine::DisplayComponent,
-				engine::DisplayComponent>([](engine::DisplayComponent const& displayComponent,
-							    engine::DisplayComponent const& displayComponent2) {
+			entity.get<engine::IrrlichtComponent,
+				engine::IrrlichtComponent>([](engine::IrrlichtComponent const& irrlichtComponent,
+							    engine::IrrlichtComponent const& irrlichtComponent2) {
 			});
 		});
 
 		scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
-			auto& displayComponent = entity.set<engine::DisplayComponent>(&game, "obj/worm.obj");
-			displayComponent.node->setPosition(irr::core::vector3df {0.f, -3.f, 0.f});
-			displayComponent.node->setScale(irr::core::vector3df {.5f, .5f, .5f});
-			displayComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-			displayComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
-			displayComponent.node->setMaterialTexture(0, game.textureManager.get("texture/worm.png"));
+			auto& irrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj");
+			irrlichtComponent.node->setPosition(irr::core::vector3df {0.f, -3.f, 0.f});
+			irrlichtComponent.node->setScale(irr::core::vector3df {.5f, .5f, .5f});
+			irrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+			irrlichtComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
+			irrlichtComponent.node->setMaterialTexture(0, game.textureManager.get("texture/worm.png"));
 
 			scene.registerEvent<engine::CameraComponent::Coords>("move player", [&](auto const& offset) {
-				displayComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
-				displayComponent.node->setPosition(displayComponent.node->getPosition() + offset);
-				scene.triggerEvent("set camera lookat", displayComponent.node->getPosition());
+				irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
+				irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
+				scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());
 				return 0;
 			});
 		});
