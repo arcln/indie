@@ -17,7 +17,7 @@ engine::Game::Game(bool enableVideo) : eventsHandler(_keyEvents), _eventReceiver
 	if (!_device) {
 		throw std::runtime_error("fatal: failed to initialize irrlicht");
 	}
-	_device->setWindowCaption(L"Worms 3D");
+	_device->setWindowCaption(L"Worms");
 
 	this->meshManager.onLoad([&](std::string const& asset) {
 		return this->_device->getSceneManager()->getMesh(asset.c_str());
@@ -74,7 +74,8 @@ engine::Game::pushScene(std::string const& name)
 	_sceneModels[name](*this, _scenes.back());
 }
 
-void engine::Game::popScene()
+void
+engine::Game::popScene()
 {
 	_scenes.pop_back();
 }
@@ -110,5 +111,4 @@ void engine::Game::_updateScenes()
 			system.second->update(scene.getEntities());
 		}
 	}
-
 }

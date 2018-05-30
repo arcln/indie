@@ -14,11 +14,13 @@
 
 namespace engine { namespace network {
 
-	struct Message {
+	struct __attribute__((packed)) Message {
 		unsigned int size;
 	};
 
-	struct TextMessage : public Message {
+	struct __attribute__((packed)) TextMessage : public Message {
+		TextMessage(std::string const& text);
+
 		char text[NET_MAX_MSG_SIZE - sizeof(Message)];
 	};
 }}

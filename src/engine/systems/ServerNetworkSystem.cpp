@@ -22,5 +22,5 @@ engine::ServerNetworkSystem::~ServerNetworkSystem()
 }
 
 void
-engine::ServerNetworkSystem::update(Entities const& entities)
+engine::ServerNetworkSystem::update(Entities const&)
 {}

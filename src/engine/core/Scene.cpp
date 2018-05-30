@@ -67,7 +67,7 @@ engine::Scene::synchonizeWith(std::string const& hostname)
 {
 	this->socket.create().connect(hostname);
 
-	this->socket.send<std::string>(engine::network::version);
+	this->socket.send<engine::network::TextMessage>(engine::network::version);
 	auto res = this->socket.receive<engine::network::TextMessage>();
 
 	if (std::string(res.text) != engine::network::version) {

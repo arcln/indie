@@ -79,11 +79,11 @@ namespace engine {
 		}
 
 		template <typename ContextType>
-		void triggerSyncedEvent(std::string const& name, ContextType const& context) {
+		void triggerSyncedEvent(std::string const& name, ContextType const& context = ContextType()) {
 			this->triggerEvent<ContextType>(name, context);
 
 			// TODO: Serialize context
-			this->socket.send<std::string>(name);
+			this->socket.send<network::TextMessage>(name);
 		}
 
 		void synchonizeWith(std::string const& hostname);

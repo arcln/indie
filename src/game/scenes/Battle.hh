@@ -8,24 +8,20 @@
 #pragma once
 
 #include <iostream>
-#include <engine/components/LightComponent.hpp>
-#include <engine/components/ComponentFilter.hpp>
-#include <engine/components/IrrlichtComponent.hpp>
-#include <engine/components/AnimationComponent.hpp>
+#include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
 #include "engine/components/CameraComponent.hpp"
+#include "engine/components/LightComponent.hpp"
+#include "engine/components/ComponentFilter.hpp"
+#include "engine/components/IrrlichtComponent.hpp"
 
 namespace worms { namespace scene {
 
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
-										    engine::CameraComponent::Coords {
-											    0.f, 0.f, -10.f},
-										    engine::CameraComponent::Coords {0,
-														     0,
-														     0}
+										engine::CameraComponent::Coords {0.f, 0.f, -10.f}, engine::CameraComponent::Coords {0, 0, 0}
 			);
 
 			scene.registerEvent<engine::CameraComponent::Coords>("set camera position", [&](auto const& position) {
@@ -116,7 +112,7 @@ namespace worms { namespace scene {
 						scene.triggerEvent<engine::CameraComponent::Coords>("move player", {1.f, 0.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_E:
-						scene.triggerEvent<engine::GenericEvent>("spawn worm");
+						scene.triggerSyncedEvent<engine::GenericEvent>("spawn worm");
 						break;
 					case engine::KeyCode::KEY_RIGHT:
 						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {1.f, 0.f, 0.f});
@@ -153,6 +149,13 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
 		scene.spawnEntity("worm");
 		scene.spawnEntity("map");
+<<<<<<< HEAD
 		scene.spawnEntity("animated");
+=======
+
+		if (!WORMS_IS_SERVER) {
+			scene.synchonizeWith("localhost");
+		}
+>>>>>>> multiplayer: engine improvements & basic communication
 	};
 }}

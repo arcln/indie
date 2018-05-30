@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include <irrlicht/irrlicht.h>
+#include "engine/core/Game.hpp"
+
 namespace engine {
 
 	struct IrrlichtComponent {

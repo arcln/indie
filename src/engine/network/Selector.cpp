@@ -15,10 +15,11 @@ engine::network::Selector::run()
 {
 	auto handler = [](ClientSocket client, DataHandlers dataHandlers) {
 		try {
+			std::cout << "worms-server: incoming connection" << std::endl;
 			auto clientVersion = client.receive<TextMessage>();
 
 			if (clientVersion.text == std::string(engine::network::version)) {
-				client.send<std::string>(engine::network::version);
+				client.send<TextMessage>(engine::network::version);
 			} else {
 				client.destroy();
 				return;
