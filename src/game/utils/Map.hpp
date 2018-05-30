@@ -22,8 +22,8 @@ public:
 
 	enum {
 		SMALL,
-		MEDUIM,
-		BIG
+		MEDIUM,
+		LARGE
 	};
 
 	struct 	Settings
