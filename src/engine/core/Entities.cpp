@@ -6,9 +6,9 @@
 */
 
 #include <algorithm>
-#include <engine/utils/EntityComparator.hpp>
-#include "Entity.hpp"
-#include "Entities.hpp"
+#include "engine/utils/EntityComparator.hpp"
+#include "engine/core/Entity.hpp"
+#include "engine/core/Entities.hpp"
 
 void
 engine::Entities::add(engine::Entity const& entity, engine::EntityModel const& model)
