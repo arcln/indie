@@ -5,6 +5,7 @@
 ** A file for bomberman - Paul Laffitte
 */
 
+#include <engine/components/AnimationComponent.hpp>
 #include "engine/core/Game.hpp"
 #include "engine/systems/DisplaySystem.hpp"
 #include "engine/components/TransformComponent.hpp"
@@ -29,6 +30,16 @@ engine::DisplaySystem::update(Entities const& entities)
 		i.node->setPosition(t.position);
 		i.node->setRotation(t.rotation);
 		i.node->setScale(t.scale);
+	});
+
+	entities.each<AnimationComponent, IrrlichtComponent>([](auto const& e, auto& a, auto& i) {
+		AnimationBoundaries const& boundaries = a.states.at(a.currentState);
+
+		if (boundaries.from != i.node->getStartFrame() || boundaries.to != i.node->getEndFrame()) {
+			i.node->setFrameLoop(boundaries.from, boundaries.to);
+		}
+
+		i.node->setAnimationSpeed(a.frameRate);
 	});
 
 	_sceneManager->drawAll();

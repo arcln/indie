@@ -11,6 +11,7 @@
 #include <engine/components/LightComponent.hpp>
 #include <engine/components/ComponentFilter.hpp>
 #include <engine/components/IrrlichtComponent.hpp>
+#include <engine/components/AnimationComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
 #include "engine/components/CameraComponent.hpp"
@@ -74,6 +75,27 @@ namespace worms { namespace scene {
 			});
 		});
 
+		scene.registerEntityModel("animated", [&](engine::Entity const& entity) {
+			auto& irrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/test.ms3d");
+			irrlichtComponent.node->setPosition(irr::core::vector3df {1.f, -3.f, 0.f});
+			irrlichtComponent.node->setScale(irr::core::vector3df {.5f, .5f, .5f});
+			irrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+
+			auto& anim = entity.set<engine::AnimationComponent>("aze", 30);
+			anim.states["aze"] = engine::AnimationBoundaries(5, 20);
+			anim.states["aze2"] = engine::AnimationBoundaries(10, 30);
+
+			scene.registerEvent<bool>("anim1", [&anim](bool) {
+				anim.currentState = "aze";
+				return 0;
+			});
+
+			scene.registerEvent<bool>("anim2", [&anim](bool) {
+				anim.currentState = "aze2";
+				return 0;
+			});
+		});
+
 		scene.registerEntityModel("blue light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50),
 							   irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
@@ -114,6 +136,12 @@ namespace worms { namespace scene {
 					case engine::KeyCode::KEY_KEY_F:
 						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, -1.f});
 						break;
+					case engine::KeyCode::KEY_KEY_O:
+						scene.triggerEvent<bool>("anim1", true);
+						break;
+					case engine::KeyCode::KEY_KEY_P:
+						scene.triggerEvent<bool>("anim2", true);
+						break;
 					default: break;
 				}
 			}
@@ -125,5 +153,6 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
 		scene.spawnEntity("worm");
 		scene.spawnEntity("map");
+		scene.spawnEntity("animated");
 	};
 }}
