@@ -18,7 +18,7 @@ namespace engine {
 	class Entities;
 
 	template<typename... ComponentsTypes>
-	struct Callback {
+	struct EntityCallback {
 		using Get = std::function<void(class Entity const&, typename ComponentsTypes::Constraint::ReturnType...)>;
 	};
 

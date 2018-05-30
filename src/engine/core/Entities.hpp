@@ -28,7 +28,7 @@ namespace engine {
 		void detach(Entity const& entity);
 
 		template <typename... ComponentsTypes>
-		void each(typename Callback<ComponentsTypes...>::Get const& callback, bool doChilds = true) const
+		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true) const
 		{
 			for (auto& root : _roots) {
 				try {
@@ -40,7 +40,7 @@ namespace engine {
 		}
 
 		template <typename... ComponentsTypes>
-		void eachChilds(EntityId parentId, typename Callback<ComponentsTypes...>::Get const& callback) const
+		void eachChilds(EntityId parentId, typename EntityCallback<ComponentsTypes...>::Get const& callback) const
 		{
 			Childs::const_iterator childs = _childs.find(parentId);
 
@@ -55,15 +55,17 @@ namespace engine {
 			}
 		}
 
+		void withTag(std::string tag, std::function<void (Entity const&)> callback);
+
 	private:
 		Roots _roots;
 		Childs _childs;
 
 		template<typename... ComponentsTypes>
 		void
-		_getEntityComponents(Entity const& entity, typename Callback<ComponentsTypes...>::Get const& callback) const
+		_getEntityComponents(Entity const& entity, typename EntityCallback<ComponentsTypes...>::Get const& callback) const
 		{
-			entity.get<ComponentsTypes...>([&](ComponentsTypes... components) {
+			entity.get<ComponentsTypes...>([&](typename ComponentsTypes::Constraint::ReturnType... components) {
 				callback(entity, components...);
 			});
 		}

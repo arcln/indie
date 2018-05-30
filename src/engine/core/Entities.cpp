@@ -6,7 +6,10 @@
 */
 
 #include <algorithm>
+#include <engine/components/TransformComponent.hpp>
+#include <engine/utils/TagComparator.hpp>
 #include "engine/utils/EntityComparator.hpp"
+#include "engine/components/TagComponent.hpp"
 #include "engine/core/Entity.hpp"
 #include "engine/core/Entities.hpp"
 
@@ -78,4 +81,14 @@ engine::Entities::detach(engine::Entity const& entity)
 		_roots[entity.getId()] = *entityIt;
 		siblings.erase(entityIt);
 	}
+}
+
+void
+engine::Entities::withTag(std::string tag, std::function<void (engine::Entity const&)> callback)
+{
+	this->each<engine::TagComponent>([&tag, &callback](engine::Entity const& entity, auto const& tagComponents) {
+		if (std::find_if(std::begin(tagComponents), std::end(tagComponents), engine::TagComparator(tag)) != std::end(tagComponents)) {
+			callback(entity);
+		}
+	});
 }
