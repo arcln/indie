@@ -19,6 +19,11 @@
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
+#include "engine/components/AnimationComponent.hpp"
+#include "game/utils/Map.hpp"
+#include "engine/systems/PhysicsSystem.hpp"
+#include "engine/core/Scene.hpp"
+#include "engine/core/Event.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "game/events/Vector.hpp"
@@ -75,6 +80,40 @@ namespace worms { namespace scene {
 		Wornite::Map map;
 		map.spawnMap(&game, &scene, &mapSettings);
 
+		scene.registerEntityModel("block", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+			entity.set<engine::TagComponent>(std::string("map"));
+
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.position = {0.f, 0.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
+            hitboxComponent.rebound = 0.8;
+            hitboxComponent.hasDebugMode = true;
+		});
+
+		Wornite::Map map;
+		Wornite::Map::Settings mapSettings;
+		mapSettings.Size = Wornite::Map::MEDUIM;
+		mapSettings.Density = 1;
+
+		map.spawnMap(&game, &scene, &mapSettings);
+
+		/*scene.registerEntityModel("map", [&](engine::Entity const& entity) {
+			auto& IrrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/map.obj");
+			IrrlichtComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
+			IrrlichtComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
+			IrrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
+			IrrlichtComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
+			IrrlichtComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
+
+			entity.get<engine::IrrlichtComponent,
+				engine::IrrlichtComponent>([](engine::IrrlichtComponent const& irrlichtComponent,
+							    engine::IrrlichtComponent const& irrlichtComponent2) {
+			});
+		});*/
+
+        scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 >>>>>>> game: feature class map (spawnMap)
 
