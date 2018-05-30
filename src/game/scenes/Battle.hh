@@ -66,7 +66,17 @@ namespace worms { namespace scene {
 
         scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 			entity.set<PlayerComponent>(0);
+<<<<<<< refs/remotes/origin/develop
 			entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
+=======
+		mapSettings.Density = 1;
+		mapSettings.Size = Wornite::Map::MEDUIM;
+		Wornite::Map::Settings mapSettings;
+		Wornite::Map map;
+		map.spawnMap(&game, &scene, &mapSettings);
+
+			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
+>>>>>>> game: feature class map (spawnMap)
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
             auto& transformComponent = entity.set<engine::TransformComponent>();
