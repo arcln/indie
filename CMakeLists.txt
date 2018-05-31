@@ -50,7 +50,8 @@ link_directories(/usr/local/lib)
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
 add_library(engine STATIC ${ENGINE_SRCS})
 
-add_executable(worms src/client.cpp ${GAME_SRCS})
+add_executable(worms src/main.cpp ${GAME_SRCS})
+set_target_properties(worms PROPERTIES COMPILE_FLAGS "-DWORMS_IS_SERVER=false")
 target_link_libraries(worms
 	${OPENGL_LIBRARIES}
 	${COCOA_LIBRARY}
@@ -62,7 +63,8 @@ target_link_libraries(worms
 	engine pthread Irrlicht
 )
 
-add_executable(worms-server src/server.cpp ${GAME_SRCS})
+add_executable(worms-server src/main.cpp ${GAME_SRCS})
+set_target_properties(worms-server PROPERTIES COMPILE_FLAGS "-DWORMS_IS_SERVER=true")
 target_link_libraries(worms-server
 	${OPENGL_LIBRARIES}
 	${COCOA_LIBRARY}

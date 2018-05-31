@@ -26,7 +26,9 @@ namespace engine { namespace network {
 
 		template <typename MessageType>
 		void send(MessageType const& data) const {
-			if (::send(_socket, &data, sizeof(MessageType), 0) < 0) {
+			auto dataCpy = data;
+			dataCpy.size = sizeof(MessageType);
+			if (::send(_socket, &dataCpy, sizeof(MessageType), 0) < 0) {
 				throw std::runtime_error("failed to write into socket.");
 			}
 		}
@@ -34,7 +36,7 @@ namespace engine { namespace network {
 		template <typename MessageType>
 		MessageType receive() const {
 			char buffer[NET_MAX_MSG_SIZE];
-			int recvSize = -2;
+			long recvSize = 0;
 
 			if ((recvSize = ::recv(_socket, buffer, NET_MAX_MSG_SIZE, 0)) < 0) {
 				throw std::runtime_error("failed to read into socket");
@@ -43,7 +45,7 @@ namespace engine { namespace network {
 			}
 
 			auto data = reinterpret_cast<MessageType*>(buffer);
-			if (data->size != sizeof(MessageType)) {
+			if (recvSize != sizeof(MessageType)) {
 				throw std::runtime_error("corrupted packet");
 			}
 
