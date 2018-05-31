@@ -65,7 +65,7 @@ namespace engine {
 		void
 		_getEntityComponents(Entity const& entity, typename EntityCallback<ComponentsTypes...>::Get const& callback) const
 		{
-			entity.get<ComponentsTypes...>([&](typename ComponentsTypes::Constraint::ReturnType... components) {
+			entity.get<ComponentsTypes...>([&](typename ComponentsTypes::Constraint::ReturnType&... components) {
 				callback(entity, components...);
 			});
 		}
