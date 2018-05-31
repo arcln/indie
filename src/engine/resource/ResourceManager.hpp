@@ -13,7 +13,7 @@
 #include <unordered_map>
 #include <iostream>
 
-#define ASSETS_ROOT	"../assets/"
+#define ASSETS_ROOT	"./assets/"
 
 /**
  * @brief Engine namespace, used for everything that touch to low-level graphics

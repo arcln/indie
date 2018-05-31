@@ -11,7 +11,7 @@
 
 engine::EntityId engine::Scene::_lastSpawnedEntityId = engine::Entity::nullId;
 
-engine::Scene::Scene() : _running(true)
+engine::Scene::Scene() : _running(true), _synced(false)
 {
 }
 

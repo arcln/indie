@@ -74,7 +74,7 @@ engine::network::Socket const&
 engine::network::Socket::accept(Socket& client) const
 {
 	SOCKADDR_IN csin;
-	unsigned sinsize = sizeof csin;
+	SOCKET_SIZE_TYPE sinsize = sizeof csin;
 
 	client._socket = ::accept(_socket, reinterpret_cast<SOCKADDR*>(&csin), &sinsize);
 

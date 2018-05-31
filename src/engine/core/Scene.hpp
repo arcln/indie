@@ -81,7 +81,10 @@ namespace engine {
 		template <typename ContextType>
 		void triggerSyncedEvent(std::string const& name, ContextType const& context) {
 			this->triggerEvent<ContextType>(name, context);
-			this->socket.send<network::TextMessage>(name + "|" + context.serialize());
+
+			if (_synced) {
+				this->socket.send<network::TextMessage>(name + "|" + context.serialize());
+			}
 		}
 
 		void synchonizeWith(std::string const& hostname);
@@ -100,5 +103,6 @@ namespace engine {
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
+		bool _synced;
 	};
 }
