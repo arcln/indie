@@ -11,10 +11,11 @@
 #include <engine/components/LightComponent.hpp>
 #include <engine/components/ComponentFilter.hpp>
 #include <engine/components/IrrlichtComponent.hpp>
-#include <engine/components/AnimationComponent.hpp>
+#include <engine/components/HitboxComponent.hpp>
+#include <engine/components/TransformComponent.hpp>
+#include "engine/components/CameraComponent.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
-#include "engine/components/CameraComponent.hpp"
 
 namespace worms { namespace scene {
 
@@ -22,10 +23,10 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
-											    0.f, 0.f, -10.f},
-										    engine::CameraComponent::Coords {0,
+											    0.f, 0.f, -10.0},
+										    engine::CameraComponent::Coords {0.0,
 														     0,
-														     0}
+														     0.0}
 			);
 
 			scene.registerEvent<engine::CameraComponent::Coords>("set camera position", [&](auto const& position) {
@@ -48,7 +49,6 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
 			auto& IrrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/map.obj");
 			IrrlichtComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
-			IrrlichtComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
 			IrrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 			IrrlichtComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
 			IrrlichtComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
@@ -60,12 +60,33 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
-			auto& irrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj");
-			irrlichtComponent.node->setPosition(irr::core::vector3df {0.f, -3.f, 0.f});
-			irrlichtComponent.node->setScale(irr::core::vector3df {.5f, .5f, .5f});
-			irrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-			irrlichtComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
-			irrlichtComponent.node->setMaterialTexture(0, game.textureManager.get("texture/worm.png"));
+			auto& irrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
+
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            // transformComponent.scale = {2.5f, 2.5f, 2.5f};
+            transformComponent.position = {0.f, 0.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
+            hitboxComponent.hasDebugMode = true;
+
+			scene.registerEvent<engine::CameraComponent::Coords>("move player", [&](auto const& offset) {
+                //
+				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
+				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
+				// scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());
+				return 0;
+			});
+		});
+
+        scene.registerEntityModel("worm2", [&](engine::Entity const& entity) {
+			auto& irrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
+
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.scale = {.5f, .5f, .5f};
+            transformComponent.position = {3.f, 3.f, 3.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
+            hitboxComponent.hasDebugMode = true;
 
 			scene.registerEvent<engine::CameraComponent::Coords>("move player", [&](auto const& offset) {
 				irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
@@ -119,10 +140,10 @@ namespace worms { namespace scene {
 						scene.triggerEvent<engine::GenericEvent>("spawn worm");
 						break;
 					case engine::KeyCode::KEY_RIGHT:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {1.f, 0.f, 0.f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {-1.f, 0.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_LEFT:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {-1.f, 0.f, 0.f});
+						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {1.f, 0.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_UP:
 						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 1.f, 0.f});
@@ -151,8 +172,8 @@ namespace worms { namespace scene {
 
 		scene.spawnEntity("blue light");
 		scene.spawnEntity("camera");
-		scene.spawnEntity("worm");
-		scene.spawnEntity("map");
-		scene.spawnEntity("animated");
+        scene.spawnEntity("worm");
+		scene.spawnEntity("worm2");
+		// scene.spawnEntity("map");
 	};
 }}

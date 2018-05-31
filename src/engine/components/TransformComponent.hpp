@@ -18,7 +18,7 @@ namespace engine {
 
 		irr::core::vector3df position;
 		irr::core::vector3df rotation;
-		irr::core::vector3df scale;
+		irr::core::vector3df scale{1.f, 1.f, 1.f};
 	};
 
 }
