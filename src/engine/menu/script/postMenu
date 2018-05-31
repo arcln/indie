@@ -1,0 +1,12 @@
+image:
+	- name: logo
+	- src: ./ressources/wormsLogo.png
+	- positionX: 640
+	- positionY: 521
+	- effects: updown 0.5 20
+
+button:
+	- name: startGame
+	- texturePath: ./ressources/PressAnyKey.png
+	- rect: 540, 340, 200, 40
+	- effects: fade 10
