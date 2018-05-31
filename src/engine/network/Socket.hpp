@@ -36,7 +36,7 @@ namespace engine { namespace network {
 		template <typename MessageType>
 		MessageType receive() const {
 			char buffer[NET_MAX_MSG_SIZE];
-			int recvSize = 0;
+			long recvSize = 0;
 
 			if ((recvSize = ::recv(_socket, buffer, NET_MAX_MSG_SIZE, 0)) < 0) {
 				throw std::runtime_error("failed to read into socket");
@@ -45,7 +45,6 @@ namespace engine { namespace network {
 			}
 
 			auto data = reinterpret_cast<MessageType*>(buffer);
-			std::cout << recvSize << " " <<sizeof(MessageType)<<std::endl;
 			if (recvSize != sizeof(MessageType)) {
 				throw std::runtime_error("corrupted packet");
 			}

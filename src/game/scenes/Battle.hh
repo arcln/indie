@@ -15,6 +15,7 @@
 #include "engine/components/LightComponent.hpp"
 #include "engine/components/ComponentFilter.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
+#include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
 
@@ -92,9 +93,9 @@ namespace worms { namespace scene {
 			});
 		});
 
-		scene.registerEntityModel("blue light", [&](engine::Entity const& entity) {
+		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(game.device(), irr::core::vector3df(0, 500, 50),
-							   irr::video::SColorf(0.0f, 0.0f, 1.0f), 1000);
+							   irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000);
 		});
 
 		scene.registerEvent<engine::GenericEvent>("spawn worm", [&](engine::GenericEvent const&) {
@@ -106,13 +107,13 @@ namespace worms { namespace scene {
 			if (keystate.PressedDown) {
 				switch (keystate.Key) {
 					case engine::KeyCode::KEY_KEY_Q:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move player", {-1.f, 0.f, 0.f});
+						scene.triggerSyncedEvent<Vector3f>("move player", Vector3f(-1.f, 0.f, 0.f));
 						break;
 					case engine::KeyCode::KEY_KEY_D:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move player", {1.f, 0.f, 0.f});
+						scene.triggerSyncedEvent<Vector3f>("move player", Vector3f(1.f, 0.f, 0.f));
 						break;
 					case engine::KeyCode::KEY_KEY_E:
-						scene.triggerSyncedEvent<engine::GenericEvent>("spawn worm");
+						scene.triggerSyncedEvent<Vector3f>("spawn worm", Vector3f(0.f, 0.f, 0.f));
 						break;
 					case engine::KeyCode::KEY_RIGHT:
 						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {1.f, 0.f, 0.f});
@@ -145,7 +146,7 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		scene.spawnEntity("blue light");
+		scene.spawnEntity("light");
 		scene.spawnEntity("camera");
 		scene.spawnEntity("worm");
 		scene.spawnEntity("map");

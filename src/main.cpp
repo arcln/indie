@@ -12,6 +12,5 @@ int main()
 {
 	engine::Engine engine(WORMS_IS_SERVER);
 
-	std::cerr << "worms: starting " << (WORMS_IS_SERVER ? "server" : "client") << std::endl;
 	return engine.play(worms::worms);
 }

@@ -63,7 +63,7 @@ namespace engine {
 		template <typename ContextType>
 		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
 			if (this->events.find(name) == std::end(this->events)) {
-				this->events[name] = reinterpret_cast<Event<int>*>(::new Event<ContextType>());
+				this->events[name] = reinterpret_cast<Event<GenericEvent>*>(::new Event<ContextType>());
 			}
 
 			reinterpret_cast<Event<ContextType>*>(this->events[name])->subscribe(handler);
@@ -79,11 +79,9 @@ namespace engine {
 		}
 
 		template <typename ContextType>
-		void triggerSyncedEvent(std::string const& name, ContextType const& context = ContextType()) {
+		void triggerSyncedEvent(std::string const& name, ContextType const& context) {
 			this->triggerEvent<ContextType>(name, context);
-
-			// TODO: Serialize context
-			this->socket.send<network::TextMessage>(name);
+			this->socket.send<network::TextMessage>(name + "|" + context.serialize());
 		}
 
 		void synchonizeWith(std::string const& hostname);
