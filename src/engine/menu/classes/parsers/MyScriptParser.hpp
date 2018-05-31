@@ -16,7 +16,9 @@
 #include "engine/core/Entity.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/components/ButtonComponent.hpp"
+#include "engine/components/ImageComponent.hpp"
 #include "engine/menu/classes/parsers/ButtonFactory.hpp"
+#include "engine/menu/classes/parsers/ImageFactory.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 
 namespace engine { namespace Menu {
@@ -33,6 +35,7 @@ namespace engine { namespace Menu {
 			void fillMap();
 
 			void manageButton();
+			void manageImage();
 		private:
 			engine::Scene							*_scene;
 			engine::Game							*_game;
