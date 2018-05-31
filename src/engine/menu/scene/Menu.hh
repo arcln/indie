@@ -10,7 +10,7 @@
 #include <iostream>
 #include <engine/components/LightComponent.hpp>
 #include <engine/components/ComponentFilter.hpp>
-#include <engine/components/DisplayComponent.hpp>
+#include <engine/components/IrrlichtComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
 #include "engine/core/Game.hpp"

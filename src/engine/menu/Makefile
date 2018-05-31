@@ -19,7 +19,7 @@ SRCS	=	main.cpp					\
 		../components/ButtonComponent.cpp		\
 		../components/CameraComponent.cpp		\
 		../components/ComponentPoolEvent.cpp		\
-		../components/DisplayComponent.cpp		\
+		../components/IrrlichtComponent.cpp		\
 		../components/LightComponent.cpp		\
 		../core/Entities.cpp				\
 		../core/Entity.cpp				\
