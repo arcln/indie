@@ -16,8 +16,12 @@ namespace engine {
 		using Constraint = ComponentConstraint<IrrlichtComponent, false>;
 
 		IrrlichtComponent();
-		IrrlichtComponent(Game* game, std::string const& asset);
+        IrrlichtComponent(Game* game, std::string const& obj, std::string const& text);
+		IrrlichtComponent(Game* game, std::string const& obj);
 
 		irr::scene::IAnimatedMeshSceneNode* node = nullptr;
+
+    private:
+        void initialize(Game* game, std::string const& obj);
 	};
 }
