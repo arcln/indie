@@ -16,6 +16,7 @@
 #include "engine/core/Game.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/ButtonComponent.hpp"
+#include "engine/components/ImageComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
 
 
@@ -51,33 +52,35 @@ namespace worms { namespace scene {
 										    nullptr,
 										    nullptr
 			);
+			buttonComponent.node->setUseAlphaChannel(true);
 
 			scene.registerEvent<engine::ButtonComponent::Coords>("move button", [&](auto const& pos) {
 				buttonComponent.node->setRelativePosition(pos);
 				return 0;
 			});
 
-			scene.registerEvent<const wchar_t *>("set text", [&](auto const& text) {
-				buttonComponent.node->setText(text);
-				return 0;
-			});
-
-			scene.registerEvent<const wchar_t *>("set tooltip", [&](auto const& tooltip) {
-				buttonComponent.node->setToolTipText(tooltip);
-				return 0;
-			});
-
-			scene.registerEvent<irr::video::ITexture*>("set normal image", [&](auto const& image) {
-				buttonComponent.node->setImage(image);
+			scene.registerEvent<std::string>("set normal image", [&](auto const &image) {
+				irr::video::ITexture *texture = game.textureManager.get(image);
+				buttonComponent.node->setImage(texture);
 				return 0;
 			});
 		});
 
+		scene.registerEntityModel("image", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& imageComponent = entity.set<engine::ImageComponent>(game.device(),
+										 game.textureManager.get("texture/placeholder1280x720.png"),
+										 irr::core::position2d<irr::s32>(0,0),
+										 true,
+										 nullptr,
+										 id,
+										 nullptr);
+		});
 		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
 			return scene.spawnEntity("button");
 		});
 
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("./script/postMenu", &scene, &game);
+		engine::Menu::MyScriptParser parser("engine/menu/script/postMenu", &scene, &game);
 	};
 }}

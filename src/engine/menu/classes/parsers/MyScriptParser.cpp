@@ -11,6 +11,7 @@ engine::Menu::MyScriptParser::MyScriptParser(std::string path, engine::Scene *sc
 {
 	_path = path;
 	_elementHandled.insert(std::pair<std::string, std::function<void(void)>>("button", [this](void) {manageButton();}));
+	_elementHandled.insert(std::pair<std::string, std::function<void(void)>>("image", [this](void) {manageImage();}));
 	_game = game;
 	_scene = scene;
 	_isOver = false;
@@ -89,36 +90,62 @@ void engine::Menu::MyScriptParser::createElement(std::string type)
 
 void engine::Menu::MyScriptParser::manageButton()
 {
-	std::string line;
-	std::string command;
-	std::string param;
 	EntityId currentEntity = _scene->spawnEntity("button");
-	ComponentFilter<engine::ButtonComponent, engine::IrrlichtComponent> filter;
-	ComponentFilter<engine::ButtonComponent, engine::IrrlichtComponent>::Callback callback;
-	engine::ButtonComponent button;
-	irr::gui::IGUIButton *irrButton;
+	ComponentFilter<engine::ButtonComponent> filter;
 	
-	filter.get(currentEntity, [](auto& buttonComponent, auto& irrlichtComponent) {
-		callback(buttonComponent);
-		irrlichtComponent.node;
-	});
-	std::cout << "\nDEBUG\n" << std::endl;
-	_it += 1;
-	engine::Menu::ButtonFactory factory(irrButton);
-	for (; _it != _storage.end() ; ++_it) {
-		line = *_it;
-		_lineNb += 1;
-		if (checkStart(line, "\t") == 0)
-			break;
-		command = line.substr(line.find('-', 1) + 2, line.find(':', 1) - (line.find('-', 1) + 2));
-		param = line.substr(line.find(':', 1) + 2, line.size() - (line.find(':') + 2));
-		std::cout << "Command : [" << command << "]. | Param : [" << param << "]." << std::endl;
-		for (std::pair<std::string, std::function<void(std::string)>> commandHandl : factory._handledFunc ) {
-			if (commandHandl.first == command) {
-				commandHandl.second(param);
+	filter.get(currentEntity, [this](auto &buttonComponent) {
+		std::string line;
+		std::string command;
+		std::string param;
+
+		_it += 1;
+		engine::Menu::ButtonFactory factory(buttonComponent.node, _game);
+		for (; _it != _storage.end() ; ++_it) {
+			line = *_it;
+			_lineNb += 1;
+			if (checkStart(line, "\t") == 0)
+				break;
+			command = line.substr(line.find('-', 1) + 2, line.find(':', 1) - (line.find('-', 1) + 2));
+			param = line.substr(line.find(':', 1) + 2, line.size() - (line.find(':') + 2));
+			std::cout << "Command : [" << command << "]. | Param : [" << param << "]." << std::endl;
+			for (std::pair<std::string, std::function<void(std::string)>> commandHandl : factory._handledFunc ) {
+				if (commandHandl.first == command) {
+					commandHandl.second(param);
+				}
 			}
 		}
-	}
-	if (_it == _storage.end())
-		_isOver = true;
+		if (_it == _storage.end())
+			_isOver = true;
+	});
+}
+
+void engine::Menu::MyScriptParser::manageImage()
+{
+	EntityId currentEntity = _scene->spawnEntity("image");
+	ComponentFilter<engine::ImageComponent> filter;
+	
+	filter.get(currentEntity, [this](auto &imageComponent) {
+		std::string line;
+		std::string command;
+		std::string param;
+
+		_it += 1;
+		engine::Menu::ImageFactory factory(imageComponent.node, _game);
+		for (; _it != _storage.end() ; ++_it) {
+			line = *_it;
+			_lineNb += 1;
+			if (checkStart(line, "\t") == 0)
+				break;
+			command = line.substr(line.find('-', 1) + 2, line.find(':', 1) - (line.find('-', 1) + 2));
+			param = line.substr(line.find(':', 1) + 2, line.size() - (line.find(':') + 2));
+			std::cout << "Command : [" << command << "]. | Param : [" << param << "]." << std::endl;
+			for (std::pair<std::string, std::function<void(std::string)>> commandHandl : factory._handledFunc ) {
+				if (commandHandl.first == command) {
+					commandHandl.second(param);
+				}
+			}
+		}
+		if (_it == _storage.end())
+			_isOver = true;
+	});
 }

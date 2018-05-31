@@ -1,12 +1,16 @@
 image:
+	- name: background
+	- image: texture/wormsWpp.jpg
+	- pos: 0, 0
+
+image:
 	- name: logo
-	- src: ./ressources/wormsLogo.png
-	- positionX: 640
-	- positionY: 521
+	- image: texture/WormNiteLogo.png
+	- pos: 259, 100
 	- effects: updown 0.5 20
 
 button:
-	- name: startGame
-	- texturePath: ./ressources/PressAnyKey.png
-	- rect: 540, 340, 200, 40
+	- image: texture/PressAnyKey.png
+	- rect: 120, 530, 1160, 630
+	- border: false
 	- effects: fade 10
