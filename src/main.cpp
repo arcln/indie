@@ -45,7 +45,7 @@ void __win32InitSockets()
 int main()
 {
 #ifdef WIN32
-	__initWin32Sockets();
+	__win32InitSockets();
 #endif
 
 	engine::Engine engine(WORMS_IS_SERVER, ENGINE_OS_SETUP);
