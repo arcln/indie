@@ -11,7 +11,7 @@
 #include "engine/components/TransformComponent.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 
-engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
+engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game), _nodesManager(game.getcwd())
 {
 	_videoDriver = _game.device()->getVideoDriver();
 	_sceneManager = _game.device()->getSceneManager();

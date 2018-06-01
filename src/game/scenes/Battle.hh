@@ -16,6 +16,7 @@
 #include "engine/components/LightComponent.hpp"
 #include "engine/components/ComponentFilter.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
+#include "engine/components/AnimationComponent.hpp"
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
@@ -152,8 +153,8 @@ namespace worms { namespace scene {
 		scene.spawnEntity("map");
 		scene.spawnEntity("animated");
 
-		if (!WORMS_IS_SERVER) {
-			scene.synchonizeWith("localhost");
-		}
+		// if (!WORMS_IS_SERVER) {
+		// 	scene.synchonizeWith("localhost");
+		// }
 	};
 }}

@@ -28,7 +28,7 @@ namespace engine { namespace network {
 		void send(MessageType const& data) const {
 			auto dataCpy = data;
 			dataCpy.size = sizeof(MessageType);
-			if (::send(_socket, &dataCpy, sizeof(MessageType), 0) < 0) {
+			if (::send(_socket, reinterpret_cast<char *>(&dataCpy), sizeof(MessageType), 0) < 0) {
 				throw std::runtime_error("failed to write into socket.");
 			}
 		}

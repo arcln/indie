@@ -5,10 +5,16 @@
 ** A file for bomberman - Paul Laffitte
 */
 
+#include <unistd.h>
 #include "engine/systems/System.hpp"
 #include "Game.hpp"
 
-engine::Game::Game(bool enableVideo) : eventsHandler(_keyEvents), _eventReceiver(_keyEvents)
+engine::Game::Game(bool enableVideo, std::string const& cwd)
+	: eventsHandler(_keyEvents)
+	, meshManager(cwd)
+	, textureManager(cwd)
+	, _eventReceiver(_keyEvents)
+	, _cwd(cwd)
 {
 	_device = irr::createDevice(enableVideo ? irr::video::EDT_OPENGL : irr::video::EDT_NULL,
 								irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false,
@@ -102,6 +108,12 @@ irr::IrrlichtDevice const*
 engine::Game::device() const
 {
 	return _device;
+}
+
+std::string const&
+engine::Game::getcwd() const
+{
+	return _cwd;
 }
 
 void engine::Game::_updateScenes()
