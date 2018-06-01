@@ -20,8 +20,7 @@ namespace engine {
 		using Siblings = std::vector<Entity>;
 		using Childs = std::map<EntityId, Siblings>;
 
-		void add(Entity const& entity, EntityModel const& model);
-		void add(Entity const&& entity, EntityModel const& model);
+		Entity const& add(Entity&& entity, EntityModel const& model);
 		void remove(EntityId id);
 
 		void attach(EntityId parentId, Entity const& child);

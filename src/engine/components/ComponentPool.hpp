@@ -65,7 +65,8 @@ namespace engine {
 		 * @param entityId Entity's id
 		 * @return Entity's components
 		 */
-		typename Container::mapped_type get(EntityId entityId)
+		typename Container::mapped_type
+		get(EntityId entityId)
 		{
 			typename Container::iterator componentIt = _components.find(entityId);
 
@@ -75,10 +76,22 @@ namespace engine {
 		}
 
 		/**
+		 * Check if an entity has some components
+		 * @param entityId Entity's id
+		 * @return whether the entity has or not the requested components
+		 */
+		bool
+		has(EntityId entityId)
+		{
+			return _components.find(entityId) != std::end(_components);
+		}
+
+		/**
 		 * Singleton getter
 		 * @return the component pool singleton itself
 		 */
-		static ComponentPool<ComponentType>& instance() {
+		static ComponentPool<ComponentType>&
+		instance() {
 			static ComponentPool<ComponentType> componentPool;
 
 			return componentPool;
