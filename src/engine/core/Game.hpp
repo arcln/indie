@@ -24,14 +24,13 @@ namespace engine {
 
 	class Game {
 	public:
-		Game(bool enableVideo = true);
+		Game(bool enableVideo, std::string const& cwd);
 		virtual ~Game();
 
 		using SceneModel = std::function<void (Game&, Scene&)>;
 		using SceneModels = std::unordered_map<std::string, SceneModel>;
 
 		void play(std::string const& name);
-
 		void replaceScene(std::string const& name);
 		void pushScene(std::string const& name);
 		void popScene();
@@ -41,6 +40,8 @@ namespace engine {
 
 		irr::IrrlichtDevice* device();
 		irr::IrrlichtDevice const* device() const;
+
+		std::string const& getcwd() const;
 
 	private:
 		Event<KeyState> _keyEvents;
@@ -56,6 +57,7 @@ namespace engine {
 		std::unordered_map<std::string, System*> _systems;
 		std::list<Scene> _scenes;
 		SceneModels _sceneModels;
+		std::string _cwd;
 
 		void _updateScenes();
 	};

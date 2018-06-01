@@ -12,9 +12,11 @@
 
 namespace engine {
 
+	static const std::string DefaultAssetsRoot = "./assets/";
+
 	class Engine {
 	public:
-		Engine(bool isServer = false);
+		Engine(bool isServer, std::string const& cwd);
 
 		int play(std::function<void (Game&)> const& gameModel);
 

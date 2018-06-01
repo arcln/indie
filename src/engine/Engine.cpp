@@ -8,7 +8,10 @@
 #include "Engine.hpp"
 #include "engine/systems/ServerNetworkSystem.hpp"
 
-engine::Engine::Engine(bool isServer) : _game(!isServer), _isServer(isServer) {}
+engine::Engine::Engine(bool isServer, std::string const& cwd)
+	: _game(!isServer, cwd.length() ? cwd + "/Contents/Resources/assets/" : DefaultAssetsRoot)
+	, _isServer(isServer)
+{}
 
 int
 engine::Engine::play(std::function<void (Game&)> const& model)
