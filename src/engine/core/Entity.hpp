@@ -74,6 +74,30 @@ namespace engine {
 			ComponentFilter<ComponentsTypes...>().get(_id, callback);
 		}
 
+		/**
+		 * Get entity's component
+		 * @tparam ComponentsTypes Types of components to get
+		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
+		 */
+		template<typename ComponentType>
+		ComponentType&
+		get() const
+		{
+			return ComponentType::Constraint::Pool::instance().get(_id);
+		}
+
+		/**
+		 * Get entity's component
+		 * @tparam ComponentsTypes Types of components to get
+		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
+		 */
+		template<typename ComponentType>
+		bool
+		has() const
+		{
+			return ComponentType::Constraint::Pool::instance().has(_id);
+		}
+
 		EntityId getId() const;
 
 		EntityId getParentId() const;

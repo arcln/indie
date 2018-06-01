@@ -13,8 +13,8 @@
 #include "engine/core/Entity.hpp"
 #include "engine/core/Entities.hpp"
 
-void
-engine::Entities::add(engine::Entity const& entity, engine::EntityModel const& model)
+engine::Entity const&
+engine::Entities::add(engine::Entity&& entity, engine::EntityModel const& model)
 {
 	EntityId parentId = entity.getParentId();
 
@@ -24,19 +24,7 @@ engine::Entities::add(engine::Entity const& entity, engine::EntityModel const& m
 		_roots.emplace(entity.getId(), entity);
 
 	_childs[parentId].emplace_back(entity);
-}
-
-void
-engine::Entities::add(engine::Entity const&& entity, engine::EntityModel const& model)
-{
-	EntityId parentId = entity.getParentId();
-
-	model(entity);
-
-	if (parentId == engine::Entity::nullId)
-		_roots.emplace(entity.getId(), entity);
-
-	_childs[parentId].emplace_back(entity);
+	return _childs[parentId].back();
 }
 
 void

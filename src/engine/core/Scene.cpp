@@ -25,23 +25,22 @@ engine::Scene::registerEntityModel(std::string const& name, EntityModel const& m
 	_models[name] = model;
 }
 
-engine::EntityId
+engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name, EntityId parentId)
 {
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("entity model '" + name + "' not found");
 
-	_entities.add(engine::Entity(++_lastSpawnedEntityId, parentId, &_entities), _models[name]);
-	return _lastSpawnedEntityId;
+
+	return _entities.add(engine::Entity(++_lastSpawnedEntityId, parentId, &_entities), _models[name]);
 }
 
-engine::EntityId
+engine::Entity const&
 engine::Scene::spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId)
 {
-	EntityId entityId = this->spawnEntity(name, parentId);
-
-	initialisation(Entity(entityId, engine::Entity::nullId, &_entities));
-	return entityId;
+	engine::Entity const& entity = this->spawnEntity(name, parentId);
+	initialisation(entity);
+	return entity;
 }
 
 bool

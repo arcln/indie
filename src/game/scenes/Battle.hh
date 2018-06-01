@@ -11,6 +11,7 @@
 #include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
+#include "engine/components/AnimationComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/LightComponent.hpp"
 #include "engine/components/ComponentFilter.hpp"
@@ -145,18 +146,14 @@ namespace worms { namespace scene {
 
 			return 0;
 		});
-
 		scene.spawnEntity("light");
 		scene.spawnEntity("camera");
 		scene.spawnEntity("worm");
 		scene.spawnEntity("map");
-<<<<<<< HEAD
 		scene.spawnEntity("animated");
-=======
 
 		if (!WORMS_IS_SERVER) {
 			scene.synchonizeWith("localhost");
 		}
->>>>>>> multiplayer: engine improvements & basic communication
 	};
 }}
