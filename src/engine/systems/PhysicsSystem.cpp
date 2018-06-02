@@ -47,10 +47,11 @@ engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& en
 
             h2.hitboxW2D = GeometryHelper::transformPolygon(t2, h2.hitbox2D);
 
-            Manifold mf = GeometryHelper::polygonCollide(h, h2);
+            Manifold mf = GeometryHelper::polygonCollide(p, h, h2);
             if (mf.isCollide) {
-                p.velocity = Vec2D{0.f, 0.f};
+                std::cout << mf.normal.X << ", " << mf.normal.Y << std::endl;
                 t.position = t.prevPosition;
+                p.velocity = p.velocity - 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
             }
         });
     });
