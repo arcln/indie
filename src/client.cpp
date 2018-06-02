@@ -6,6 +6,7 @@
 */
 
 #include "engine/core/Game.hpp"
+#include "engine/systems/PhysicsSystem.hpp"
 #include "engine/systems/DisplaySystem.hpp"
 
 #include "game/scenes/Battle.hh"
@@ -16,6 +17,9 @@ namespace worms {
 		engine::Game game;
 
 		engine::DisplaySystem display(game);
+        engine::PhysicsSystem physics;
+
+        game.registerSystem("physics", &physics);
 		game.registerSystem("display", &display);
 
 		game.registerSceneModel("battle", worms::scene::battle);
