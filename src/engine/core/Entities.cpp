@@ -19,6 +19,7 @@ engine::Entities::add(engine::Entity&& entity, engine::EntityModel const& model)
 	EntityId parentId = entity.getParentId();
 
 	model(entity);
+    entity.get<TransformComponent>([](auto& t) {});
 
 	if (parentId == engine::Entity::nullId)
 		_roots.emplace(entity.getId(), entity);
