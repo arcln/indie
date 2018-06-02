@@ -7,3 +7,7 @@ cmake-build-debug
 
 .clang_complete
 .idea
+
+bin/darwin/Worms.app
+node_modules
+dist
