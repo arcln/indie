@@ -15,6 +15,7 @@ engine::HitboxComponent::HitboxComponent(std::string const& polygon)
     : hasDebugMode(false)
 {
 	boost::geometry::read_wkt("POLYGON(" + polygon + ")", hitbox2D);
+    boost::geometry::correct(hitbox2D);
 
     std::size_t it = 0;
     Point firstPoint;

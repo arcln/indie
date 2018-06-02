@@ -8,10 +8,10 @@
 
 #include <irrlicht/irrlicht.h>
 #include "engine/components/ComponentConstraint.hpp"
+#include "../helpers/GeometryHelper.hpp"
 
 
 namespace engine {
-	using Vec2D = irr::core::vector2d<float>;
 
 	struct PhysicsComponent {
         using Constraint = ComponentConstraint<PhysicsComponent, false>;

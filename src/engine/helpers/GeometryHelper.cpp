@@ -6,6 +6,7 @@
 */
 #include <cmath>
 #include "../components/HitboxComponent.hpp"
+#include "../components/PhysicsComponent.hpp"
 #include "../components/TransformComponent.hpp"
 #include "GeometryHelper.hpp"
 
@@ -53,7 +54,7 @@ engine::GeometryHelper::segmentsAreCollinear(Segment const& s1, Segment const& s
 }
 
 engine::Manifold
-engine::GeometryHelper::polygonCollide(HitboxComponent const& h1, HitboxComponent const& h2)
+engine::GeometryHelper::polygonCollide(PhysicsComponent const& p1, HitboxComponent const& h1, HitboxComponent const& h2)
 {
     // TODO: optimize by testing first with AABB collision
     std::deque<Polygon> inter;
@@ -67,27 +68,34 @@ engine::GeometryHelper::polygonCollide(HitboxComponent const& h1, HitboxComponen
 
     if (mf.isCollide) {
         auto segments = GeometryHelper::getCombinedSegments(inter[0], h2.hitboxW2D);
-        Point p1(0.f, 0.f);
-        Point p2(0.f, 0.f);
+        Point pt1(0.f, 0.f);
+        Point pt2(0.f, 0.f);
 
         if (segments.empty()) {
-            std::cout << "aie" << std::endl;
             mf.isCollide = false;
             return mf;
         }
 
         for (auto& segment : segments) {
-            p1.x(p1.x() + boost::geometry::get<0, 0>(segment));
-            p1.y(p1.y() + boost::geometry::get<0, 1>(segment));
-            p2.x(p2.x() + boost::geometry::get<1, 0>(segment));
-            p2.y(p2.y() + boost::geometry::get<1, 1>(segment));
+            pt1.x(pt1.x() + boost::geometry::get<0, 0>(segment));
+            pt1.y(pt1.y() + boost::geometry::get<0, 1>(segment));
+            pt2.x(pt2.x() + boost::geometry::get<1, 0>(segment));
+            pt2.y(pt2.y() + boost::geometry::get<1, 1>(segment));
         }
-        p1.x(p1.x() / segments.size());
-        p1.y(p1.y() / segments.size());
-        p2.x(p2.x() / segments.size());
-        p2.y(p2.y() / segments.size());
+        pt1.x(pt1.x() / segments.size());
+        pt1.y(pt1.y() / segments.size());
+        pt2.x(pt2.x() / segments.size());
+        pt2.y(pt2.y() / segments.size());
 
-        // std::cout << p1.x() << "; " << p1.y() << " " << p2.x() << "; " << p2.y() << std::endl;
+        Point lineVec(pt2.x() - pt1.x(), pt2.y() - pt1.y());
+        Point normal1(-lineVec.y(), lineVec.x());
+        Point normal2(lineVec.y(), -lineVec.x());
+
+        float dot = normal1.x() * p1.velocity.X + normal1.y() * p1.velocity.Y;
+
+        mf.normal.X = dot < 0 ? normal1.x() : normal2.x();
+        mf.normal.Y = dot < 0 ? normal1.y() : normal2.y();
+        mf.normal.normalize();
     }
 
     return mf;
@@ -105,5 +113,6 @@ engine::GeometryHelper::transformPolygon(TransformComponent const& transform, Po
         ));
     });
 
+    boost::geometry::correct(out);
     return out;
 }

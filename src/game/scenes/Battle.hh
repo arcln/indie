@@ -73,9 +73,9 @@ namespace worms { namespace scene {
 			entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
 
             auto& transformComponent = entity.set<engine::TransformComponent>();
-            transformComponent.position = {1.3, 0.f, 0.f};
+            transformComponent.position = {0.f, 0.f, 0.f};
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 2, 1 -1)");
             hitboxComponent.hasDebugMode = true;
 
 		});
