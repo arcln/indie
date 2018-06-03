@@ -10,6 +10,7 @@
 #include <engine/utils/TagComparator.hpp>
 #include "engine/utils/EntityComparator.hpp"
 #include "engine/components/TagComponent.hpp"
+#include "engine/components/IrrlichtComponent.hpp"
 #include "engine/core/Entity.hpp"
 #include "engine/core/Entities.hpp"
 
@@ -19,7 +20,8 @@ engine::Entities::add(engine::Entity&& entity, engine::EntityModel const& model)
 	EntityId parentId = entity.getParentId();
 
 	model(entity);
-    entity.get<TransformComponent>([](auto& t) {});
+    if (entity.has<IrrlichtComponent>())
+        entity.get<TransformComponent>([](auto& t) {});
 
 	if (parentId == engine::Entity::nullId)
 		_roots.emplace(entity.getId(), entity);

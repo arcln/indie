@@ -66,9 +66,9 @@ engine::DisplaySystem::update(Entities const& entities)
     });
 
     // debug: display axis
-    _videoDriver->draw3DLine({-100, 0, 0}, {100, 0, 0}, irr::video::SColor(255, 255, 0, 0));
-    _videoDriver->draw3DLine({0, -100, 0}, {0, 100, 0}, irr::video::SColor(255, 0, 255, 0));
-    _videoDriver->draw3DLine({0, 0, -100}, {0, 0, 100}, irr::video::SColor(255, 0, 0, 255));
+    // _videoDriver->draw3DLine({-100, 0, 0}, {100, 0, 0}, irr::video::SColor(255, 255, 0, 0));
+    // _videoDriver->draw3DLine({0, -100, 0}, {0, 100, 0}, irr::video::SColor(255, 0, 255, 0));
+    // _videoDriver->draw3DLine({0, 0, -100}, {0, 0, 100}, irr::video::SColor(255, 0, 0, 255));
 
 	_videoDriver->endScene();
 }

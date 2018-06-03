@@ -17,6 +17,7 @@ namespace engine {
     class TransformComponent;
     class HitboxComponent;
     class PhysicsComponent;
+    class Entity;
 
     using Point = boost::geometry::model::d2::point_xy<float>;
     using Polygon = boost::geometry::model::polygon<Point>;
@@ -32,6 +33,7 @@ namespace engine {
 
     struct Manifold {
         bool isCollide = false;
+        bool hasError = false;
         Vec2D normal{-1.f, -1.f};
     };
 
@@ -40,7 +42,8 @@ namespace engine {
         static std::vector<Segment> getCombinedSegments(Polygon const& p1, Polygon const& p2);
         static bool segmentsAreCollinear(Segment const& s1, Segment const& s2);
         static Polygon transformPolygon(TransformComponent const& transform, Polygon const& polygon);
-        static Manifold polygonCollide(PhysicsComponent const& p1, HitboxComponent const& h1, HitboxComponent const& h2);
+        static Manifold polygonCollide(Entity const& entity, HitboxComponent& h1, HitboxComponent const& h2, int call = 0);
+        static bool simplePolygonCollide(HitboxComponent& h1, HitboxComponent const& h2);
 
         static const float epsilon;
 

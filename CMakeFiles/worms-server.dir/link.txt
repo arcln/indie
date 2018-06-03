@@ -1,0 +1,1 @@
+/usr/bin/c++   -W -Wall -Wextra -Wno-unused-parameter -g -O2 -g -DNDEBUG   --coverage CMakeFiles/worms-server.dir/src/server.cpp.o  -o worms-server  -L/usr/local/lib -rdynamic -lGLU -lGL -lglut -lXmu -lXi -lz libengine.a -lpthread -lIrrlicht -Wl,-rpath,/usr/local/lib 

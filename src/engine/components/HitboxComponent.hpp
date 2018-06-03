@@ -20,6 +20,7 @@ namespace engine {
 		HitboxComponent(std::string const& polygon);
 
         std::vector<Segment3D> segments3D;
+        Vec2D patch;
         Polygon hitbox2D;
 		Polygon hitboxW2D;
         bool hasDebugMode;

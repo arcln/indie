@@ -1,0 +1,8 @@
+/home/arbona/work/tek/indie/CMakeFiles/edit_cache.dir
+/home/arbona/work/tek/indie/CMakeFiles/engine.dir
+/home/arbona/work/tek/indie/CMakeFiles/worms.dir
+/home/arbona/work/tek/indie/CMakeFiles/rebuild_cache.dir
+/home/arbona/work/tek/indie/CMakeFiles/worms-server.dir
+/home/arbona/work/tek/indie/tests/CMakeFiles/rebuild_cache.dir
+/home/arbona/work/tek/indie/tests/CMakeFiles/edit_cache.dir
+/home/arbona/work/tek/indie/tests/CMakeFiles/tests-engine.dir

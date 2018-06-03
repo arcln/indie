@@ -14,18 +14,13 @@
 #include <engine/components/IrrlichtComponent.hpp>
 #include <engine/components/HitboxComponent.hpp>
 #include <engine/components/TransformComponent.hpp>
+#include <engine/components/TagComponent.hpp>
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
 #include "engine/components/TagComponent.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
-#include "engine/components/AnimationComponent.hpp"
-#include "engine/components/CameraComponent.hpp"
-#include "engine/components/LightComponent.hpp"
-#include "engine/components/ComponentFilter.hpp"
-#include "engine/components/IrrlichtComponent.hpp"
-#include "engine/components/AnimationComponent.hpp"
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
@@ -75,7 +70,7 @@ namespace worms { namespace scene {
             auto& transformComponent = entity.set<engine::TransformComponent>();
             transformComponent.position = {0.f, 0.f, 0.f};
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 2, 1 -1)");
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 1 -10)");
             hitboxComponent.hasDebugMode = true;
 
 		});
@@ -94,7 +89,7 @@ namespace worms { namespace scene {
             hitboxComponent.hasDebugMode = true;
 
             scene.registerEvent<engine::Vec2D>("jump player", [&](auto const& jump) {
-                if (physicsComponent.velocity == engine::Vec2D{0.f, 0.f})
+                // if (physicsComponent.velocity == engine::Vec2D{0.f, 0.f})
                     physicsComponent.velocity += jump;
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
 				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
@@ -104,6 +99,8 @@ namespace worms { namespace scene {
 
 			scene.registerEvent<engine::Vec2D>("move player", [&](auto const& offset) {
                 physicsComponent.velocity += offset;
+                // transformComponent.position.X += offset.X;
+                // transformComponent.position.Y += offset.Y;
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
 				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
 				// scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());
@@ -125,13 +122,13 @@ namespace worms { namespace scene {
 			if (keystate.PressedDown) {
 				switch (keystate.Key) {
                     case engine::KeyCode::KEY_KEY_Z:
-						scene.triggerEvent<engine::Vec2D>("jump player", {0.f, 100.f});
+						scene.triggerEvent<engine::Vec2D>("jump player", {-0.f, 100.f});
 						break;
 					case engine::KeyCode::KEY_KEY_Q:
-						scene.triggerEvent<engine::Vec2D>("move player", {-10.f, 0.f});
+						scene.triggerEvent<engine::Vec2D>("move player", {-20.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_D:
-						scene.triggerEvent<engine::Vec2D>("move player", {10.f, 0.f});
+						scene.triggerEvent<engine::Vec2D>("move player", {20.f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_E:
 						scene.triggerSyncedEvent<Vector3f>("spawn worm", Vector3f(0.f, 0.f, 0.f));

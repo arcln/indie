@@ -38,6 +38,9 @@ engine::PhysicsSystem::update(Entities const& entities)
 void
 engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& entity)
 {
+    if (!entity.has<HitboxComponent>())
+        return;
+
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
         h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
 
@@ -47,12 +50,55 @@ engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& en
 
             h2.hitboxW2D = GeometryHelper::transformPolygon(t2, h2.hitbox2D);
 
-            Manifold mf = GeometryHelper::polygonCollide(p, h, h2);
+            Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
             if (mf.isCollide) {
+                if (mf.hasError) {
+                    t.position = t.prevPosition;
+                    p.velocity *= 0.f;
+                    return;
+                }
+                p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
                 std::cout << mf.normal.X << ", " << mf.normal.Y << std::endl;
-                t.position = t.prevPosition;
-                p.velocity = p.velocity - 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
+                p.velocity *= 0.3; // TODO: rebound velocity
+                PhysicsSystem::patchPosition(entity, h2);
+                return;
             }
         });
     });
+}
+
+void
+engine::PhysicsSystem::patchPosition(Entity const& entity, HitboxComponent const& collideWith)
+{
+    auto& t = entity.get<TransformComponent>();
+    auto& h = entity.get<HitboxComponent>();
+    auto& p = entity.get<PhysicsComponent>();
+    auto bound1 = t.prevPosition;
+    auto bound2 = t.position;
+    auto cursor = (bound1 + bound2) / 2;
+
+    t.position = bound1;
+    h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+    if (GeometryHelper::simplePolygonCollide(h, collideWith)) {
+        std::cout << "aieeeee" << std::endl;
+    }
+
+    for (auto it = 0; it < 10; it += 1) {
+        t.position = cursor;
+        h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+        if (GeometryHelper::simplePolygonCollide(h, collideWith)) {
+            bound2 = cursor;
+        } else {
+            bound1 = cursor;
+        }
+        cursor = (bound1 + bound2) / 2;
+    }
+
+    float dist = std::fabs(std::sqrt(std::pow(t.position.X - bound1.X, 2) + std::pow(t.position.Y - bound1.Y, 2)));
+    auto v = p.velocity;
+    v *= engine::PhysicsSystem::tick;
+    // std::cout << dist << std::endl;
+    t.position = bound1;
+    t.position.X += v.X;
+    t.position.Y += v.Y;
 }

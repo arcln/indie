@@ -24,6 +24,7 @@ namespace engine {
 		void update(Entities const& entities) override;
 
         static void applyCollision(Entities const& entities, Entity const& entity);
+        static void patchPosition(Entity const& entity, HitboxComponent const& collideWith);
 
 	private:
 
