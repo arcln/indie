@@ -18,7 +18,6 @@
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
-#include "engine/components/TagComponent.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
 #include "game/events/Vector.hpp"
@@ -65,12 +64,13 @@ namespace worms { namespace scene {
 		// });
 
 		scene.registerEntityModel("block", [&](engine::Entity const& entity) {
-			entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+			entity.set<engine::TagComponent>(std::string("map"));
 
             auto& transformComponent = entity.set<engine::TransformComponent>();
             transformComponent.position = {0.f, 0.f, 0.f};
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 1 -10)");
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
             hitboxComponent.hasDebugMode = true;
 
 		});
@@ -97,8 +97,8 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			scene.registerEvent<engine::Vec2D>("move player", [&](auto const& offset) {
-                physicsComponent.velocity += offset;
+			scene.registerEvent<engine::Vec2D>("move player", [&](auto const& move) {
+                physicsComponent.move = move;
                 // transformComponent.position.X += offset.X;
                 // transformComponent.position.Y += offset.Y;
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
@@ -125,10 +125,10 @@ namespace worms { namespace scene {
 						scene.triggerEvent<engine::Vec2D>("jump player", {-0.f, 100.f});
 						break;
 					case engine::KeyCode::KEY_KEY_Q:
-						scene.triggerEvent<engine::Vec2D>("move player", {-20.f, 0.f});
+						scene.triggerEvent<engine::Vec2D>("move player", {-0.3f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_D:
-						scene.triggerEvent<engine::Vec2D>("move player", {20.f, 0.f});
+						scene.triggerEvent<engine::Vec2D>("move player", {0.3f, 0.f});
 						break;
 					case engine::KeyCode::KEY_KEY_E:
 						scene.triggerSyncedEvent<Vector3f>("spawn worm", Vector3f(0.f, 0.f, 0.f));

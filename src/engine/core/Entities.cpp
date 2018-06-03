@@ -75,7 +75,7 @@ engine::Entities::detach(engine::Entity const& entity)
 }
 
 void
-engine::Entities::withTag(std::string tag, std::function<void (engine::Entity const&)> callback)
+engine::Entities::withTag(std::string tag, std::function<void (engine::Entity const&)> callback) const
 {
 	this->each<engine::TagComponent>([&tag, &callback](engine::Entity const& entity, auto const& tagComponents) {
 		if (std::find_if(std::begin(tagComponents), std::end(tagComponents), engine::TagComparator(tag)) != std::end(tagComponents)) {

@@ -34,7 +34,7 @@ namespace engine {
     struct Manifold {
         bool isCollide = false;
         bool hasError = false;
-        Vec2D normal{-1.f, -1.f};
+        Vec2D normal{0.f, 0.f};
     };
 
 	class GeometryHelper {
@@ -44,6 +44,7 @@ namespace engine {
         static Polygon transformPolygon(TransformComponent const& transform, Polygon const& polygon);
         static Manifold polygonCollide(Entity const& entity, HitboxComponent& h1, HitboxComponent const& h2, int call = 0);
         static bool simplePolygonCollide(HitboxComponent& h1, HitboxComponent const& h2);
+        static Point mergeSegmentsIntoVector(std::vector<Segment> const& segments);
 
         static const float epsilon;
 

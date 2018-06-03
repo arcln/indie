@@ -15,6 +15,7 @@ namespace engine {
 
 	struct PhysicsComponent {
         using Constraint = ComponentConstraint<PhysicsComponent, false>;
-        Vec2D velocity{0., 0.};
+        Vec2D velocity{0.f, 0.f};
+        Vec2D move{0.f, 0.f};
 	};
 }
