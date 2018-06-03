@@ -15,6 +15,9 @@ namespace engine {
 	public:
 		using Constraint = ComponentConstraint<TagComponent, true>;
 
+        TagComponent();
+		TagComponent(std::string const& tag) : value(tag) {};
+
 		std::string value;
 	};
 }

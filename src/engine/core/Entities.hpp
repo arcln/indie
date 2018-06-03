@@ -54,7 +54,7 @@ namespace engine {
 			}
 		}
 
-		void withTag(std::string tag, std::function<void (Entity const&)> callback);
+		void withTag(std::string tag, std::function<void (Entity const&)> callback) const;
 
 	private:
 		Roots _roots;

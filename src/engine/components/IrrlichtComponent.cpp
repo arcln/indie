@@ -11,12 +11,13 @@
 engine::IrrlichtComponent::IrrlichtComponent()
 {}
 
-engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& asset)
+void
+engine::IrrlichtComponent::initialize(Game* game, std::string const& obj)
 {
-	auto mesh = game->meshManager.get(asset);
+    auto mesh = game->meshManager.get(obj);
 
 	if (mesh == nullptr) {
-		throw std::runtime_error("failed to load asset: '" + asset + "'");
+		throw std::runtime_error("failed to load asset: '" + obj + "'");
 	}
 
 	this->node = game->device()->getSceneManager()->addAnimatedMeshSceneNode(mesh);
@@ -27,4 +28,15 @@ engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& asse
 
 	this->node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
 	this->node->setMD2Animation(irr::scene::EMAT_STAND);
+}
+
+engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& obj, std::string const& text)
+{
+    this->initialize(game, obj);
+    this->node->setMaterialTexture(0, game->textureManager.get(text));
+}
+
+engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& obj)
+{
+    this->initialize(game, obj);
 }
