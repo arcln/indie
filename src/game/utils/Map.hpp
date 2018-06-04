@@ -45,7 +45,7 @@ public:
 private:
 	int _blockDisplayed = 0;
 
-	const float _mapPrecision = 0.2f;
+	const float _mapPrecision = .2f;
 
 	const char _grad3[12][3] = {
 		{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
