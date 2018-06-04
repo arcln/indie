@@ -17,6 +17,9 @@
 #include "engine/core/Game.hpp"
 #include "engine/components/ButtonComponent.hpp"
 #include "engine/components/ImageComponent.hpp"
+#include "engine/components/TextComponent.hpp"
+#include "engine/components/EditBoxComponent.hpp"
+#include "engine/components/CheckBoxComponent.hpp"
 #include "engine/menu/classes/parsers/ButtonFactory.hpp"
 #include "engine/menu/classes/parsers/ImageFactory.hpp"
 #include "engine/menu/classes/parsers/ImageHandler.hpp"
@@ -37,6 +40,9 @@ namespace engine { namespace Menu {
 
 			void manageButton();
 			void manageImage();
+			void manageText();
+			void manageEditBox();
+			void manageCheckBox();
 
 			void callEffects();
 

@@ -75,9 +75,11 @@ namespace worms { namespace scene {
 										 nullptr,
 										 id,
 										 nullptr);
+			imageComponent.node->setUseAlphaChannel(true);
 		});
 		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
-			return scene.spawnEntity("button");
+			scene.spawnEntity("button");
+			return 0;
 		});
 
 		scene.spawnEntity("camera");
@@ -88,7 +90,10 @@ namespace worms { namespace scene {
 		parser.checkList();
 
 		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			
+			std::cout << "LOLOL" << std::endl;
+			game.popScene();
+			game.pushScene("mainMenu");
+			game.replaceScene("mainMenu");
 			return 0;
 		});
 	};

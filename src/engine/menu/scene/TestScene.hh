@@ -17,12 +17,15 @@
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/ButtonComponent.hpp"
 #include "engine/components/ImageComponent.hpp"
+#include "engine/components/TextComponent.hpp"
+#include "engine/components/CheckBoxComponent.hpp"
+#include "engine/components/EditBoxComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
 
 
 namespace worms { namespace scene {
 
-	static const auto mainMenu = [](engine::Game& game, engine::Scene& scene) {
+	static const auto testScene = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -77,19 +80,54 @@ namespace worms { namespace scene {
 										 nullptr);
 			imageComponent.node->setUseAlphaChannel(true);
 		});
+
+		scene.registerEntityModel("staticText", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
+										      L"TEST TEXT",
+										      irr::core::rect<irr::s32>(10, 10, 200, 200),
+										      false,
+										      false,
+										      nullptr,
+										      id,
+										      false);
+			staticTextComponent.node->setWordWrap(false);
+		});
+
+		scene.registerEntityModel("editBox", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& editBoxComponent = entity.set<engine::EditBoxComponent>(game.device(),
+										      L"",
+										      irr::core::rect<irr::s32>(10, 10, 200, 200),
+										      false,
+										      nullptr,
+										      id);
+			editBoxComponent.node->setDrawBackground(true);
+		});
+
+		scene.registerEntityModel("checkBox", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& checkBoxComponent = entity.set<engine::CheckBoxComponent>(game.device(),
+											false,
+											irr::core::rect<irr::s32>(10, 10, 200, 200),
+											nullptr,
+											id,
+											L"TEST");
+			checkBoxComponent.node->setChecked(false);
+		});
+
 		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
 			scene.spawnEntity("button");
 			return 0;
 		});
 
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/mainMenu", &scene, &game);
+		engine::Menu::MyScriptParser parser("engine/menu/script/testScene", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();
 
 		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			std::cout << "Nani" << std::endl;
 			return 0;
 		});
 	};

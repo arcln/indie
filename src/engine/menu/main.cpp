@@ -11,17 +11,19 @@
 
 #include "scene/PostMenu.hh"
 #include "scene/MainMenu.hh"
+#include "scene/TestScene.hh"
 
 namespace worms {
 
 	void start() {
-		engine::Game game;
+		engine::Game game(true, "../assets/");
 		engine::DisplaySystem display(game);
 		game.registerSystem("display", &display);
 
 		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
-		game.play("mainMenu");
+		game.registerSceneModel("testScene", worms::scene::testScene);
+		game.play("testScene");
 	}
 }
 
