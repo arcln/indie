@@ -21,7 +21,7 @@ namespace worms {
 
 		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
-		game.play("postMenu");
+		game.play("mainMenu");
 	}
 }
 
