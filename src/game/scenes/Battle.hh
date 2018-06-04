@@ -97,7 +97,7 @@ namespace worms { namespace scene {
 		mapSettings.Size = Wornite::Map::mapSize::SMALL;
 		mapSettings.Density = 1;
 
-		map.spawnMap(&game, &scene, &mapSettings);
+		map.genMap(&game, &scene, &mapSettings);
 
 		/*scene.registerEntityModel("map", [&](engine::Entity const& entity) {
 			auto& IrrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/map.obj");
