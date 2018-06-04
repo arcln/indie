@@ -19,6 +19,9 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/menu/classes/parsers/ImageFactory.cpp		\
 		engine/menu/classes/parsers/ImageHandler.cpp		\
 		engine/components/ButtonComponent.cpp		\
+		engine/components/TextComponent.cpp		\
+		engine/components/EditBoxComponent.cpp		\
+		engine/components/CheckBoxComponent.cpp		\
 		engine/components/ImageComponent.cpp		\
 		engine/components/CameraComponent.cpp		\
 		engine/components/ComponentPoolEvent.cpp		\
@@ -32,6 +35,7 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/exceptions/ComponentPoolException.cpp	\
 		engine/network/Selector.cpp				\
 		engine/network/Socket.cpp				\
+		engine/network/Message.cpp				\
 		engine/systems/ClientNetworkSystem.cpp		\
 		engine/systems/DisplaySystem.cpp			\
 		engine/systems/System.cpp				\
