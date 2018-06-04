@@ -68,6 +68,7 @@ void Wornite::Map::replaceBigChunks(engine::Game *game, engine::Scene *scene, Wo
 	}
 
 	map->mapString = mapBsq.dots;
+	std::cout << map->mapString << std::endl;
 	spawnMap(game, scene, map);
 	delete mapBsq.dots;
 }
