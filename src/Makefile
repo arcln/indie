@@ -17,6 +17,7 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/menu/classes/parsers/MyScriptParser.cpp		\
 		engine/menu/classes/parsers/ButtonFactory.cpp		\
 		engine/menu/classes/parsers/ImageFactory.cpp		\
+		engine/menu/classes/parsers/ImageHandler.cpp		\
 		engine/components/ButtonComponent.cpp		\
 		engine/components/ImageComponent.cpp		\
 		engine/components/CameraComponent.cpp		\

@@ -19,6 +19,7 @@
 #include "engine/components/ImageComponent.hpp"
 #include "engine/menu/classes/parsers/ButtonFactory.hpp"
 #include "engine/menu/classes/parsers/ImageFactory.hpp"
+#include "engine/menu/classes/parsers/ImageHandler.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 
 namespace engine { namespace Menu {
@@ -36,6 +37,10 @@ namespace engine { namespace Menu {
 
 			void manageButton();
 			void manageImage();
+
+			void callEffects();
+
+			void checkList();
 		private:
 			engine::Scene							*_scene;
 			engine::Game							*_game;
@@ -47,5 +52,6 @@ namespace engine { namespace Menu {
 			int								_lineNb;
 			std::vector<std::string>::iterator				_it;
 			bool								_isOver;
+			std::list<engine::Menu::ImageHandler>				_imageList;
 	};
 }}
