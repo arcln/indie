@@ -22,7 +22,7 @@
 
 namespace worms { namespace scene {
 
-	static const auto menu = [](engine::Game& game, engine::Scene& scene) {
+	static const auto mainMenu = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -81,6 +81,14 @@ namespace worms { namespace scene {
 		});
 
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/postMenu", &scene, &game);
+		engine::Menu::MyScriptParser parser("engine/menu/script/mainMenu", &scene, &game);
+
+		parser.parseFile();
+		parser.fillMap();
+
+		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
+
+			return 0;
+		});
 	};
 }}

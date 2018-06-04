@@ -1,7 +1,18 @@
+image:
+	- name: background
+	- image: texture/wormsWpp.jpg
+	- pos: 0, 0
+
+image:
+	- name: logo
+	- image: texture/WormNiteLogo.png
+	- pos: 259, 100
+	- effect: upDown 0.5 20
+
 button:
 	- name: Start
-	- rect: WIDTH / 2 - 100, HEIGHT / 2 - 20, 200, 40
+	- rect: 540, 340, 740, 380
 
 button:
 	- name: Quit
-	- rect: WIDTH / 2 - 100, HEIGHT / 2 + 40, 200, 40
+	- rect: 540, 420, 740, 460

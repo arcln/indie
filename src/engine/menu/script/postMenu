@@ -7,10 +7,10 @@ image:
 	- name: logo
 	- image: texture/WormNiteLogo.png
 	- pos: 259, 100
-	- effects: updown 0.5 20
+	- effect: upDown 0.5 20
 
-button:
+image:
 	- image: texture/PressAnyKey.png
-	- rect: 120, 530, 1160, 630
+	- pos: 196, 530
 	- border: false
-	- effects: fade 10
+	- effect: fadeUnfade 10

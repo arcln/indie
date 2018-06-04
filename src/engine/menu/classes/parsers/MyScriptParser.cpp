@@ -15,8 +15,6 @@ engine::Menu::MyScriptParser::MyScriptParser(std::string path, engine::Scene *sc
 	_game = game;
 	_scene = scene;
 	_isOver = false;
-	parseFile();
-	fillMap();
 }
 
 void engine::Menu::MyScriptParser::parseFile()
@@ -71,11 +69,12 @@ void engine::Menu::MyScriptParser::fillMap()
 		if (checkStart(line, "\t") == 0) {
 			type = line.substr(0, line.find(":"));
 			if (checkElement(type, _lineNb) == 1) {
-				std::cout << type << " : OK." << std::endl;
+				std::cout << "\n" << type << " : OK." << std::endl;
 				createElement(type);
 			}
 		}
 	}
+	std::cout << "\n" << _imageList.size() << "\n" << std::endl;
 }
 
 void engine::Menu::MyScriptParser::createElement(std::string type)
@@ -131,6 +130,7 @@ void engine::Menu::MyScriptParser::manageImage()
 
 		_it += 1;
 		engine::Menu::ImageFactory factory(imageComponent.node, _game);
+		engine::Menu::ImageHandler handler(imageComponent.node, _game);
 		for (; _it != _storage.end() ; ++_it) {
 			line = *_it;
 			_lineNb += 1;
@@ -139,13 +139,35 @@ void engine::Menu::MyScriptParser::manageImage()
 			command = line.substr(line.find('-', 1) + 2, line.find(':', 1) - (line.find('-', 1) + 2));
 			param = line.substr(line.find(':', 1) + 2, line.size() - (line.find(':') + 2));
 			std::cout << "Command : [" << command << "]. | Param : [" << param << "]." << std::endl;
+			if (command == "name" || command == "effect") {
+				handler.applyEffects(command, param);
+				continue;
+			}
 			for (std::pair<std::string, std::function<void(std::string)>> commandHandl : factory._handledFunc ) {
-				if (commandHandl.first == command) {
+				if (commandHandl.first == command)
 					commandHandl.second(param);
-				}
 			}
 		}
 		if (_it == _storage.end())
 			_isOver = true;
+		_imageList.push_back(handler);
 	});
+}
+
+void engine::Menu::MyScriptParser::checkList()
+{
+	std::cout << _imageList.size() << std::endl;
+}
+
+void engine::Menu::MyScriptParser::callEffects()
+{
+	std::cout << _imageList.size() << std::endl;
+	if (_imageList.empty()) {
+		std::cout << "Nique" << std::endl;
+		return;
+	}
+	std::list<engine::Menu::ImageHandler>::iterator iterator;
+	for (iterator = _imageList.begin(); iterator != _imageList.end(); ++iterator) {
+		iterator->runEffects();
+	}
 }

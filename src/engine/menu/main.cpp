@@ -9,7 +9,8 @@
 #include "engine/core/Scene.hpp"
 #include "engine/systems/DisplaySystem.hpp"
 
-#include "scene/Menu.hh"
+#include "scene/PostMenu.hh"
+#include "scene/MainMenu.hh"
 
 namespace worms {
 
@@ -18,8 +19,9 @@ namespace worms {
 		engine::DisplaySystem display(game);
 		game.registerSystem("display", &display);
 
-		game.registerSceneModel("menu", worms::scene::menu);
-		game.play("menu");
+		game.registerSceneModel("postMenu", worms::scene::postMenu);
+		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
+		game.play("postMenu");
 	}
 }
 
