@@ -97,18 +97,29 @@ namespace worms { namespace scene {
             hitboxComponent.hasDebugMode = true;
 			hitboxComponent.rebound = 0.1f;
 
+<<<<<<< HEAD
             scene.registerEvent<engine::Vec2D>("jump player", [entity, &scene, &physicsComponent](auto const& jump) {
                 if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
                     physicsComponent.velocity += jump;
                 }
+=======
+			// @Synced -> std::string
+			scene.registerEvent<std::string>("jump player", [&](std::string const& jump) {
+                // if (physicsComponent.velocity == engine::Vec2D{0.f, 0.f})
+
+				// Where the magic happens
+				physicsComponent.velocity += (Vector2f) jump;
+
+>>>>>>> network: working network events
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
 				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
 				// scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());
 				return 0;
 			});
 
-			scene.registerEvent<engine::Vec2D>("move player", [&](auto const& move) {
-                physicsComponent.move = move;
+			// @Synced -> std::string
+			scene.registerEvent<std::string>("move player", [&](std::string const& move) {
+                physicsComponent.move = Vector2f(move);
                 // transformComponent.position.X += offset.X;
                 // transformComponent.position.Y += offset.Y;
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
@@ -147,6 +158,11 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
         scene.spawnEntity("block");
         scene.spawnEntity("worm");
-		// scene.spawnEntity("map");
+//		scene.spawnEntity("map");
+//		scene.spawnEntity("animated");
+
+		 if (!WORMS_IS_SERVER) {
+		 	scene.synchronizeWith("localhost", game);
+		 }
 	};
 }}

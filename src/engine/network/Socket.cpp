@@ -9,6 +9,7 @@
 #include "Socket.hpp"
 
 engine::network::Socket::Socket() = default;
+std::size_t engine::network::ClientSocket::_NextId = 0;
 
 engine::network::Socket const&
 engine::network::Socket::connect(std::string const& hostname) const
@@ -95,4 +96,9 @@ engine::network::Socket::destroy()
 engine::network::ServerSocket::ServerSocket()
 {
 	this->create().bind().listen();
+}
+
+engine::network::ClientSocket::ClientSocket()
+{
+	this->id = ++_NextId;
 }

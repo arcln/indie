@@ -29,12 +29,14 @@ namespace engine { namespace network {
 		}
 
 		std::thread run();
+		std::vector<ClientSocket> const& clients() const;
 
 	private:
 		ServerSocket _serverSocket;
 		std::thread _masterThread;
 		std::mutex _clientsMutex;
-		std::vector<std::thread> _clients;
 		DataHandlers _handlers;
+		std::vector<ClientSocket> _clientSockets;
+		std::vector<std::thread> _clients;
 	};
 }}

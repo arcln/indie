@@ -7,12 +7,32 @@
 
 #pragma once
 
+#include <irrlicht/irrlicht.h>
 #include "EventPayload.hpp"
 
 namespace worms {
 
 	template <typename DataType>
 	struct Vector2 : public EventPayload {
+		explicit Vector2(DataType x = 0, DataType y = 0) : x(x), y(y) {}
+
+		operator irr::core::vector2d<DataType>() const {
+			return irr::core::vector2d<DataType> {x, y};
+		}
+
+		Vector2(std::string const& data) {
+			this->unserialize(data);
+		}
+
+		std::string serialize() const override {
+			return std::to_string(this->x) + ";" + std::to_string(this->y);
+		}
+
+		void unserialize(std::string const& data) override {
+			this->x = std::stof(data);
+			this->y = std::stof(data.substr(data.find(';') + 1));
+		}
+
 		DataType x;
 		DataType y;
 	};

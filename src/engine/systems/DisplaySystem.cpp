@@ -48,24 +48,24 @@ engine::DisplaySystem::update(Scene& scene)
 	_sceneManager->drawAll();
 	_guiEnv->drawAll();
 
-    irr::video::SMaterial mtl;
-    mtl.Lighting = false;
-    _videoDriver->setMaterial(mtl);
-    _videoDriver->setTransform(irr::video::ETS_WORLD, irr::core::matrix4());
-
-    entities.each<TransformComponent, IrrlichtComponent, HitboxComponent>([this](auto const& e, auto& t, auto& i, auto& h) {
-        if (!h.hasDebugMode) {
-            return;
-        }
-        for (auto& segment : h.segments3D) {
-            auto wSegment = engine::Segment3D{
-                (segment.p1* t.scale + t.position),
-                (segment.p2 * t.scale + t.position)
-            };
-
-            _videoDriver->draw3DLine(wSegment.p1, wSegment.p2, irr::video::SColor(255, 255, 0, 0));
-        }
-    });
+//    irr::video::SMaterial mtl;
+//    mtl.Lighting = false;
+//    _videoDriver->setMaterial(mtl);
+//    _videoDriver->setTransform(irr::video::ETS_WORLD, irr::core::matrix4());
+//
+//    entities.each<TransformComponent, IrrlichtComponent, HitboxComponent>([this](auto const& e, auto& t, auto& i, auto& h) {
+//        if (!h.hasDebugMode) {
+//            return;
+//        }
+//        for (auto& segment : h.segments3D) {
+//            auto wSegment = engine::Segment3D{
+//                (segment.p1* t.scale + t.position),
+//                (segment.p2 * t.scale + t.position)
+//            };
+//
+//            _videoDriver->draw3DLine(wSegment.p1, wSegment.p2, irr::video::SColor(255, 255, 0, 0));
+//        }
+//    });
 
     // debug: display axis
     _videoDriver->draw3DLine({-100, 0, 0}, {100, 0, 0}, irr::video::SColor(255, 255, 0, 0));

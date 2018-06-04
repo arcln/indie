@@ -29,7 +29,7 @@ namespace engine { namespace network {
 			auto dataCpy = data;
 			dataCpy.size = sizeof(MessageType);
 			if (::send(_socket, reinterpret_cast<char *>(&dataCpy), sizeof(MessageType), 0) < 0) {
-				throw std::runtime_error("failed to write into socket.");
+				throw std::runtime_error(std::string("failed to write into socket (") + strerror(errno) + ")");
 			}
 		}
 
@@ -39,7 +39,7 @@ namespace engine { namespace network {
 			long recvSize = 0;
 
 			if ((recvSize = ::recv(_socket, buffer, NET_MAX_MSG_SIZE, 0)) < 0) {
-				throw std::runtime_error("failed to read into socket");
+				throw std::runtime_error(std::string("failed to read into socket (") + strerror(errno) + ")");
 			} else if (recvSize == 0) {
 				throw std::runtime_error("connection was closed by remote host");
 			}
@@ -52,7 +52,7 @@ namespace engine { namespace network {
 			return *data;
 		}
 
-	private:
+//	private:
 		SOCKET _socket;
 	};
 
@@ -61,5 +61,13 @@ namespace engine { namespace network {
 		ServerSocket();
 	};
 
-	class ClientSocket : public Socket {};
+	class ClientSocket : public Socket {
+	public:
+		ClientSocket();
+
+		std::size_t id;
+
+	private:
+		static std::size_t _NextId;
+	};
 }}
