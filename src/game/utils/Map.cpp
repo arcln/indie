@@ -6,59 +6,145 @@
 */
 
 #include "Map.hpp"
+#include "Bsq.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <ctime>
-
-
-
+#include <algorithm>
 
 void
-Wornite::Map::spawnMap(engine::Game *game, engine::Scene *scene, Wornite::Map::Settings *mapSettings)
+Wornite::Map::genMap(engine::Game *game, engine::Scene *scene, Wornite::Map::Settings *settings)
 {
 	float perlinScale;
-	int mapLength;
-	int mapHeight;
+	mapSettings map;
 
 	srand (static_cast <unsigned> (time(0)));
 	perlinScale = rand() % 1000;
-	switch (mapSettings->Size) {
-		case mapSize::SMALL : mapLength = 60;
-			mapHeight = 30;
+	switch (settings->Size) {
+		case mapSize::SMALL : map.mapLength = 15;
+			map.mapHeight = 15;
 			break;
-		case mapSize::MEDIUM : mapLength = 80;
-			mapHeight = 40;
+		case mapSize::MEDIUM : map.mapLength = 80;
+			map.mapHeight = 40;
 			break;
-		case mapSize::LARGE : mapLength = 100;
-			mapHeight = 45;
+		case mapSize::LARGE : map.mapLength = 100;
+			map.mapHeight = 45;
 			break;
 	}
-	for (float y = -mapLength; y < mapLength; y += _mapPrecision) {
-		for (float x = -(mapHeight / 2.); x < mapHeight / 2.; x += _mapPrecision) {
+	for (float y = -(map.mapHeight / 2.f); y < map.mapHeight / 2.f; y += _mapPrecision) {
+		for (float x = -(map.mapLength / 2.f); x < map.mapLength / 2.f; x += _mapPrecision) {
 			irr::core::vector3df position;
 			float perlin;
-
-			position.X = y;
-			position.Y = x;
-			position.Z = 0;
-			perlin = getPerlin((position.X + perlinScale) / 100.f * 10.f,
-					   (position.Y + perlinScale) / 100.f * 10.F,
-					   position.Z);
+			perlin = getPerlin((x + perlinScale) / 100.f * 10.f,
+					   (y + perlinScale) / 100.f * 10.F,
+					   0);
 			if (perlin < -0.1f)
-				continue;
-			scene->registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
-				auto &IrrlichtComponent = entity.set<engine::IrrlichtComponent>(game,
-												"obj/pieceMap.obj");
-				IrrlichtComponent.node->setMaterialTexture(0, game->textureManager.get(
-					"texture/map.png"));
+				map.mapString.push_back('o');
+			else
+				map.mapString.push_back('.');
+		}
+		map.mapString.push_back('\n');
+	}
+	std::cout << map.mapString << std::endl;
+//	map.mapString = "ooooooooooooooo\nooooooooooooooo\nooooooooooooooo\noooooo.....oooo\noooooo.....oooo\noooooo.....oooo\noooooo.....oooo\noooooo.....oooo\nooooooooooooooo\nooooooooooooooo\nooo.........ooo\nooooooooooooooo\nooooooooooooooo\nooo.........ooo\nooooooooooooooo\n";
+	replaceBigChunks(game, scene, &map);
+	printf("block displayed: %d\n", _blockDisplayed);
+}
 
-				auto &TransformComponent = entity.set<engine::TransformComponent>();
-				TransformComponent.position = position;
-				TransformComponent.scale = {0.2f, 0.2f, 1.f};
-			});
-			scene->spawnEntity("pieceMap");
+void Wornite::Map::replaceBigChunks(engine::Game *game, engine::Scene *scene, Wornite::Map::mapSettings *map)
+{
+	Bsq bsq;
+	Bsq::t_response res = {{0,0}, 99};
+	Bsq::t_map mapBsq;
+
+	mapBsq.dots = new char[map->mapString.size() + 1];
+	map->mapString.push_back('\0');
+	std::copy(map->mapString.begin(), map->mapString.end(), mapBsq.dots);
+	mapBsq.col = (unsigned int) std::count(map->mapString.begin(), map->mapString.end(), '\n');
+	mapBsq.row = (unsigned int) map->mapString.find_first_of('\n', 0);
+	printf("map col : %d map row : %d\n", mapBsq.col, mapBsq.row);
+	while (res.size > 1) {
+		bsq.find_bsq(&mapBsq, &res);
+		spawnBigChunk(game, scene, &mapBsq, &res);
+//		printf("%s\n\n", mapBsq.dots);
+	}
+	map->mapString = mapBsq.dots;
+	spawnMap(game, scene, map);
+}
+
+void
+Wornite::Map::spawnBigChunk(engine::Game *game, engine::Scene *scene,
+			    Wornite::Bsq::t_map *map, Wornite::Bsq::t_response *res)
+{
+	irr::core::vector3df position;
+	irr::core::vector3df scale;
+
+	position.X = (res->pos.x * _mapPrecision) + ((res->size * _mapPrecision) / 2.f) - (map->row * _mapPrecision / 2.f);
+	position.Y = -((res->pos.y * _mapPrecision) + ((res->size * _mapPrecision) / 2.f) - (map->col * _mapPrecision / 2.f));
+	position.Z = 0.f;
+	printf("x: %f y: %f\n", position.X, position.Y);
+	scale.X = (res->size - 1) * _mapPrecision;
+	scale.Y = (res->size - 1) * _mapPrecision;
+	scale.Z = 1.f;
+	spawnPieceMap(game, scene, position, scale);
+	removeBigChunk(map, res);
+}
+
+void
+Wornite::Map::removeBigChunk(Wornite::Bsq::t_map *map, Wornite::Bsq::t_response *res)
+{
+	irr::core::vector3di cur;
+
+	printf("block to remove : begin x: %d y: %d with size %d\n", res->pos.x, res->pos.y, res->size);
+	cur.Y = res->pos.y + res->size - 1;
+	while (cur.Y != res->pos.y - 1)
+	{
+		cur.X = res->pos.x + res->size - 1;
+		while (cur.X != res->pos.x - 1)
+		{
+//			printf("map[%d, %d] : %c\n", cur.X, cur.Y ,map->dots[(cur.X + (cur.Y * map->col))]);
+			map->dots[(cur.X + (cur.Y * (map->row + 1)))] = 'o';
+			cur.X -= 1;
+		}
+		cur.Y -= 1;
+	}
+}
+
+void
+Wornite::Map::spawnMap(engine::Game *game, engine::Scene *scene, Wornite::Map::mapSettings *map)
+{
+	std::cout << map->mapString << std::endl;
+	for (float y = -(map->mapHeight / 2.f); y < map->mapHeight / 2.f; y += _mapPrecision) {
+		for (float x = -(map->mapLength / 2.f); x < map->mapLength / 2.f; x += _mapPrecision) {
+			irr::core::vector3df position = {x, y, 0};
+			irr::core::vector3df scale = {_mapPrecision, _mapPrecision, 0};
+
+			if (map->mapString[(position.Y * map->mapLength) + position.X] == '.') {
+				printf("dot %f %f\n", position.X, position.Y);
+				position.Y = -position.Y;
+				spawnPieceMap(game, scene, position, scale);
+			}
 		}
 	}
+}
+
+void
+Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene,
+			    irr::core::vector3df position,
+			    irr::core::vector3df scale)
+{
+	scene->registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
+		auto &IrrlichtComponent = entity.set<engine::IrrlichtComponent>(game,
+										"obj/pieceMap.obj");
+		IrrlichtComponent.node->setMaterialTexture(0, game->textureManager.get(
+			"texture/map.png"));
+
+		auto &TransformComponent = entity.set<engine::TransformComponent>();
+		TransformComponent.position = position;
+		TransformComponent.scale = scale;
+	});
+	scene->spawnEntity("pieceMap");
+	_blockDisplayed += 1;
 }
 
 float __attribute__ ((pure))
@@ -113,7 +199,7 @@ Wornite::Map::getPerlin(float x, float y, float z)
 	irr::core::vector3df 	g;
 	irr::core::vector3df 	r;
 	irr::core::vector3df 	f;
-	unsigned int		gi[8];
+	unsigned int			gi[8];
 	int			index;
 
 	g.X = std::floor(x);

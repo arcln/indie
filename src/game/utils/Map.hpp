@@ -12,6 +12,7 @@
 #include "engine/core/Entity.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 #include "engine/components/TransformComponent.hpp"
+#include "Bsq.hpp"
 
 namespace Wornite {
 
@@ -31,10 +32,20 @@ public:
 		int 	Size;
 		int 	Density;
 	};
-	void spawnMap(engine::Game* game, engine::Scene* scene, Settings* map);
+
+	typedef struct 		s_mapSettings
+	{
+		std::string 	mapString;
+		int 		mapLength;
+		int 		mapHeight;
+	}			mapSettings;
+
+	void genMap(engine::Game* game, engine::Scene* scene, Settings* mapSettings);
 
 private:
-	const float _mapPrecision = 0.25f;
+	int _blockDisplayed = 0;
+
+	const float _mapPrecision = 0.2f;
 
 	const char _grad3[12][3] = {
 		{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
@@ -83,6 +94,12 @@ private:
 	float __attribute__ ((const))	fade(float n);
 	float __attribute__((pure))	getPerlin2(unsigned int gi[8], irr::core::vector3df r, irr::core::vector3df f);
 	float __attribute__((pure)) getPerlin(float x, float y, float z);
+	void replaceBigChunks(engine::Game* game, engine::Scene* scene, Wornite::Map::mapSettings *map);
+	void spawnBigChunk(engine::Game* game, engine::Scene* scene, Bsq::t_map *map, Bsq::t_response *res);
+	void spawnMap(engine::Game* game, engine::Scene* scene, Wornite::Map::mapSettings *map);
+	void spawnPieceMap(engine::Game* game, engine::Scene* scene,
+			   irr::core::vector3df position, irr::core::vector3df scale);
+	void removeBigChunk(Bsq::t_map *map, Bsq::t_response *res);
 };
 
 }
