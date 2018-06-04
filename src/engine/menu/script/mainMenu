@@ -10,9 +10,19 @@ image:
 	- effect: upDown 0.5 20
 
 button:
-	- name: Start
-	- rect: 540, 340, 740, 380
+	- image: texture/button_play.png
+	- imagePressed: texture/button_play(1).png
+	- rect: 525, 330, 755, 390
+	- border: false
 
 button:
-	- name: Quit
-	- rect: 540, 420, 740, 460
+	- image: texture/button_options.png
+	- imagePressed: texture/button_options(1).png
+	- rect: 525, 410, 755, 470
+	- border: false
+
+button:
+	- image: texture/button_quit.png
+	- imagePressed: texture/button_quit(1).png
+	- rect: 525, 490, 755, 550
+	- border: false
