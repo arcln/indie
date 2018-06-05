@@ -41,10 +41,11 @@ namespace engine {
 	public:
         static std::vector<Segment> getCombinedSegments(Polygon const& p1, Polygon const& p2);
         static bool segmentsAreCollinear(Segment const& s1, Segment const& s2);
-        static Polygon transformPolygon(TransformComponent const& transform, Polygon const& polygon);
+        static void transformHitbox(HitboxComponent& hitbox, TransformComponent const& transform);
         static Manifold polygonCollide(Entity const& entity, HitboxComponent& h1, HitboxComponent const& h2, int call = 0);
         static bool simplePolygonCollide(HitboxComponent& h1, HitboxComponent const& h2);
         static Point mergeSegmentsIntoVector(std::vector<Segment> const& segments);
+        static bool AABBCollide(HitboxComponent const& h1, HitboxComponent const& h2);
 
         static const float epsilon;
 

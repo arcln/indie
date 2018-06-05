@@ -5,6 +5,7 @@
 ** Thomas Arbona
 */
 #include <deque>
+#include <chrono>
 #include <algorithm>
 #include <boost/geometry.hpp>
 #include "engine/core/Game.hpp"
@@ -14,20 +15,23 @@
 #include "../components/PhysicsComponent.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
-const engine::Vec2D engine::PhysicsSystem::gravity{0., -480.};
-const float engine::PhysicsSystem::tick = 1./60.; // TODO: compute tick
+const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
 
 // TODO: handle jump properly
 void
 engine::PhysicsSystem::update(Entities const& entities)
 {
+    auto now = std::chrono::system_clock::now();
+    _tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
+    _prevUpdate = now;
+
     entities.each<PhysicsComponent, TransformComponent>([&](auto const& e, auto& p, auto& t) {
         engine::Vec2D pos2D(t.position.X, t.position.Y);
         engine::Vec2D newPos2D;
 
         // apply gravity
-        p.velocity += engine::PhysicsSystem::gravity * engine::PhysicsSystem::tick;
-        newPos2D = pos2D + p.velocity * engine::PhysicsSystem::tick;
+        p.velocity += engine::PhysicsSystem::gravity * _tick;
+        newPos2D = pos2D + p.velocity * _tick;
         t.prevPosition = t.position;
         t.position.X = newPos2D.X;
         t.position.Y = newPos2D.Y;
@@ -44,20 +48,20 @@ engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& en
         return;
 
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
-        h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+        GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId())
                 return;
 
-            h2.hitboxW2D = GeometryHelper::transformPolygon(t2, h2.hitbox2D);
+            GeometryHelper::transformHitbox(h2, t2);
 
             Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
             if (mf.isCollide) {
                 if (mf.hasError)
                     return;
                 p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
-                p.velocity *= 0.3; // TODO: rebound velocity
+                p.velocity *= h.rebound * h2.rebound; // TODO: rebound velocity
                 PhysicsSystem::patchCollision(entity, h2);
             }
         });
@@ -76,7 +80,7 @@ engine::PhysicsSystem::patchCollision(Entity const& entity, HitboxComponent cons
 
     for (auto it = 0; it < 10; it += 1) {
         t.position = cursor;
-        h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+        GeometryHelper::transformHitbox(h, t);
         if (GeometryHelper::simplePolygonCollide(h, collideWith)) {
             bound2 = cursor;
         } else {
@@ -106,7 +110,7 @@ engine::PhysicsSystem::applyDeplacement(Entities const& entities, Entity const& 
         t.prevPosition = t.position;
         t.position.X += p.move.X;
         t.position.Y += p.move.Y;
-        h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+        GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId())
@@ -162,7 +166,7 @@ engine::PhysicsSystem::patchDeplacement(Entities const& entities, Entity const& 
         t.prevPosition = t.position;
         t.position = origin;
         t.position.Y -= 0.01;
-        h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+        GeometryHelper::transformHitbox(h, t);
         t.position = t.prevPosition;
         if (!GeometryHelper::simplePolygonCollide(h, hMap))
             return;
@@ -172,7 +176,7 @@ engine::PhysicsSystem::patchDeplacement(Entities const& entities, Entity const& 
         for (auto it = 0; it < 50; it += 1) {
             t.prevPosition = t.position;
             t.position.Y -= 0.02;
-            h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+            GeometryHelper::transformHitbox(h, t);
             if (GeometryHelper::simplePolygonCollide(h, hMap)) {
                 isOk = true;
                 t.position = t.prevPosition;
@@ -192,7 +196,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities const& entities, Entity co
     bool isCollide = false;
 
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
-        h.hitboxW2D = GeometryHelper::transformPolygon(t, h.hitbox2D);
+        GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId())
@@ -204,4 +208,30 @@ engine::PhysicsSystem::simpleCollideEntities(Entities const& entities, Entity co
     });
 
     return isCollide;
+}
+
+bool
+engine::PhysicsSystem::isGrounded(Entities const& entities, Entity const& entity)
+{
+    bool unique = true;
+    bool isGrounded = false;
+
+    entities.withTag("map", [&](Entity const& entMap) {
+        if (!unique)
+            return;
+        unique = false;
+
+        auto& t = entity.get<TransformComponent>();
+        auto& h = entity.get<HitboxComponent>();
+        auto& hMap = entMap.get<HitboxComponent>();
+
+        t.prevPosition = t.position;
+        t.position.Y -= 0.01;
+        GeometryHelper::transformHitbox(h, t);
+        t.position = t.prevPosition;
+        std::cout << "ok" << std::endl;
+        isGrounded = GeometryHelper::simplePolygonCollide(h, hMap);
+    });
+
+    return isGrounded;
 }

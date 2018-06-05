@@ -54,15 +54,25 @@ engine::GeometryHelper::simplePolygonCollide(HitboxComponent& h1, HitboxComponen
 {
     std::deque<Polygon> inter;
 
-    boost::geometry::intersection(h1.hitboxW2D, h2.hitboxW2D, inter);
+    if (!GeometryHelper::AABBCollide(h1, h2))
+        return false;
 
+    boost::geometry::intersection(h1.hitboxW2D, h2.hitboxW2D, inter);
     return !inter.empty();
+}
+
+bool
+engine::GeometryHelper::AABBCollide(HitboxComponent const& h1, HitboxComponent const& h2)
+{
+    return !((h2.AABBWPosition.X >= h1.AABBWPosition.X + h1.size.X)
+        || (h2.AABBWPosition.X + h2.size.X <= h1.AABBWPosition.X)
+        || (h2.AABBWPosition.Y <= h1.AABBWPosition.Y - h1.size.Y)
+        || (h2.AABBWPosition.Y - h2.size.Y >= h1.AABBWPosition.Y));
 }
 
 engine::Manifold
 engine::GeometryHelper::polygonCollide(Entity const& entity, HitboxComponent& h1, HitboxComponent const& h2, int call)
 {
-    // TODO: optimize by testing first with AABB collision
     std::deque<Polygon> inter;
     Manifold mf;
 
@@ -71,6 +81,9 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, HitboxComponent& h1
         mf.hasError = true;
         return mf;
     }
+
+    if (call == 0 && !GeometryHelper::AABBCollide(h1, h2))
+        return mf;
 
     boost::geometry::intersection(h1.hitboxW2D, h2.hitboxW2D, inter);
     mf.isCollide = !inter.empty();
@@ -87,7 +100,7 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, HitboxComponent& h1
 
             t1.position.X += h1.patch.X;
             t1.position.Y += h1.patch.Y;
-            h1.hitboxW2D = GeometryHelper::transformPolygon(t1, h1.hitbox2D);
+            GeometryHelper::transformHitbox(h1, t1);
             return GeometryHelper::polygonCollide(entity, h1, h2, call + 1);
         }
 
@@ -126,12 +139,12 @@ engine::GeometryHelper::mergeSegmentsIntoVector(std::vector<engine::Segment> con
     return lineVec;
 }
 
-engine::Polygon
-engine::GeometryHelper::transformPolygon(TransformComponent const& transform, Polygon const& polygon)
+void
+engine::GeometryHelper::transformHitbox(HitboxComponent& hitbox, TransformComponent const& transform)
 {
     Polygon out;
 
-    boost::geometry::for_each_point(polygon, [&](Point const& p) -> void {
+    boost::geometry::for_each_point(hitbox.hitbox2D, [&](Point const& p) -> void {
         out.outer().push_back(Point(
             boost::geometry::get<0>(p) * transform.scale.X + transform.position.X,
             boost::geometry::get<1>(p) * transform.scale.Y + transform.position.Y
@@ -139,5 +152,7 @@ engine::GeometryHelper::transformPolygon(TransformComponent const& transform, Po
     });
 
     boost::geometry::correct(out);
-    return out;
+    hitbox.hitboxW2D = out;
+    hitbox.AABBWPosition.X = (hitbox.AABBPosition.X * transform.scale.X) + transform.position.X;
+    hitbox.AABBWPosition.Y = (hitbox.AABBPosition.Y * transform.scale.Y) + transform.position.Y;
 }

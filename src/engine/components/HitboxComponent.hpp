@@ -20,7 +20,11 @@ namespace engine {
 		HitboxComponent(std::string const& polygon);
 
         std::vector<Segment3D> segments3D;
+        float rebound = 0.3;
         Vec2D patch;
+        Vec2D size;
+        Vec2D AABBPosition;
+        Vec2D AABBWPosition;
         Polygon hitbox2D;
 		Polygon hitboxW2D;
         bool hasDebugMode;
