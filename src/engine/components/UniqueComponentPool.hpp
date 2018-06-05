@@ -66,8 +66,9 @@ namespace engine {
 		{
 			typename Container::iterator const& componentIt = _components.find(entityId);
 
-			if (componentIt == std::end(_components))
-				throw internal::ComponentPoolException("component not found");
+			if (componentIt == std::end(_components)) {
+                throw internal::ComponentPoolException("component not found");
+            }
 			return componentIt->second;
 
 		}

@@ -90,10 +90,10 @@ namespace worms { namespace scene {
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
             hitboxComponent.hasDebugMode = true;
 
-            scene.registerEvent<engine::Vec2D>("jump player", [&](auto const& jump) {
-                // if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
+            scene.registerEvent<engine::Vec2D>("jump player", [entity, &scene, &physicsComponent](auto const& jump) {
+                if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
                     physicsComponent.velocity += jump;
-                // }
+                }
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
 				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
 				// scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());

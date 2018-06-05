@@ -226,10 +226,9 @@ engine::PhysicsSystem::isGrounded(Entities const& entities, Entity const& entity
         auto& hMap = entMap.get<HitboxComponent>();
 
         t.prevPosition = t.position;
-        t.position.Y -= 0.01;
+        t.position.Y -= 0.1;
         GeometryHelper::transformHitbox(h, t);
         t.position = t.prevPosition;
-        std::cout << "ok" << std::endl;
         isGrounded = GeometryHelper::simplePolygonCollide(h, hMap);
     });
 
