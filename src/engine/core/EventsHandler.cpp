@@ -8,7 +8,9 @@
 #include "EventsHandler.hpp"
 
 engine::EventsHandler::EventsHandler(Events& keyEvents) : _keyEvents(keyEvents)
-{}
+{
+	_registerEventTarget(Scene());
+}
 
 engine::KeyState const&
 engine::EventsHandler::getKeyState(KeyCode keyCode)

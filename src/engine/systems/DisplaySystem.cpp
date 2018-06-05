@@ -29,6 +29,8 @@ engine::DisplaySystem::update(Scene& scene)
 	_game.device()->run();
 	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
+	std::cout << _game.eventsHandler.getKeyState(engine::KeyCode::KEY_SPACE).PressedDown << std::endl;
+
 	entities.each<TransformComponent, IrrlichtComponent>([](auto const& e, auto& t, auto& i) {
 		i.node->setPosition(t.position);
 		i.node->setRotation(t.rotation);
