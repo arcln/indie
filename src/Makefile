@@ -17,6 +17,8 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/menu/classes/parsers/MyScriptParser.cpp		\
 		engine/menu/classes/parsers/ButtonFactory.cpp		\
 		engine/menu/classes/parsers/ImageFactory.cpp		\
+		engine/menu/classes/parsers/TextFactory.cpp		\
+		engine/menu/classes/parsers/EditBoxFactory.cpp		\
 		engine/menu/classes/parsers/ImageHandler.cpp		\
 		engine/components/ButtonComponent.cpp		\
 		engine/components/TextComponent.cpp		\
@@ -38,7 +40,6 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/network/Message.cpp				\
 		engine/systems/ClientNetworkSystem.cpp		\
 		engine/systems/DisplaySystem.cpp			\
-		engine/systems/System.cpp				\
 		engine/utils/EntityComparator.cpp			\
 		engine/utils/TagComparator.cpp
 

@@ -22,6 +22,8 @@
 #include "engine/components/CheckBoxComponent.hpp"
 #include "engine/menu/classes/parsers/ButtonFactory.hpp"
 #include "engine/menu/classes/parsers/ImageFactory.hpp"
+#include "engine/menu/classes/parsers/TextFactory.hpp"
+#include "engine/menu/classes/parsers/EditBoxFactory.hpp"
 #include "engine/menu/classes/parsers/ImageHandler.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 
