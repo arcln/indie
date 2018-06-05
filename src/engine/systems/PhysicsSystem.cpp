@@ -35,8 +35,8 @@ engine::PhysicsSystem::update(Scene& scene)
         t.position.X = newPos2D.X;
         t.position.Y = newPos2D.Y;
 
-        PhysicsSystem::applyCollision(entities, e);
-        PhysicsSystem::applyDeplacement(entities, e);
+        this->applyCollision(entities, e);
+        this->applyDeplacement(entities, e);
     });
 }
 
@@ -107,8 +107,8 @@ engine::PhysicsSystem::applyDeplacement(Entities const& entities, Entity const& 
         Manifold gmf;
         auto origin = t.position;
         t.prevPosition = t.position;
-        t.position.X += p.move.X;
-        t.position.Y += p.move.Y;
+        t.position.X += p.move.X * _tick;
+        t.position.Y += p.move.Y * _tick;
         GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
@@ -125,8 +125,8 @@ engine::PhysicsSystem::applyDeplacement(Entities const& entities, Entity const& 
         });
 
         if (gmf.isCollide) {
-            auto dist = p.move.getLength();
-            auto moveVec = p.move;
+            auto dist = p.move.getLength() * _tick;
+            auto moveVec = p.move * _tick;
             moveVec -= 2 * (moveVec.dotProduct(gmf.normal)) * gmf.normal;
             moveVec.normalize();
             t.position = t.prevPosition;
@@ -136,12 +136,11 @@ engine::PhysicsSystem::applyDeplacement(Entities const& entities, Entity const& 
                 t.position = t.prevPosition;
                 if (!isCorrection) {
                     p.move.Y += 0.1;
-                    PhysicsSystem::applyDeplacement(entities, entity, true);
+                    this->applyDeplacement(entities, entity, true);
+                    p.move.Y -= 0.1;
                 }
             }
         }
-        p.move.X = 0.f;
-        p.move.Y = 0.f;
         if (!isCorrection) {
             PhysicsSystem::patchDeplacement(entities, entity, origin);
         }
