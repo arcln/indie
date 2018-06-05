@@ -12,6 +12,4 @@ engine::LightComponent::LightComponent()
 {}
 
 engine::LightComponent::LightComponent(irr::IrrlichtDevice* device, irr::core::vector3df const& position, irr::video::SColorf const& color, float radius)
-{
-	node = device->getSceneManager()->addLightSceneNode(nullptr, position, color, radius);
-}
+	: node(device->getSceneManager()->addLightSceneNode(nullptr, position, color, radius)) {}

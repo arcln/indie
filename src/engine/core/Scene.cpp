@@ -9,9 +9,10 @@
 #include "engine/core/Scene.hpp"
 #include "engine/core/Game.hpp"
 
-engine::EntityId engine::Scene::_lastSpawnedEntityId = engine::Entity::nullId;
+engine::EntityId engine::Scene::_LastSpawnedEntityId = engine::Entity::nullId;
+std::size_t engine::Scene::_LastSceneId = 0;
 
-engine::Scene::Scene() : _running(true), _synced(false)
+engine::Scene::Scene() : _running(true), _synced(false), _id(++_LastSceneId)
 {
 }
 
@@ -32,7 +33,7 @@ engine::Scene::spawnEntity(std::string const& name, EntityId parentId)
 		throw std::runtime_error("entity model '" + name + "' not found");
 
 
-	return _entities.add(engine::Entity(++_lastSpawnedEntityId, parentId, &_entities), _models[name]);
+	return _entities.add(engine::Entity(++_LastSpawnedEntityId, parentId, &_entities), _models[name]);
 }
 
 engine::Entity const&
@@ -53,6 +54,18 @@ void
 engine::Scene::previousScene()
 {
 	_running = false;
+}
+
+std::size_t
+engine::Scene::id() const
+{
+	return _id;
+}
+
+bool
+engine::Scene::hasEvent(std::string const& eventName) const
+{
+	return this->events.find(eventName) != std::end(this->events);
 }
 
 engine::Entities const&

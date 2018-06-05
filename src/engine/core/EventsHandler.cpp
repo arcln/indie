@@ -7,13 +7,8 @@
 
 #include "EventsHandler.hpp"
 
-engine::EventsHandler::EventsHandler(Event<KeyState>& keyEvents) : _keyEvents(keyEvents)
-{
-	keyEvents.subscribe([&](KeyState const& keyState) -> int {
-		_keyStates[keyState.Key] = keyState;
-		return 0;
-	});
-}
+engine::EventsHandler::EventsHandler(Events& keyEvents) : _keyEvents(keyEvents)
+{}
 
 engine::KeyState const&
 engine::EventsHandler::getKeyState(KeyCode keyCode)
@@ -22,19 +17,30 @@ engine::EventsHandler::getKeyState(KeyCode keyCode)
 }
 
 void
-engine::EventsHandler::subscribe(engine::Event<engine::KeyState>::CallbackType const& callback)
+engine::EventsHandler::unregisterEventTarget(Scene const& target)
 {
-	_keyEvents.subscribe(callback);
+	_keyEvents.erase(_keyEvents.find(target.id()));
 }
 
-engine::EventsReceiver::EventsReceiver(engine::Event<engine::KeyState>& keyEvents) : _keyEvents(keyEvents)
+void
+engine::EventsHandler::_registerEventTarget(Scene const& target)
+{
+	_keyEvents[target.id()].subscribe([&](KeyState const& keyState) -> int {
+		_keyStates[keyState.Key] = keyState;
+		return 0;
+	});
+}
+
+engine::EventsReceiver::EventsReceiver(Events& keyEvents) : _keyEvents(keyEvents)
 {}
 
 bool
 engine::EventsReceiver::OnEvent(irr::SEvent const& event)
 {
 	if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
-		_keyEvents.emit(engine::KeyState(event.KeyInput));
+		for (auto& target : _keyEvents) {
+			target.second.emit(engine::KeyState(event.KeyInput));
+		}
 	}
 
 	return false;

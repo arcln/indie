@@ -17,7 +17,6 @@
 
 const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
 
-// TODO: handle jump properly
 void
 engine::PhysicsSystem::update(Scene& scene)
 {
@@ -30,7 +29,6 @@ engine::PhysicsSystem::update(Scene& scene)
         engine::Vec2D pos2D(t.position.X, t.position.Y);
         engine::Vec2D newPos2D;
 
-        // apply gravity
         p.velocity += engine::PhysicsSystem::gravity * _tick;
         newPos2D = pos2D + p.velocity * _tick;
         t.prevPosition = t.position;

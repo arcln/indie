@@ -8,10 +8,10 @@
 #pragma once
 
 #include <list>
+#include <stack>
 #include <vector>
 #include <unordered_map>
 #include <irrlicht/irrlicht.h>
-#include <stack>
 #include "engine/core/Scene.hpp"
 #include "engine/resource/ResourceManager.hpp"
 #include "EventsHandler.hpp"
@@ -44,7 +44,7 @@ namespace engine {
 		std::string const& getcwd() const;
 
 	private:
-		Event<KeyState> _keyEvents;
+		 Events _keyEvents;
 
 	public:
 		EventsHandler eventsHandler;

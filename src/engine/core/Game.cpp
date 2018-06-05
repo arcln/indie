@@ -32,12 +32,6 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	this->textureManager.onLoad([&](std::string const& asset) {
 		return this->_device->getVideoDriver()->getTexture(asset.c_str());
 	});
-
-	this->eventsHandler.subscribe([&](KeyState const& keyState) -> int {
-		if (keyState.Key == engine::KeyCode::KEY_ESCAPE && !keyState.PressedDown)
-			_device->closeDevice();
-		return 0;
-	});
 }
 
 engine::Game::~Game()
@@ -83,6 +77,7 @@ engine::Game::pushScene(std::string const& name)
 void
 engine::Game::popScene()
 {
+	this->eventsHandler.unregisterEventTarget(_scenes.back());
 	_scenes.pop_back();
 }
 

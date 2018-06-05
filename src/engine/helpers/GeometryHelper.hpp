@@ -14,9 +14,9 @@
 
 namespace engine {
 
-    class TransformComponent;
-    class HitboxComponent;
-    class PhysicsComponent;
+    struct TransformComponent;
+    struct HitboxComponent;
+    struct PhysicsComponent;
     class Entity;
 
     using Point = boost::geometry::model::d2::point_xy<float>;

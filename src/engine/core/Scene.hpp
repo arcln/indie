@@ -90,6 +90,8 @@ namespace engine {
 		void synchonizeWith(std::string const& hostname);
 
 		bool isRunning() const;
+		bool hasEvent(std::string const& evtName) const;
+		std::size_t id() const;
 
 		Events events;
 		network::ClientSocket socket;
@@ -98,11 +100,13 @@ namespace engine {
 		void previousScene();
 
 	private:
-		static EntityId _lastSpawnedEntityId;
+		static EntityId _LastSpawnedEntityId;
+		static std::size_t _LastSceneId;
 
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
 		bool _synced;
+		std::size_t _id;
 	};
 }
