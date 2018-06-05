@@ -210,8 +210,27 @@ void engine::Menu::MyScriptParser::manageCheckBox()
 {
 	Entity entity = _scene->spawnEntity("checkBox");
 	engine::CheckBoxComponent checkBoxCompo = entity.get<engine::CheckBoxComponent>();
+	std::string line;
+	std::string command;
+	std::string param;
 
-	(void) checkBoxCompo;
+	_it += 1;
+	engine::Menu::CheckBoxFactory factory(checkBoxCompo.node, _game);
+	for (; _it != _storage.end() ; ++_it) {
+		line = *_it;
+		_lineNb += 1;
+		if (checkStart(line, "\t") == 0)
+			break;
+		command = line.substr(line.find('-', 1) + 2, line.find(':', 1) - (line.find('-', 1) + 2));
+		param = line.substr(line.find(':', 1) + 2, line.size() - (line.find(':') + 2));
+		std::cout << "Command : [" << command << "]. | Param : [" << param << "]." << std::endl;
+		for (std::pair<std::string, std::function<void(std::string)>> commandHandl : factory._handledFunc ) {
+			if (commandHandl.first == command)
+				commandHandl.second(param);
+		}
+	}
+	if (_it == _storage.end())
+		_isOver = true;
 }
 
 void engine::Menu::MyScriptParser::checkList()

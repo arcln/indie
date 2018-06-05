@@ -2,22 +2,22 @@
 ** EPITECH PROJECT, 2018
 ** Indie
 ** File description:
-** EditBox Factory Hpp
+** CheckBox Factory Hpp
 */
 
 #pragma once
 
-#include "engine/components/EditBoxComponent.hpp"
+#include "engine/components/CheckBoxComponent.hpp"
 #include "engine/core/Game.hpp"
 
 #include <irrlicht/SColor.h>
 
 namespace engine { namespace Menu {
 
-	class EditBoxFactory {
+	class CheckBoxFactory {
 		public:
-			EditBoxFactory(irr::gui::IGUIEditBox *node, engine::Game *game);
-			~EditBoxFactory() = default;
+			CheckBoxFactory(irr::gui::IGUICheckBox *node, engine::Game *game);
+			~CheckBoxFactory() = default;
 
 			std::map<std::string, std::function<void(std::string)>>	_handledFunc;
 
@@ -30,7 +30,7 @@ namespace engine { namespace Menu {
 			int setTextCommand(std::string param);
 			int colorCommand(std::string param);
 		private:
-			irr::gui::IGUIEditBox *_node;
+			irr::gui::IGUICheckBox *_node;
 			engine::Game *_game;
 			irr::IrrlichtDevice *_device;
 	};

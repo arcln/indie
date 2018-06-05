@@ -19,6 +19,7 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/menu/classes/parsers/ImageFactory.cpp		\
 		engine/menu/classes/parsers/TextFactory.cpp		\
 		engine/menu/classes/parsers/EditBoxFactory.cpp		\
+		engine/menu/classes/parsers/CheckBoxFactory.cpp		\
 		engine/menu/classes/parsers/ImageHandler.cpp		\
 		engine/components/ButtonComponent.cpp		\
 		engine/components/TextComponent.cpp		\

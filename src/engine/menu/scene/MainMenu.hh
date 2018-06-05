@@ -89,7 +89,9 @@ namespace worms { namespace scene {
 		parser.fillMap();
 
 		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			std::cout << "Nani" << std::endl;
+			if (keystate.PressedDown) {
+				std::cout << "MainMenu EVENT" << std::endl;
+			}
 			return 0;
 		});
 	};
