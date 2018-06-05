@@ -124,6 +124,7 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
 		engine::Menu::MyScriptParser parser("engine/menu/script/testScene", &scene, &game);
 
+		std::cout << "\nDEBUG\n" << std::endl;
 		parser.parseFile();
 		parser.fillMap();
 
