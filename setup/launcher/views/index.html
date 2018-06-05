@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Indie Studio</title>
+  <link rel="stylesheet" href="../style/index.css">
+</head>
+
+<body>
+  <!-- <div style="height: 60px;">
+    <img src="../img/logo.png" style="height: 100px; margin-top: -18px; margin-left: -17px;">
+    <h2 style="position: absolute; top: -5px; left: 75px;">
+      Indie Studio
+    </h2>
+  </div> -->
+  <div style="height: 480px; overflow: hidden;">
+    <img src=" ../img/worms.png " style="min-width: 100%; margin-top: -70px">
+    <div style="background: rgba(0, 0, 0, 0.7); display: inline-block; position: absolute; top: 0; width: 42%; height: 396px; padding: 42px; color: white">
+      <h2 style="margin-top: 20px">WORNITE</h2>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt repellat repellendus quas, sit perferendis animi
+        voluptate dicta? Mollitia ipsum voluptatum blanditiis recusandae dolorem, id voluptas tenetur soluta rem quidem neque?</p>
+      <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nesciunt repellat repellendus quas, sit perferendis animi
+        voluptate dicta? Mollitia ipsum voluptatum blanditiis recusandae dolorem, id voluptas tenetur soluta rem quidem neque?</p>
+    </div>
+  </div>
+  <div class="footer"></div>
+</body>
+
+<script id="progress-bar-template" type="text/x-handlebars-template">
+  <div style="max-width: 86%">
+    <div class="progress-bar" style="background: #111"></div>
+    <div class="progress-bar" style="width: {{progress}}%"></div>
+  </div>
+</script>
+
+<script id="status-template" type="text/x-handlebars-template">
+  <h4 style="position: relative;text-align: right;top: 32px;right: 124px;margin: 0;">{{{status}}}</h4>
+</script>
+
+<script id="footer-template" type="text/x-handlebars-template">
+  <div id="status"></div>
+
+  {{#if ready}}
+  <div class="{{playBtnState}}" id="play">
+    <div style="padding-top: 8px;">Start</div>
+  </div>
+  {{else}}
+  <div id="progress"></div>
+  <span class="lds-dual-ring" style="position: fixed;right: 33px;bottom: 2px;"></span>
+  {{/if}}
+</script>
+
+<script>
+  require('../src/renderer').render();
+</script>
+
+</html>

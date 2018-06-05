@@ -1,0 +1,26 @@
+{
+  "name": "indie-studio",
+  "productName": "Indie Studio",
+  "version": "1.0.0",
+  "description": "The well known game launcher...",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/arthurchaloin/indie.git",
+  "keywords": [
+    "Indie Studio"
+  ],
+  "author": "GitHub",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^2.0.0",
+    "electron-builder": "^20.15.1"
+  },
+  "dependencies": {
+    "cors": "^2.8.4",
+    "electron-settings": "^3.2.0",
+    "handlebars": "^4.0.11",
+    "jquery": "^3.3.1"
+  }
+}
