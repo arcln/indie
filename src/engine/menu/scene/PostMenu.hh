@@ -90,10 +90,13 @@ namespace worms { namespace scene {
 		parser.checkList();
 
 		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			std::cout << "LOLOL" << std::endl;
-			game.popScene();
-			game.pushScene("mainMenu");
-			game.replaceScene("mainMenu");
+			std::cout << "Enter event POST MENU" << std::endl;
+			if (keystate.PressedDown) {
+				std::cout << "Post Menu EVENT" << std::endl;
+				//game.popScene();
+				//game.pushScene("mainMenu");
+				game.replaceScene("mainMenu");
+			}
 			return 0;
 		});
 	};

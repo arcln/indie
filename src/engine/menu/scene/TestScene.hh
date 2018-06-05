@@ -112,7 +112,7 @@ namespace worms { namespace scene {
 											irr::core::rect<irr::s32>(10, 10, 200, 200),
 											nullptr,
 											id,
-											L"TEST");
+											nullptr);
 			checkBoxComponent.node->setChecked(false);
 		});
 

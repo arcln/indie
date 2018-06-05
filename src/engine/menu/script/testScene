@@ -9,3 +9,8 @@ editBox:
 	size: 500, 100
 	overrideFont: ../assets/font/FontArial68/myfont.xml
 	color: 255, 0, 0, 255
+
+checkBox:
+	pos: 100, 100
+	size: 100, 100
+	setText: lol

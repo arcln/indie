@@ -2,25 +2,23 @@
 ** EPITECH PROJECT, 2018
 ** Indie
 ** File description:
-** EditBox Factory Cpp
+** CheckBox Factory Cpp
 */
 
-#include "EditBoxFactory.hpp"
+#include "CheckBoxFactory.hpp"
 #include <irrlicht/IGUIFont.h>
 
-engine::Menu::EditBoxFactory::EditBoxFactory(irr::gui::IGUIEditBox *node, engine::Game *game)
+engine::Menu::CheckBoxFactory::CheckBoxFactory(irr::gui::IGUICheckBox *node, engine::Game *game)
 {
 	_node = node;
 	_game = game;
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("pos", [this](std::string param) {posCommand(param);}));
-	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("overrideFont", [this](std::string param) {overrideFontCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setText", [this](std::string param) {setTextCommand(param);}));
-	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("color", [this](std::string param) {colorCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("size", [this](std::string param) {sizeCommand(param);}));
 	_device = game->device();
 }
 
-irr::core::position2di engine::Menu::EditBoxFactory::findPos(std::string param)
+irr::core::position2di engine::Menu::CheckBoxFactory::findPos(std::string param)
 {
 	std::string textArg;
 	int nb1 = 0;
@@ -41,7 +39,7 @@ irr::core::position2di engine::Menu::EditBoxFactory::findPos(std::string param)
 	return irr::core::position2di(nb1, nb2);
 }
 
-irr::video::SColor engine::Menu::EditBoxFactory::getColor(std::string param)
+irr::video::SColor engine::Menu::CheckBoxFactory::getColor(std::string param)
 {
 	std::string textArg;
 	int nb1 = 0;
@@ -68,21 +66,14 @@ irr::video::SColor engine::Menu::EditBoxFactory::getColor(std::string param)
 	return irr::video::SColor(nb1, nb2, nb3, nb4);
 }
 
-int engine::Menu::EditBoxFactory::posCommand(std::string param)
+int engine::Menu::CheckBoxFactory::posCommand(std::string param)
 {
 	irr::core::position2di pos = findPos(param);
 	_node->setRelativePosition(pos);
 	return 0;
 }
 
-int engine::Menu::EditBoxFactory::overrideFontCommand(std::string param)
-{
-	irr::gui::IGUIFont *font = _device->getGUIEnvironment()->getFont(param.c_str());
-	_node->setOverrideFont(font);
-	return 0;
-}
-
-int engine::Menu::EditBoxFactory::setTextCommand(std::string param)
+int engine::Menu::CheckBoxFactory::setTextCommand(std::string param)
 {
 	std::wstring widestr = std::wstring(param.begin(), param.end());
 	const wchar_t *tmp = widestr.c_str();
@@ -91,13 +82,7 @@ int engine::Menu::EditBoxFactory::setTextCommand(std::string param)
 	return 0;
 }
 
-int engine::Menu::EditBoxFactory::colorCommand(std::string param)
-{
-	_node->setOverrideColor(getColor(param));
-	return 0;
-}
-
-int engine::Menu::EditBoxFactory::sizeCommand(std::string param)
+int engine::Menu::CheckBoxFactory::sizeCommand(std::string param)
 {
 	irr::core::position2di size = findPos(param);
 	irr::core::rect<irr::s32> currentPos = _node->getAbsolutePosition();
