@@ -119,7 +119,7 @@ namespace worms { namespace scene {
 
 			// @Synced -> std::string
 			scene.registerEvent<std::string>("move player", [&](std::string const& move) {
-                physicsComponent.move = Vector2f(move);
+                physicsComponent.move = (Vector2f) move;
                 // transformComponent.position.X += offset.X;
                 // transformComponent.position.Y += offset.Y;
 				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
@@ -161,8 +161,8 @@ namespace worms { namespace scene {
 //		scene.spawnEntity("map");
 //		scene.spawnEntity("animated");
 
-		 if (!WORMS_IS_SERVER) {
-		 	scene.synchronizeWith("localhost", game);
-		 }
+		if (!WORMS_IS_SERVER) {
+			scene.synchronizeWith("localhost", game);
+		}
 	};
 }}
