@@ -30,10 +30,10 @@ public:
 	struct 	Settings
 	{
 		int 	Size;
-		int 	Density;
+		float 	Density;
 	};
 
-	typedef struct 		s_mapSettings
+	typedef struct 		mapSettings
 	{
 		std::string 	mapString;
 		int 		mapLength;
@@ -45,7 +45,7 @@ public:
 private:
 	int _blockDisplayed = 0;
 
-	const float _mapPrecision = .2f;
+	const float _mapPrecision = .1f;
 
 	const char _grad3[12][3] = {
 		{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
