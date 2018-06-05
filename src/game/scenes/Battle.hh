@@ -95,7 +95,7 @@ namespace worms { namespace scene {
 		Wornite::Map map;
 		Wornite::Map::Settings mapSettings;
 		mapSettings.Size = Wornite::Map::mapSize::SMALL;
-		mapSettings.Density = 1;
+		mapSettings.Density = 0.8f;
 
 		map.genMap(&game, &scene, &mapSettings);
 
