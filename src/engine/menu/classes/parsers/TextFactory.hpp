@@ -26,11 +26,13 @@ namespace engine { namespace Menu {
 
 			int posCommand(std::string param);
 			int overrideFontCommand(std::string param);
+			int fontSizeCommand(std::string param);
 			int setTextCommand(std::string param);
 			int colorCommand(std::string param);
 		private:
 			irr::gui::IGUIStaticText *_node;
 			engine::Game *_game;
 			irr::IrrlichtDevice *_device;
+			std::vector<int> _fontSize;
 	};
 }}

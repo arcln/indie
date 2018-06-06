@@ -77,7 +77,6 @@ void engine::Menu::MyScriptParser::fillMap()
 			}
 		}
 	}
-	std::cout << "\n" << _imageList.size() << "\n" << std::endl;
 }
 
 void engine::Menu::MyScriptParser::createElement(std::string type)
@@ -101,6 +100,7 @@ void engine::Menu::MyScriptParser::manageButton()
 
 	_it += 1;
 	engine::Menu::ButtonFactory factory(buttoCompo.node, _game);
+	buttoCompo._scene = _scene;
 	for (; _it != _storage.end() ; ++_it) {
 		line = *_it;
 		_lineNb += 1;
@@ -129,7 +129,6 @@ void engine::Menu::MyScriptParser::manageImage()
 
 	_it += 1;
 	engine::Menu::ImageFactory factory(imgCompo.node, _game);
-	engine::Menu::ImageHandler handler(imgCompo.node, _game);
 	for (; _it != _storage.end() ; ++_it) {
 		line = *_it;
 		_lineNb += 1;
@@ -138,10 +137,6 @@ void engine::Menu::MyScriptParser::manageImage()
 		command = line.substr(line.find('-', 1) + 2, line.find(':', 1) - (line.find('-', 1) + 2));
 		param = line.substr(line.find(':', 1) + 2, line.size() - (line.find(':') + 2));
 		std::cout << "Command : [" << command << "]. | Param : [" << param << "]." << std::endl;
-		if (command == "name" || command == "effect") {
-			handler.applyEffects(command, param);
-			continue;
-		}
 		for (std::pair<std::string, std::function<void(std::string)>> commandHandl : factory._handledFunc ) {
 			if (commandHandl.first == command)
 				commandHandl.second(param);
@@ -149,7 +144,6 @@ void engine::Menu::MyScriptParser::manageImage()
 	}
 	if (_it == _storage.end())
 		_isOver = true;
-	_imageList.push_back(handler);
 }
 
 void engine::Menu::MyScriptParser::manageText()
@@ -231,21 +225,4 @@ void engine::Menu::MyScriptParser::manageCheckBox()
 	}
 	if (_it == _storage.end())
 		_isOver = true;
-}
-
-void engine::Menu::MyScriptParser::checkList()
-{
-	std::cout << _imageList.size() << std::endl;
-}
-
-void engine::Menu::MyScriptParser::callEffects()
-{
-	std::cout << _imageList.size() << std::endl;
-	if (_imageList.empty()) {
-		return;
-	}
-	std::list<engine::Menu::ImageHandler>::iterator iterator;
-	for (iterator = _imageList.begin(); iterator != _imageList.end(); ++iterator) {
-		iterator->runEffects();
-	}
 }

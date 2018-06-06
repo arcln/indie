@@ -19,7 +19,6 @@
 #include "engine/components/ImageComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
 
-
 namespace worms { namespace scene {
 
 	static const auto mainMenu = [](engine::Game& game, engine::Scene& scene) {
@@ -77,8 +76,54 @@ namespace worms { namespace scene {
 										 nullptr);
 			imageComponent.node->setUseAlphaChannel(true);
 		});
+
+		scene.registerEntityModel("staticText", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
+										      L"TEST TEXT",
+										      irr::core::rect<irr::s32>(10, 10, 200, 200),
+										      false,
+										      false,
+										      nullptr,
+										      id,
+										      false);
+			staticTextComponent.node->setWordWrap(false);
+		});
+
+		scene.registerEntityModel("editBox", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& editBoxComponent = entity.set<engine::EditBoxComponent>(game.device(),
+										      L"",
+										      irr::core::rect<irr::s32>(10, 10, 200, 200),
+										      false,
+										      nullptr,
+										      id);
+			editBoxComponent.node->setDrawBackground(true);
+		});
+
+		scene.registerEntityModel("checkBox", [&](engine::Entity const& entity) {
+			static irr::s32 id = 0;
+			auto& checkBoxComponent = entity.set<engine::CheckBoxComponent>(game.device(),
+											false,
+											irr::core::rect<irr::s32>(10, 10, 200, 200),
+											nullptr,
+											id,
+											nullptr);
+			checkBoxComponent.node->setChecked(false);
+		});
+
 		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
 			scene.spawnEntity("button");
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("Options", [&](engine::GenericEvent const&) {
+			std::cout << "Go to Options." << std::endl;
+			return 0;
+		});
+
+		scene.registerEvent<bool>("Quit", [&](engine::GenericEvent const&) {
+			exit(0);
 			return 0;
 		});
 

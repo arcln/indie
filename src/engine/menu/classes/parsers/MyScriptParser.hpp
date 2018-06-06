@@ -25,7 +25,6 @@
 #include "engine/menu/classes/parsers/TextFactory.hpp"
 #include "engine/menu/classes/parsers/EditBoxFactory.hpp"
 #include "engine/menu/classes/parsers/CheckBoxFactory.hpp"
-#include "engine/menu/classes/parsers/ImageHandler.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 
 namespace engine { namespace Menu {
@@ -47,9 +46,6 @@ namespace engine { namespace Menu {
 			void manageEditBox();
 			void manageCheckBox();
 
-			void callEffects();
-
-			void checkList();
 		private:
 			engine::Scene							*_scene;
 			engine::Game							*_game;
@@ -61,6 +57,5 @@ namespace engine { namespace Menu {
 			int								_lineNb;
 			std::vector<std::string>::iterator				_it;
 			bool								_isOver;
-			std::list<engine::Menu::ImageHandler>				_imageList;
 	};
 }}

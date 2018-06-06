@@ -15,7 +15,8 @@ engine::Menu::ButtonFactory::ButtonFactory(irr::gui::IGUIButton *node, engine::G
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("image", [this](std::string param) {imageCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("imagePressed", [this](std::string param) {imagePressedCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("border", [this](std::string param) {borderCommand(param);}));
-	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("name", [this](std::string param) {nameCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("event", [this](std::string param) {eventCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setText", [this](std::string param) {setTextCommand(param);}));
 }
 
 irr::core::rect<irr::s32> engine::Menu::ButtonFactory::getRectPos(std::string param)
@@ -82,7 +83,16 @@ int engine::Menu::ButtonFactory::borderCommand(std::string param)
 	return 0;
 }
 
-int engine::Menu::ButtonFactory::nameCommand(std::string param)
+int engine::Menu::ButtonFactory::eventCommand(std::string param)
+{
+	std::wstring widestr = std::wstring(param.begin(), param.end());
+	const wchar_t *tmp = widestr.c_str();
+
+	_node->setName(tmp);
+	return 0;
+}
+
+int engine::Menu::ButtonFactory::setTextCommand(std::string param)
 {
 	std::wstring widestr = std::wstring(param.begin(), param.end());
 	const wchar_t *tmp = widestr.c_str();

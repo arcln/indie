@@ -25,7 +25,8 @@ namespace engine { namespace Menu {
 			int imageCommand(std::string param);
 			int imagePressedCommand(std::string param);
 			int borderCommand(std::string param);
-			int nameCommand(std::string param);
+			int eventCommand(std::string param);
+			int setTextCommand(std::string param);
 		private:
 			irr::gui::IGUIButton *_node;
 			engine::Game *_game;

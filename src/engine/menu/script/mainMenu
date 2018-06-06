@@ -6,23 +6,25 @@ image:
 image:
 	- name: logo
 	- image: texture/WormNiteLogo.png
-	- pos: 259, 100
-	- effect: upDown 0.5 20
+	- pos: 259, 50
 
 button:
 	- image: texture/button_play.png
 	- imagePressed: texture/button_play(1).png
 	- rect: 525, 330, 755, 390
 	- border: false
+	- name: Play
 
 button:
 	- image: texture/button_options.png
 	- imagePressed: texture/button_options(1).png
 	- rect: 525, 410, 755, 470
 	- border: false
+	- name: Options
 
 button:
 	- image: texture/button_quit.png
 	- imagePressed: texture/button_quit(1).png
 	- rect: 525, 490, 755, 550
 	- border: false
+	- name: Quit

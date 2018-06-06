@@ -22,7 +22,6 @@
 #include "engine/components/EditBoxComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
 
-
 namespace worms { namespace scene {
 
 	static const auto testScene = [](engine::Game& game, engine::Scene& scene) {
