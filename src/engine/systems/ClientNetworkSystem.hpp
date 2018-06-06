@@ -21,7 +21,7 @@ namespace engine {
 		explicit ClientNetworkSystem(network::ClientSocket const& socket, Events const& events);
 		~ClientNetworkSystem();
 
-		void update(Entities const& entities) override;
+		void update(Scene& scene) override;
 
 	private:
 		std::thread _netThread;

@@ -120,7 +120,7 @@ void engine::Game::_updateScenes()
 {
 	for (auto& scene : _scenes) {
 		for (auto& system : _systems) {
-			system.second->update(scene.getEntities());
+			system.second->update(scene);
 		}
 	}
 }

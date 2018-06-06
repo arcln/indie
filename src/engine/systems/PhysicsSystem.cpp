@@ -19,8 +19,9 @@ const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
 
 // TODO: handle jump properly
 void
-engine::PhysicsSystem::update(Entities const& entities)
+engine::PhysicsSystem::update(Scene& scene)
 {
+    Entities const& entities = scene.getEntities();
     auto now = std::chrono::system_clock::now();
     _tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
     _prevUpdate = now;
