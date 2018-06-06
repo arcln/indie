@@ -18,7 +18,6 @@ namespace worms {
         game.registerSystem("physics", new engine::PhysicsSystem());
         game.registerSystem("display", new engine::DisplaySystem(game));
 
-		game.registerSceneModel("main", worms::scene::test);
-		game.registerSceneModel("battle", worms::scene::battle);
+		game.registerSceneModel("main", worms::scene::battle);
 	};
 }

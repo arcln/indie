@@ -8,13 +8,16 @@
 #include <iostream>
 #include "ClientNetworkSystem.hpp"
 
-engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket const& socket, Events const&)
-	: System(), _netThread([socket]() {
+engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket const& socket, Scene::Events& events)
+	: System(), _netThread([socket](Scene::Events events) {
 		while (true) {
-			auto msg = socket.receive<network::TextMessage>();
-			std::cout << msg.text << std::endl;
+			std::string msg = socket.receive<network::TextMessage>().text;
+			std::string head = msg.substr(0, msg.find('|'));
+			std::string body = msg.substr(msg.find('|') + 1);
+
+			reinterpret_cast<Event<std::string>*>(events[head])->emit(body);
 		}
-}) {}
+}, events) {}
 
 engine::ClientNetworkSystem::~ClientNetworkSystem()
 {

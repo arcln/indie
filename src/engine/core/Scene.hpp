@@ -78,23 +78,19 @@ namespace engine {
 			reinterpret_cast<Event<ContextType>*>(this->events[name])->emit(context);
 		}
 
-		template <typename ContextType>
-		void triggerSyncedEvent(std::string const& name, ContextType const& context) {
-			this->triggerEvent<ContextType>(name, context);
+		void triggerSyncedEvent(std::string const& name, std::string const& serializedContext) {
+			this->triggerEvent<std::string>(name, serializedContext);
 
 			if (_synced) {
-				this->socket.send<network::TextMessage>(name + "|" + context.serialize());
+				this->socket.send<network::TextMessage>(name + "|" + serializedContext);
 			}
 		}
 
-		void synchonizeWith(std::string const& hostname);
+		void synchronizeWith(std::string const& hostname, class Game& game);
 
 		bool isRunning() const;
 		bool hasEvent(std::string const& evtName) const;
 		std::size_t id() const;
-
-		Events events;
-		network::ClientSocket socket;
 
 	protected:
 		void previousScene();
@@ -103,6 +99,8 @@ namespace engine {
 		static EntityId _LastSpawnedEntityId;
 		static std::size_t _LastSceneId;
 
+		Events events;
+		network::ClientSocket socket;
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
