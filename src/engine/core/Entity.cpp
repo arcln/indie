@@ -19,12 +19,16 @@ engine::Entity::Entity(EntityId id, EntityId parentId, Entities* entities)
 {}
 
 engine::Entity::Entity(engine::Entity const& entity)
-	: _id(entity._id)
-{}
+	: _id(entity._id), _parentId(entity._parentId), _entities(entity._entities)
+{
+    std::cout << "cc" << std::endl;
+}
 
 engine::Entity&
 engine::Entity::operator=(const engine::Entity& entity)
 {
+    _parentId = entity._parentId;
+    _entities = entity._entities;
 	_id = entity._id;
 	return *this;
 }
@@ -40,7 +44,7 @@ engine::Entity::kill()
 }
 
 void
-engine::Entity::attach(engine::Entity const& child)
+engine::Entity::attach(engine::Entity const& child) const
 {
 	_entities->attach(_id, child);
 }

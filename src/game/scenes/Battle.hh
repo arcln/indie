@@ -18,6 +18,8 @@
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
+#include "engine/components/HoldComponent.hpp"
+#include "engine/components/ItemComponent.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
@@ -77,10 +79,26 @@ namespace worms { namespace scene {
 
 		});
 
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+
+            entity.set<engine::PhysicsComponent>();
+            entity.set<engine::ItemComponent>();
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.position = {-10.f, 10.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+            hitboxComponent.rebound = 0.2;
+            hitboxComponent.hasDebugMode = true;
+
+		});
+
         scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 
             std::cout << "worms id: " << entity.getId() << std::endl;
+
+            entity.set<engine::HoldComponent>();
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
             auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -134,6 +152,7 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
         scene.spawnEntity("block");
         scene.spawnEntity("worm");
+        scene.spawnEntity("item");
 //		scene.spawnEntity("map");
 //		scene.spawnEntity("animated");
 

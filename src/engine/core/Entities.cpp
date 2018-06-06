@@ -50,11 +50,11 @@ engine::Entities::attach(engine::EntityId parentId, engine::Entity const& child)
 {
 	auto const& childIt = _roots.find(child.getId());
 
-	if (childIt != std::end(_roots))
-		this->detach(child);
+	// if (childIt == std::end(_roots))
+	// 	this->detach(child);
 
 	_childs[parentId].emplace_back(childIt->second);
-	_roots.erase(childIt);
+	// _roots.erase(childIt);
 }
 
 void

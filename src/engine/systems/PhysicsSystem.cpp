@@ -12,6 +12,8 @@
 #include "PhysicsSystem.hpp"
 #include "../components/TransformComponent.hpp"
 #include "../components/HitboxComponent.hpp"
+#include "../components/HoldComponent.hpp"
+#include "../components/ItemComponent.hpp"
 #include "../components/PhysicsComponent.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
@@ -49,7 +51,7 @@ engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& en
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
         GeometryHelper::transformHitbox(h, t);
 
-        entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
+        entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId())
                 return;
 
@@ -59,9 +61,16 @@ engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& en
             if (mf.isCollide) {
                 if (mf.hasError)
                     return;
-                p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
-                p.velocity *= h.rebound * h2.rebound; // TODO: rebound velocity
-                PhysicsSystem::patchCollision(entity, h2);
+                if (entity.has<HoldComponent>() && e2.has<ItemComponent>()) {
+                    std::cout << "aie" << std::endl;
+                    entity.attach(e2);
+                    std::cout << "aie" << std::endl;
+
+                } else {
+                    p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
+                    p.velocity *= h.rebound * h2.rebound; // TODO: rebound velocity
+                    PhysicsSystem::patchCollision(entity, h2);
+                }
             }
         });
     });
