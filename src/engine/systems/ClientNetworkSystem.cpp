@@ -22,5 +22,5 @@ engine::ClientNetworkSystem::~ClientNetworkSystem()
 }
 
 void
-engine::ClientNetworkSystem::update(Entities const& entities)
+engine::ClientNetworkSystem::update(Scene&)
 {}
