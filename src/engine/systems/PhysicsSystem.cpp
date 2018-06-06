@@ -20,7 +20,7 @@ const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
 void
 engine::PhysicsSystem::update(Scene& scene)
 {
-    Entities const& entities = scene.getEntities();
+    Entities& entities = scene.getEntities();
     auto now = std::chrono::system_clock::now();
     _tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
     _prevUpdate = now;
@@ -41,7 +41,7 @@ engine::PhysicsSystem::update(Scene& scene)
 }
 
 void
-engine::PhysicsSystem::applyCollision(Entities const& entities, Entity const& entity)
+engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 {
     if (!entity.has<HitboxComponent>())
         return;
@@ -98,7 +98,7 @@ engine::PhysicsSystem::patchCollision(Entity const& entity, HitboxComponent cons
 }
 
 void
-engine::PhysicsSystem::applyDeplacement(Entities const& entities, Entity const& entity, bool isCorrection)
+engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity, bool isCorrection)
 {
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
         if (p.move.X == 0.f && p.move.Y == 0.f)
@@ -148,7 +148,7 @@ engine::PhysicsSystem::applyDeplacement(Entities const& entities, Entity const& 
 }
 
 void
-engine::PhysicsSystem::patchDeplacement(Entities const& entities, Entity const& entity, irr::core::vector3df const& origin)
+engine::PhysicsSystem::patchDeplacement(Entities& entities, Entity const& entity, irr::core::vector3df const& origin)
 {
     bool unique = true;
 
@@ -187,7 +187,7 @@ engine::PhysicsSystem::patchDeplacement(Entities const& entities, Entity const& 
 }
 
 bool
-engine::PhysicsSystem::simpleCollideEntities(Entities const& entities, Entity const& entity)
+engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& entity)
 {
     if (!entity.has<HitboxComponent>())
         return false;
@@ -209,7 +209,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities const& entities, Entity co
 }
 
 bool
-engine::PhysicsSystem::isGrounded(Entities const& entities, Entity const& entity)
+engine::PhysicsSystem::isGrounded(Entities& entities, Entity const& entity)
 {
     bool unique = true;
     bool isGrounded = false;

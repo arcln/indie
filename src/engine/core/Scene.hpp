@@ -47,7 +47,7 @@ namespace engine {
 		 * @param parentId Id of the Entity to which the spawned one should be attached
 		 * @return the spawned entity
 		 */
-		Entity const& spawnEntity(std::string const& name, EntityId parentId = Entity::nullId);
+		Entity spawnEntity(std::string const& name, EntityId parentId = Entity::nullId);
 
 		/**
 		 * Spawn an entity based on the model designated by its name
@@ -58,7 +58,7 @@ namespace engine {
 		 */
 		Entity const& spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId = Entity::nullId);
 
-		Entities const& getEntities() const;
+		Entities& getEntities();
 
 		template <typename ContextType>
 		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
@@ -100,7 +100,6 @@ namespace engine {
 		void previousScene();
 
 	private:
-		static EntityId _LastSpawnedEntityId;
 		static std::size_t _LastSceneId;
 
 		EntityModels _models;
