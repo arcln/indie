@@ -46,9 +46,9 @@ namespace engine {
 		void unregisterEventTarget(Scene const& target);
 
 		template <typename PayloadType>
-		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload) {
-			_keyEvents[scene.id()].subscribe([&scene, evt, payload, key](engine::KeyState const& k) -> int {
-				if (k.Key == key && k.PressedDown && scene.hasEvent(evt)) {
+		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload, bool onRelease = false) {
+			_keyEvents[scene.id()].subscribe([&scene, evt, payload, key, onRelease](engine::KeyState const& k) -> int {
+				if (k.Key == key && onRelease ^ k.PressedDown && scene.hasEvent(evt)) {
 					scene.triggerEvent<PayloadType>(evt, payload);
 				}
 

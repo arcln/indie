@@ -95,6 +95,7 @@ namespace worms { namespace scene {
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
             hitboxComponent.hasDebugMode = true;
+			hitboxComponent.rebound = 0.1f;
 
             scene.registerEvent<engine::Vec2D>("jump player", [entity, &scene, &physicsComponent](auto const& jump) {
                 if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
@@ -127,9 +128,14 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {-3.f, 0.f});
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {3.f, 0.f});
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {-10.f, 0.f});
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {0.f, 0.f}, true);
+
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {10.f, 0.f});
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {0.f, 0.f}, true);
+
 		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_SPACE, "jump player", {0.f, 100.f});
+
 		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_RIGHT, "move camera", {-1.f, 0.f, 0.f});
 		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_LEFT, "move camera", {1.f, 0.f, 0.f});
 		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_UP, "move camera", {0.f, 1.f, 0.f});
