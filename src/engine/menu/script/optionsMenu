@@ -1,0 +1,10 @@
+image:
+	- name: background
+	- image: texture/wormsWpp.png
+	- pos: 0, 0
+
+text:
+	- pos: 550, 100
+	- setText: Options
+	- color: 255, 255, 255, 0
+	- fontSize: 72

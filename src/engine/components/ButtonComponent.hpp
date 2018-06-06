@@ -11,6 +11,7 @@
 #include <irrlicht/IGUIButton.h>
 #include <irrlicht/IrrlichtDevice.h>
 #include "engine/components/ComponentConstraint.hpp"
+#include "engine/core/Scene.hpp"
 
 namespace engine {
 
@@ -24,6 +25,7 @@ namespace engine {
 		using Constraint = ComponentConstraint<ButtonComponent, false>;
 
 		irr::gui::IGUIButton *node = nullptr;
+		engine::Scene *_scene = nullptr;
 
 		void move(const irr::core::rect<irr::s32> &rectangle);
 	};

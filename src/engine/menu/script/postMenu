@@ -6,11 +6,9 @@ image:
 image:
 	- name: logo
 	- image: texture/WormNiteLogo.png
-	- pos: 259, 100
-	- effect: upDown 0.5 20
+	- pos: 259, 50
 
 image:
 	- image: texture/PressAnyKey.png
 	- pos: 196, 530
 	- border: false
-	- effect: fadeUnfade 10
