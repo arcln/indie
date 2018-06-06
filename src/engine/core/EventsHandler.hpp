@@ -15,6 +15,11 @@
 
 namespace engine {
 
+	enum EventConfig {
+		EVT_RELEASE = 1 << 0,
+		EVT_SYNCED = 1 << 1
+	};
+
 	struct EnumClassHash {
 		template <typename T>
 		std::size_t operator()(T t) const
@@ -46,10 +51,17 @@ namespace engine {
 		void unregisterEventTarget(Scene const& target);
 
 		template <typename PayloadType>
-		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload, bool onRelease = false) {
-			_keyEvents[scene.id()].subscribe([&scene, evt, payload, key, onRelease](engine::KeyState const& k) -> int {
-				if (k.Key == key && onRelease ^ k.PressedDown && scene.hasEvent(evt)) {
-					scene.triggerEvent<PayloadType>(evt, payload);
+		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload, int config = 0) {
+			bool release = config & EventConfig::EVT_RELEASE;
+			bool sync = config & EventConfig::EVT_SYNCED;
+
+			_keyEvents[scene.id()].subscribe([&scene, evt, payload, key, sync, release](engine::KeyState const& k) -> int {
+				if (k.Key == key && release ^ k.PressedDown && scene.hasEvent(evt)) {
+					if (sync) {
+						scene.triggerSyncedEvent(evt, payload.serialize());
+					} else {
+						scene.triggerEvent<PayloadType>(evt, payload);
+					}
 				}
 
 				return 0;

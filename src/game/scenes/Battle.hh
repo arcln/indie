@@ -25,12 +25,6 @@
 
 namespace worms { namespace scene {
 
-	static const auto test = [](engine::Game& game, engine::Scene& scene) {
-		scene.registerEvent<std::string>("test evt", [](std::string const& data) {std::cout << data << std::endl;return 0;});
-		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_SPACE, "test evt", "test payload");
-		game.replaceScene("battle");
-	};
-
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
@@ -40,23 +34,23 @@ namespace worms { namespace scene {
             entity.set<engine::TransformComponent>();
 
 
-			scene.registerEvent<engine::CameraComponent::Coords>("set camera position", [&](auto const& position) {
+			scene.registerEvent<Vector3f>("set camera position", [&](auto const& position) {
 				cameraComponent.node->setPosition(position);
 				return 0;
 			});
 
-			scene.registerEvent<engine::CameraComponent::Coords>("set camera lookat", [&](auto const& position) {
+			scene.registerEvent<Vector3f>("set camera lookat", [&](auto const& position) {
 				cameraComponent.node->setTarget(position);
 				return 0;
 			});
 
-			scene.registerEvent<engine::CameraComponent::Coords>("move camera", [&](auto const& offset) {
+			scene.registerEvent<Vector3f>("move camera", [&](auto const& offset) {
 				cameraComponent.node->setPosition(cameraComponent.node->getPosition() + offset);
 				cameraComponent.node->setTarget(cameraComponent.node->getTarget() + offset);
 				return 0;
 			});
 		});
-        //
+
 		// scene.registerEntityModel("map", [&](engine::Entity const& entity) {
 		// 	auto& IrrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/map.obj");
 		// 	IrrlichtComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
@@ -97,34 +91,18 @@ namespace worms { namespace scene {
             hitboxComponent.hasDebugMode = true;
 			hitboxComponent.rebound = 0.1f;
 
-<<<<<<< HEAD
-            scene.registerEvent<engine::Vec2D>("jump player", [entity, &scene, &physicsComponent](auto const& jump) {
-                if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
-                    physicsComponent.velocity += jump;
-                }
-=======
 			// @Synced -> std::string
-			scene.registerEvent<std::string>("jump player", [&](std::string const& jump) {
-                // if (physicsComponent.velocity == engine::Vec2D{0.f, 0.f})
+			scene.registerEvent<std::string>("jump player", [entity, &scene, &physicsComponent](std::string const& jump) {
+                if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
+                    physicsComponent.velocity += (Vector2f) jump;
+                }
 
-				// Where the magic happens
-				physicsComponent.velocity += (Vector2f) jump;
-
->>>>>>> network: working network events
-				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
-				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
-				// scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());
 				return 0;
 			});
 
 			// @Synced -> std::string
 			scene.registerEvent<std::string>("move player", [&](std::string const& move) {
                 physicsComponent.move = (Vector2f) move;
-                // transformComponent.position.X += offset.X;
-                // transformComponent.position.Y += offset.Y;
-				// irrlichtComponent.node->setRotation(irr::core::vector3df {0.f, offset.X < 0 ? 270.f : 90.f, 0.f});
-				// irrlichtComponent.node->setPosition(irrlichtComponent.node->getPosition() + offset);
-				// scene.triggerEvent("set camera lookat", irrlichtComponent.node->getPosition());
 				return 0;
 			});
 		});
@@ -139,20 +117,18 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {-10.f, 0.f});
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {0.f, 0.f}, true);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "move player", Vector2f(-10.f, 0.f), engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "move player", Vector2f(0.f, 0.f), engine::EVT_RELEASE | engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "move player", Vector2f(10.f, 0.f), engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "move player", Vector2f(0.f, 0.f), engine::EVT_RELEASE | engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "jump player", Vector2f(0.f, 100.f), engine::EVT_SYNCED);
 
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {10.f, 0.f});
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {0.f, 0.f}, true);
-
-		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_SPACE, "jump player", {0.f, 100.f});
-
-		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_RIGHT, "move camera", {-1.f, 0.f, 0.f});
-		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_LEFT, "move camera", {1.f, 0.f, 0.f});
-		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_UP, "move camera", {0.f, 1.f, 0.f});
-		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_DOWN, "move camera", {0.f, -1.f, 0.f});
-		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_KEY_R, "move camera", {0.f, 0.f, 1.f});
-		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_KEY_F, "move camera", {0.f, 0.f, -1.f});
+		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_RIGHT, "move camera", Vector3f(-1.f, 0.f, 0.f));
+		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_LEFT,  "move camera", Vector3f(1.f, 0.f, 0.f));
+		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_UP,    "move camera", Vector3f(0.f, 1.f, 0.f));
+		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_DOWN,  "move camera", Vector3f(0.f, -1.f, 0.f));
+		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_R, "move camera", Vector3f(0.f, 0.f, 1.f));
+		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_F, "move camera", Vector3f(0.f, 0.f, -1.f));
 
 		scene.spawnEntity("light");
 		scene.spawnEntity("camera");
@@ -161,8 +137,8 @@ namespace worms { namespace scene {
 //		scene.spawnEntity("map");
 //		scene.spawnEntity("animated");
 
-		if (!WORMS_IS_SERVER) {
-			scene.synchronizeWith("localhost", game);
-		}
+//		if (!WORMS_IS_SERVER) {
+//			scene.synchronizeWith("localhost", game);
+//		}
 	};
 }}

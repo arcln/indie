@@ -40,7 +40,6 @@ else (CMAKE_CXX_FLAGS_DEBUG)
 	set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/release)
 endif (CMAKE_CXX_FLAGS_DEBUG)
 
-
 link_directories(/usr/local/lib)
 include_directories(
 	${OPENGL_INCLUDE_DIR}
