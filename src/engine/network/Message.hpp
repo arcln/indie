@@ -19,6 +19,8 @@ namespace engine { namespace network {
 	};
 
 	struct TextMessage : public Message {
+		TextMessage(std::string const& text);
+
 		char text[NET_MAX_MSG_SIZE - sizeof(Message)];
 	};
 }}

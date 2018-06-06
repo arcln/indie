@@ -33,9 +33,22 @@ engine::Entity::~Entity()
 {
 }
 
-void engine::Entity::kill()
+void
+engine::Entity::kill()
 {
 	_entities->remove(_id);
+}
+
+void
+engine::Entity::attach(engine::Entity const& child)
+{
+	_entities->attach(_id, child);
+}
+
+void
+engine::Entity::detach()
+{
+	_entities->detach(*this);
 }
 
 engine::EntityId

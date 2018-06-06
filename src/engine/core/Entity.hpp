@@ -10,12 +10,17 @@
 #include <cstddef>
 #include <engine/core/Event.hpp>
 #include <engine/core/EntityId.hpp>
-#include <engine/components/ComponentPool.hpp>
-#include <engine/components/UniqueComponentPool.hpp>
+#include <engine/components/ComponentConstraint.hpp>
+#include <engine/components/ComponentFilter.hpp>
 
 namespace engine {
 
 	class Entities;
+
+	template<typename... ComponentsTypes>
+	struct EntityCallback {
+		using Get = std::function<void(class Entity const&, typename ComponentsTypes::Constraint::ReturnType...)>;
+	};
 
 	/**
 	 * An entity composed of components. The smallest logic unit in a game
@@ -25,44 +30,72 @@ namespace engine {
 		Entity();
 		Entity(EntityId id, EntityId parentId, Entities* entities);
 		Entity(Entity const& entity);
-		Entity& operator=(Entity const& entity);
+		Entity& operator=(Entity const&);
 		virtual ~Entity();
 
+		/**
+		 * Remove the entity
+		 */
 		void kill();
 
-		template <typename ComponentType>
+		/**
+		 * Attach a child to the entity
+		 * @param child Entity to become child
+		 */
+		void attach(Entity const& child);
+
+		/**
+		 * Detach the entity from its parent
+		 */
+		void detach();
+
+		/**
+		 * Set a component on the entity. Add a new one if the component is multiple, set it or throw if it isn't
+		 * @tparam ComponentType Type of the component to set
+		 * @tparam CtorArgsTypes Types of the component ctor's parameters
+		 * @param ctorArgs Arguments for the component's ctor
+		 */
+		template <typename ComponentType, typename... CtorArgsTypes>
 		ComponentType&
-		setComponent() const
+		set(CtorArgsTypes... ctorArgs) const
 		{
-			return UniqueComponentPool<ComponentType>::instance().setComponent(_id);
+			return ComponentSFilter<ComponentType, CtorArgsTypes...>().set(_id, ctorArgs...);
 		}
 
-		template <typename ComponentType>
-		ComponentType&
-		addComponent() const
+		/**
+		 * Get entity's components through a callback
+		 * @tparam ComponentsTypes Types of components to get
+		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
+		 */
+		template<typename... ComponentsTypes>
+		void
+		get(typename ComponentFilter<ComponentsTypes...>::Callback const& callback) const
 		{
-			return ComponentPool<ComponentType>::instance().addComponent(_id);
+			ComponentFilter<ComponentsTypes...>().get(_id, callback);
 		}
 
-		template <typename ComponentType>
+		/**
+		 * Get entity's component
+		 * @tparam ComponentsTypes Types of components to get
+		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
+		 */
+		template<typename ComponentType>
+		ComponentType&
+		get() const
+		{
+			return ComponentType::Constraint::Pool::instance().get(_id);
+		}
+
+		/**
+		 * Get entity's component
+		 * @tparam ComponentsTypes Types of components to get
+		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
+		 */
+		template<typename ComponentType>
 		bool
-		hasComponent() const
+		has() const
 		{
-			return UniqueComponentPool<ComponentType>::instance().hasComponent(_id);
-		}
-
-		template <typename ComponentType>
-		ComponentType&
-		getComponent() const
-		{
-			return UniqueComponentPool<ComponentType>::instance().getComponent(_id);
-		}
-
-		template <typename ComponentType>
-		typename engine::ComponentContainer<ComponentType>::iterator
-		getComponents() const
-		{
-			return ComponentPool<ComponentType>::instance().getComponents(_id);
+			return ComponentType::Constraint::Pool::instance().has(_id);
 		}
 
 		EntityId getId() const;
@@ -76,5 +109,6 @@ namespace engine {
 		EntityId _parentId;
 
 		Entities* _entities;
+
 	};
 }

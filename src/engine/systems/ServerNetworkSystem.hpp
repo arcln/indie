@@ -18,7 +18,7 @@ namespace engine {
 		ServerNetworkSystem();
 		~ServerNetworkSystem();
 
-		void update(Entities const& entities) override;
+		void update(Scene& scene) override;
 
 	private:
 		network::Selector _selector;

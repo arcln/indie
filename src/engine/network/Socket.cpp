@@ -9,6 +9,7 @@
 #include "Socket.hpp"
 
 engine::network::Socket::Socket() = default;
+std::size_t engine::network::ClientSocket::_NextId = 0;
 
 engine::network::Socket const&
 engine::network::Socket::connect(std::string const& hostname) const
@@ -74,7 +75,7 @@ engine::network::Socket const&
 engine::network::Socket::accept(Socket& client) const
 {
 	SOCKADDR_IN csin;
-	unsigned sinsize = sizeof csin;
+	SOCKET_SIZE_TYPE sinsize = sizeof csin;
 
 	client._socket = ::accept(_socket, reinterpret_cast<SOCKADDR*>(&csin), &sinsize);
 
@@ -97,16 +98,7 @@ engine::network::ServerSocket::ServerSocket()
 	this->create().bind().listen();
 }
 
-// G++ bug ^^
-namespace engine { namespace network {
-
-	template<> void
-	Socket::send<std::string>(std::string const& data) const
-	{
-		TextMessage msg;
-
-		msg.size = sizeof(TextMessage);
-		std::sprintf(msg.text, "%s", data.c_str());
-		this->send<TextMessage>(msg);
-	}
-}}
+engine::network::ClientSocket::ClientSocket()
+{
+	this->id = ++_NextId;
+}

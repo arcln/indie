@@ -13,8 +13,6 @@
 #include <unordered_map>
 #include <iostream>
 
-#define ASSETS_ROOT	"../assets/"
-
 /**
  * @brief Engine namespace, used for everything that touch to low-level graphics
  */
@@ -27,10 +25,10 @@ namespace engine {
 	template<typename T>
 	class ResourceManager {
 	public:
-		ResourceManager() = default;
+		explicit ResourceManager(std::string const& root) : _root(root) {}
 		~ResourceManager() = default;
 
-		using LoadFuncType = T (std::string);
+		using LoadFuncType = T (std::string const&);
 
 		/**
 		 * @brief Get the requested resource. Automaticaly loads from disk if asset isn't found in cache
@@ -39,7 +37,7 @@ namespace engine {
 		 */
 		T const& get(std::string const& asset) {
 			if (_cache.find(asset) == _cache.end()) {
-				_cache[asset] = _loadFunc(ASSETS_ROOT + asset);
+				_cache[asset] = _loadFunc(_root + asset);
 			}
 
 			return _cache[asset];
@@ -68,5 +66,10 @@ namespace engine {
 		 * @brief Stream to read from filesystem
 		 */
 		std::ifstream _file;
+
+		/**
+		 * @brief Base dir
+		 */
+		std::string _root;
 	};
 }

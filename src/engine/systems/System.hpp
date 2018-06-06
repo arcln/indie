@@ -10,6 +10,7 @@
 #include <vector>
 #include <map>
 #include <engine/core/Entity.hpp>
+#include <engine/core/Scene.hpp>
 #include <engine/components/ComponentPool.hpp>
 
 namespace engine {
@@ -18,6 +19,6 @@ namespace engine {
 	public:
 		virtual ~System() = default;
 
-		virtual void update(Entities const& entities) = 0;
+		virtual void update(Scene& scene) = 0;
 	};
 }

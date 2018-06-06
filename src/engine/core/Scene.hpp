@@ -30,10 +30,8 @@ namespace engine {
 		Scene();
 		virtual ~Scene();
 
-		using EntityModel = std::function<Entity const& (Entity const&)>;
 		using EntityModels = std::unordered_map<std::string, EntityModel>;
-		using EventHandler = std::function<void (void const*)>;
-		using Events = std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>>;
+		using Events = std::unordered_map<std::string, Event<GenericEvent>*>;
 
 		/**
 		 * Register a model to spawn it later
@@ -46,61 +44,67 @@ namespace engine {
 		/**
 		 * Spawn an entity based on the model designated by its name
 		 * @param name Model's name
+		 * @param parentId Id of the Entity to which the spawned one should be attached
 		 * @return the spawned entity
 		 */
-		EntityId spawnEntity(std::string const& name);
+		Entity const& spawnEntity(std::string const& name, EntityId parentId = Entity::nullId);
 
 		/**
 		 * Spawn an entity based on the model designated by its name
 		 * @param name Model's name
 		 * @param initialisation Function that modify the spawned entity
+		 * @param parentId Id of the Entity to which the spawned one should be attached
 		 * @return the spawned entity
 		 */
-		EntityId spawnEntity(std::string const& name, EntityModel const& initialisation);
+		Entity const& spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId = Entity::nullId);
 
 		Entities const& getEntities() const;
 
 		template <typename ContextType>
-		void registerEvent(std::string const& name, EventHandler const& handler) {
-			_eventHandlers[name] = handler;
-			this->events[name] = std::make_shared<Event<ContextType>>();
-			reinterpret_cast<Event<ContextType>*>(this->events[name].get())
-				->subscribe([&](ContextType const& context) -> int {
-				// TODO: Deserialize context
-				_eventHandlers[name](&context);
-				return 0;
-			});
+		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
+			if (this->events.find(name) == std::end(this->events)) {
+				this->events[name] = reinterpret_cast<Event<GenericEvent>*>(::new Event<ContextType>());
+			}
+
+			reinterpret_cast<Event<ContextType>*>(this->events[name])->subscribe(handler);
 		}
 
 		template <typename ContextType>
-		void triggerEvent(std::string const& name, ContextType const& context) {
-			reinterpret_cast<Event<ContextType>*>(this->events[name].get())->emit(context);
+		void triggerEvent(std::string const& name, ContextType const& context = ContextType()) {
+			if (this->events.find(name) == std::end(this->events)) {
+				throw std::runtime_error("event '" + name + "' does not exists");
+			}
+
+			reinterpret_cast<Event<ContextType>*>(this->events[name])->emit(context);
 		}
 
-		template <typename ContextType>
-		void triggerSyncedEvent(std::string const& name, ContextType const& context) {
-			this->triggerEvent(name, context);
+		void triggerSyncedEvent(std::string const& name, std::string const& serializedContext) {
+			this->triggerEvent<std::string>(name, serializedContext);
 
-			// TODO: Serialize context
-			this->socket.send<std::string>(name);
+			if (_synced) {
+				this->socket.send<network::TextMessage>(name + "|" + serializedContext);
+			}
 		}
 
-		void synchonizeWith(std::string const& hostname);
+		void synchronizeWith(std::string const& hostname, class Game& game);
 
 		bool isRunning() const;
-
-		Events events;
-		network::ClientSocket socket;
+		bool hasEvent(std::string const& evtName) const;
+		std::size_t id() const;
 
 	protected:
 		void previousScene();
 
 	private:
-		static EntityId _lastSpawnedEntityId;
+		static EntityId _LastSpawnedEntityId;
+		static std::size_t _LastSceneId;
 
-		std::unordered_map<std::string, EventHandler> _eventHandlers;
+		Events events;
+		network::ClientSocket socket;
 		EntityModels _models;
 		Entities _entities;
 		bool _running;
+		bool _synced;
+		std::size_t _id;
 	};
 }

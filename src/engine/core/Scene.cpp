@@ -8,10 +8,12 @@
 #include <string>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Game.hpp"
+#include "engine/systems/ClientNetworkSystem.hpp"
 
-engine::EntityId engine::Scene::_lastSpawnedEntityId = engine::Entity::nullId;
+engine::EntityId engine::Scene::_LastSpawnedEntityId = engine::Entity::nullId;
+std::size_t engine::Scene::_LastSceneId = 0;
 
-engine::Scene::Scene() : _running(true)
+engine::Scene::Scene() : _running(true), _synced(false), _id(++_LastSceneId)
 {
 }
 
@@ -25,23 +27,22 @@ engine::Scene::registerEntityModel(std::string const& name, EntityModel const& m
 	_models[name] = model;
 }
 
-engine::EntityId
-engine::Scene::spawnEntity(std::string const& name)
+engine::Entity const&
+engine::Scene::spawnEntity(std::string const& name, EntityId parentId)
 {
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("entity model '" + name + "' not found");
 
-	_entities.add(_models[name](engine::Entity(++_lastSpawnedEntityId, engine::Entity::nullId, &_entities)));
-	return _lastSpawnedEntityId;
+
+	return _entities.add(engine::Entity(++_LastSpawnedEntityId, parentId, &_entities), _models[name]);
 }
 
-engine::EntityId
-engine::Scene::spawnEntity(std::string const& name, EntityModel const& initialisation)
+engine::Entity const&
+engine::Scene::spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId)
 {
-	EntityId entityId = this->spawnEntity(name);
-
-	initialisation(Entity(entityId, engine::Entity::nullId, &_entities));
-	return entityId;
+	engine::Entity const& entity = this->spawnEntity(name, parentId);
+	initialisation(entity);
+	return entity;
 }
 
 bool
@@ -56,6 +57,18 @@ engine::Scene::previousScene()
 	_running = false;
 }
 
+std::size_t
+engine::Scene::id() const
+{
+	return _id;
+}
+
+bool
+engine::Scene::hasEvent(std::string const& eventName) const
+{
+	return this->events.find(eventName) != std::end(this->events);
+}
+
 engine::Entities const&
 engine::Scene::getEntities() const
 {
@@ -63,16 +76,18 @@ engine::Scene::getEntities() const
 }
 
 void
-engine::Scene::synchonizeWith(std::string const& hostname)
+engine::Scene::synchronizeWith(std::string const& hostname, Game& game)
 {
 	this->socket.create().connect(hostname);
 
-	this->socket.send<std::string>(engine::network::version);
+	this->socket.send<network::TextMessage>(engine::network::version);
 	auto res = this->socket.receive<engine::network::TextMessage>();
 
 	if (std::string(res.text) != engine::network::version) {
 		throw std::runtime_error(std::string("server version ") + res.text + " does not match current version " + engine::network::version);
 	}
-
 	std::cout << "worms: network: successfuly connected to " << hostname << std::endl;
+
+	game.registerSystem("network", new ClientNetworkSystem(this->socket, this->events));
+	_synced = true;
 }

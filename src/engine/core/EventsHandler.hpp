@@ -11,8 +11,14 @@
 #include <functional>
 #include <irrlicht/IEventReceiver.h>
 #include "Event.hpp"
+#include "engine/core/Scene.hpp"
 
 namespace engine {
+
+	enum EventConfig {
+		EVT_RELEASE = 1 << 0,
+		EVT_SYNCED = 1 << 1
+	};
 
 	struct EnumClassHash {
 		template <typename T>
@@ -23,29 +29,49 @@ namespace engine {
 	};
 
 	using KeyCode = irr::EKEY_CODE;
-
 	using KeyState = irr::SEvent::SKeyInput;
+	using Events = std::map<std::size_t, Event<KeyState>>;
 
 	class EventsReceiver : public irr::IEventReceiver {
 	public:
-		explicit EventsReceiver(Event<KeyState>& keyEvents);
+		explicit EventsReceiver(Events& keyEvents);
 
 		bool OnEvent(irr::SEvent const& event) override;
 
 	private:
-		Event<KeyState>& _keyEvents;
+		Events& _keyEvents;
 	};
 
 	class EventsHandler {
 	public:
-		explicit EventsHandler(Event<KeyState>& keyEvents);
+		explicit EventsHandler(Events& keyEvents);
 
 		KeyState const& getKeyState(KeyCode keyCode);
 
-		void subscribe(Event<KeyState>::CallbackType const& callback);
+		void unregisterEventTarget(Scene const& target);
+
+		template <typename PayloadType>
+		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload, int config = 0) {
+			bool release = config & EventConfig::EVT_RELEASE;
+			bool sync = config & EventConfig::EVT_SYNCED;
+
+			_keyEvents[scene.id()].subscribe([&scene, evt, payload, key, sync, release](engine::KeyState const& k) -> int {
+				if (k.Key == key && release ^ k.PressedDown && scene.hasEvent(evt)) {
+					if (sync) {
+						scene.triggerSyncedEvent(evt, payload.serialize());
+					} else {
+						scene.triggerEvent<PayloadType>(evt, payload);
+					}
+				}
+
+				return 0;
+			});
+		}
 
 	private:
 		std::unordered_map<KeyCode, KeyState, EnumClassHash> _keyStates;
-		Event<KeyState>& _keyEvents;
+		Events& _keyEvents;
+
+		void _registerEventTarget(Scene const& target);
 	};
 }

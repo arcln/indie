@@ -5,30 +5,55 @@
 ** main.cpp
 */
 
-#include <iostream>
-#include <string>
-#include "engine/core/Event.hpp"
-#include "engine/core/Scene.hpp"
-#include "game/TestScene.hpp"
-#include "engine/core/Game.hpp"
-#include "engine/components/DisplayComponent.hpp"
-#include "engine/systems/DisplaySystem.hpp"
+#include "engine/Engine.hpp"
+#include "game/Worms.hh"
 
-int
-main(int const, char const *[])
+#ifndef APPLE
+# define ENGINE_OS_SETUP	""
+#endif
+
+#ifdef APPLE
+# include <IOKit/IOCFBundle.h>
+
+# define ENGINE_OS_SETUP	__osxGetCwd()
+
+char const* __osxGetCwd()
 {
-	engine::Game game;
+	CFURLRef appUrlRef = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFStringRef macPath = CFURLCopyFileSystemPath(appUrlRef, kCFURLPOSIXPathStyle);
+	char const* pathPtr = CFStringGetCStringPtr(macPath, kCFStringEncodingUTF8);
 
-	try {
-		engine::DisplaySystem display(game);
-		game.registerSystem("display", &display);
+	CFRelease(appUrlRef);
+	CFRelease(macPath);
+	return pathPtr;
+}
 
-		testGame::TestScene scene(&game);
-		game.registerSceneModel("worms", scene.getSceneModel());
-		game.play("worms");
-	} catch (std::exception& e) {
-		std::cerr << "worms: ERROR: " << e.what() << std::endl;
-	}
+#endif
 
-	return 0;
+#ifdef WIN32
+# include <winsock2.h>
+# pragma comment(lib, "Ws2_32.lib")
+
+void __win32InitSockets()
+{
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2), &wsa);
+}
+
+#endif
+
+int main()
+{
+#ifdef WIN32
+	__win32InitSockets();
+#endif
+
+	engine::Engine engine(WORMS_IS_SERVER, ENGINE_OS_SETUP);
+	auto status = engine.play(worms::worms);
+
+#ifdef WIN32
+	WSACleanup();
+#endif
+
+	return status;
 }

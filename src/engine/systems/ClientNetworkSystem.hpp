@@ -14,14 +14,12 @@
 
 namespace engine {
 
-	using Events = std::unordered_map<std::string, std::shared_ptr<Event<GenericEvent>>>;
-
 	class ClientNetworkSystem : public System {
 	public:
-		explicit ClientNetworkSystem(network::ClientSocket const& socket, Events const& events);
+		explicit ClientNetworkSystem(network::ClientSocket const& socket, Scene::Events& events);
 		~ClientNetworkSystem();
 
-		void update(Entities const& entities) override;
+		void update(Scene& scene) override;
 
 	private:
 		std::thread _netThread;
