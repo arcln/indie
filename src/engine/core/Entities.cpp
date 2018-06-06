@@ -25,26 +25,14 @@ engine::Entities::add(engine::EntityId parentId, engine::EntityModel const& mode
 	if (entity.has<IrrlichtComponent>())
 		entity.get<TransformComponent>([](auto& t) {});
 
-	if (parentId == engine::Entity::nullId)
-		_roots.push_back(entity.getId());
-
-	_childs[parentId].push_back(entity.getId());
+	_entities[parentId].push_back(entity.getId());
 	return entity;
-}
-
-engine::Entities::Roots::iterator
-engine::Entities::findRoot(engine::EntityId id)
-{
-	return std::find(std::begin(_roots), std::end(_roots), id);
 }
 
 engine::Entities::FindResult
 engine::Entities::find(engine::EntityId parentId, engine::EntityId id)
 {
-	if (std::find(std::begin(_roots), std::end(_roots), parentId) == std::end(_roots))
-		throw std::runtime_error("unable to find an entity, parent not found");
-
-	engine::Entities::Siblings& siblings = _childs[parentId];
+	engine::Entities::Siblings& siblings = _entities.at(parentId);
 
 	return FindResult {
 		siblings,
@@ -52,39 +40,40 @@ engine::Entities::find(engine::EntityId parentId, engine::EntityId id)
 	};
 }
 
+engine::EntityId
+engine::Entities::findParent(engine::EntityId id)
+{
+	for (auto& siblings : _entities) {
+		auto const& entityIt = std::find(std::begin(siblings.second), std::end(siblings.second), id);
+
+		if (entityIt != std::end(siblings.second))
+			return siblings.first;
+	}
+
+	throw std::runtime_error("unable to find a parent, entity not found");
+}
+
 void
 engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 {
-	if (parentId == engine::Entity::nullId) {
-		auto entityIt = this->findRoot(id);
+	engine::Entities::FindResult findResult = this->find(parentId, id);
 
-		if (entityIt == std::end(_roots))
-			throw std::runtime_error("unable to kill root entity " + std::to_string(id));
-		_roots.erase(entityIt);
-	} else {
-		engine::Entities::FindResult findResult = this->find(parentId, id);
-
-		if (findResult.it == std::end(findResult.siblings))
-			throw std::runtime_error("unable to kill entity " + std::to_string(id));
-		findResult.siblings.erase(findResult.it);
-	}
+	if (findResult.it == std::end(findResult.siblings))
+		throw std::runtime_error("unable to kill entity " + std::to_string(id));
+	findResult.siblings.erase(findResult.it);
 }
 
 engine::Entity
 engine::Entities::attach(engine::EntityId parentId, engine::EntityId id)
 {
-	if (std::find(std::begin(_roots), std::end(_roots), parentId) == std::end(_roots))
-		throw std::runtime_error("unable to attach an entity, parent not found");
+	engine::Entities::Siblings& sibilings = _entities[engine::Entity::nullId];
+	auto const& childIt = std::find(std::begin(sibilings), std::end(sibilings), id);
 
-	auto const& childIt = std::find(std::begin(_roots), std::end(_roots), id);
-
-	if (childIt == std::end(_roots))
+	if (childIt == std::end(sibilings))
 		this->detach(parentId, id);
 
-	engine::Entities::FindResult findResult = this->find(parentId, id);
-	findResult.siblings.erase(findResult.it);
-
-	_childs[parentId].push_back(id);
+	sibilings.erase(childIt);
+	_entities[parentId].push_back(id);
 	return engine::Entity(id, parentId, this);
 }
 
@@ -101,10 +90,10 @@ engine::Entities::detach(engine::EntityId parentId, engine::EntityId id)
 
 		findResult.siblings.erase(findResult.it);
 	} catch (std::runtime_error const& e) {
-		throw std::runtime_error(std::string("unable to detach an entity, parent not found: ") + e.what());
+		throw std::runtime_error(std::string("unable to detach an entity: ") + e.what());
 	}
 
-	_roots.push_back(id);
+	_entities[engine::Entity::nullId].push_back(id);
 	return engine::Entity(id, parentId, this);
 }
 

@@ -16,18 +16,17 @@ namespace engine {
 
 	class Entities {
 	public:
-		using Roots = std::vector<EntityId>;
 		using Siblings = std::vector<EntityId>;
-		using Childs = std::map<EntityId, Siblings>;
 		struct FindResult {
 			Siblings& siblings;
 			Siblings::iterator it;
 		};
 
 		Entity add(EntityId parentId, EntityModel const& model);
-		Roots::iterator findRoot(EntityId id);
-		FindResult find(EntityId parentId, EntityId id);
 		void remove(EntityId parentId, EntityId id);
+
+		FindResult find(EntityId parentId, EntityId id);
+		EntityId findParent(EntityId id);
 
 		Entity attach(EntityId parentId, EntityId id);
 		Entity detach(EntityId parentId, EntityId id);
@@ -35,22 +34,14 @@ namespace engine {
 		template <typename... ComponentsTypes>
 		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true)
 		{
-			for (auto& child : _childs) {
-				try {
-					_getEntityComponents<ComponentsTypes...>(Entity::nullId, child.first, callback);
-				} catch (internal::ComponentPoolException const& e) {}
-
-				if (doChilds)
-					this->_eachSibilings<ComponentsTypes...>(child.first, child.second, callback);
-			}
+			this->_eachSibilings<ComponentsTypes...>(Entity::nullId, _entities[Entity::nullId], callback, doChilds);
 		}
 
 		void withTag(std::string tag, std::function<void (Entity const&)> callback);
 
 	private:
 		static EntityId _LastSpawnedEntityId;
-		Roots _roots;
-		Childs _childs;
+		std::map<EntityId, Siblings> _entities;
 
 		template<typename... ComponentsTypes>
 		void
@@ -62,16 +53,16 @@ namespace engine {
 		}
 
 		template <typename... ComponentsTypes>
-		void _eachSibilings(EntityId parentId, Siblings& siblings, typename EntityCallback<ComponentsTypes...>::Get const& callback)
+		void _eachSibilings(EntityId parentId, Siblings& siblings, typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds)
 		{
 			for (auto& it : siblings) {
 				try {
 					_getEntityComponents<ComponentsTypes...>(parentId, it, callback);
 				} catch (internal::ComponentPoolException const& e) {}
 
-				auto const& childsIt = _childs.find(it);
-				if (childsIt != std::end(_childs))
-					this->_eachSibilings<ComponentsTypes...>(parentId, childsIt->second, callback);
+				auto const& childsIt = _entities.find(it);
+				if (doChilds && childsIt != std::end(_entities))
+					this->_eachSibilings<ComponentsTypes...>(parentId, childsIt->second, callback, doChilds);
 			}
 		}
 	};
