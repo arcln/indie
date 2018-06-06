@@ -9,12 +9,12 @@
 
 #include <iostream>
 #include "engine/core/Game.hpp"
-#include <engine/components/LightComponent.hpp>
-#include <engine/components/ComponentFilter.hpp>
-#include <engine/components/IrrlichtComponent.hpp>
-#include <engine/components/HitboxComponent.hpp>
-#include <engine/components/TransformComponent.hpp>
-#include <engine/components/TagComponent.hpp>
+#include "engine/components/LightComponent.hpp"
+#include "engine/components/ComponentFilter.hpp"
+#include "engine/components/IrrlichtComponent.hpp"
+#include "engine/components/HitboxComponent.hpp"
+#include "engine/components/TransformComponent.hpp"
+#include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
@@ -24,6 +24,12 @@
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
+
+	static const auto test = [](engine::Game& game, engine::Scene& scene) {
+		scene.registerEvent<std::string>("test evt", [](std::string const& data) {std::cout << data << std::endl;return 0;});
+		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_SPACE, "test evt", "test payload");
+		game.replaceScene("battle");
+	};
 
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
@@ -89,6 +95,7 @@ namespace worms { namespace scene {
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
             hitboxComponent.hasDebugMode = true;
+			hitboxComponent.rebound = 0.1f;
 
             scene.registerEvent<engine::Vec2D>("jump player", [entity, &scene, &physicsComponent](auto const& jump) {
                 if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
@@ -121,57 +128,21 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			if (keystate.PressedDown) {
-				switch (keystate.Key) {
-                    case engine::KeyCode::KEY_KEY_Z:
-						scene.triggerEvent<engine::Vec2D>("jump player", {-0.f, 100.f});
-						break;
-					case engine::KeyCode::KEY_KEY_Q:
-						scene.triggerEvent<engine::Vec2D>("move player", {-0.3f, 0.f});
-						break;
-					case engine::KeyCode::KEY_KEY_D:
-						scene.triggerEvent<engine::Vec2D>("move player", {0.3f, 0.f});
-						break;
-                    case engine::KeyCode::KEY_KEY_S:
-						scene.triggerEvent<engine::Vec2D>("move player", {-0.f, 3.f});
-						break;
-					case engine::KeyCode::KEY_KEY_X:
-						scene.triggerEvent<engine::Vec2D>("move player", {0.f, -3.f});
-						break;
-					case engine::KeyCode::KEY_KEY_E:
-						scene.triggerSyncedEvent<Vector3f>("spawn worm", Vector3f(0.f, 0.f, 0.f));
-						break;
-					case engine::KeyCode::KEY_RIGHT:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {-1.f, 0.f, 0.f});
-						break;
-					case engine::KeyCode::KEY_LEFT:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {1.f, 0.f, 0.f});
-						break;
-					case engine::KeyCode::KEY_UP:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 1.f, 0.f});
-						break;
-					case engine::KeyCode::KEY_DOWN:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, -1.f, 0.f});
-						break;
-					case engine::KeyCode::KEY_KEY_R:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, 1.f});
-						break;
-					case engine::KeyCode::KEY_KEY_F:
-						scene.triggerEvent<engine::CameraComponent::Coords>("move camera", {0.f, 0.f, -1.f});
-						break;
-					case engine::KeyCode::KEY_KEY_O:
-						scene.triggerEvent<bool>("anim1", true);
-						break;
-					case engine::KeyCode::KEY_KEY_P:
-						scene.triggerEvent<bool>("anim2", true);
-						break;
-					default: break;
-				}
-			}
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {-10.f, 0.f});
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_Q, "move player", {0.f, 0.f}, true);
 
-			return 0;
-		});
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {10.f, 0.f});
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_KEY_D, "move player", {0.f, 0.f}, true);
+
+		game.eventsHandler.subscribe<engine::Vec2D>(scene, engine::KeyCode::KEY_SPACE, "jump player", {0.f, 100.f});
+
+		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_RIGHT, "move camera", {-1.f, 0.f, 0.f});
+		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_LEFT, "move camera", {1.f, 0.f, 0.f});
+		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_UP, "move camera", {0.f, 1.f, 0.f});
+		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_DOWN, "move camera", {0.f, -1.f, 0.f});
+		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_KEY_R, "move camera", {0.f, 0.f, 1.f});
+		game.eventsHandler.subscribe<engine::CameraComponent::Coords>(scene, engine::KeyCode::KEY_KEY_F, "move camera", {0.f, 0.f, -1.f});
+
 		scene.spawnEntity("light");
 		scene.spawnEntity("camera");
         scene.spawnEntity("block");

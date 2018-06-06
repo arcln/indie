@@ -26,12 +26,12 @@ namespace engine {
 
 		void update(Scene& scene) override;
 
-		static void applyCollision(Entities const& entities, Entity const& entity);
+		void applyCollision(Entities const& entities, Entity const& entity);
+        void applyDeplacement(Entities const& entities, Entity const& e, bool isCorrection = false);
 		static void patchCollision(Entity const& entity, HitboxComponent const& collideWith);
-		static void applyDeplacement(Entities const& entities, Entity const& e, bool isCorrection = false);
-		static void patchDeplacement(Entities const& entities, Entity const& entity, irr::core::vector3df const& origin);
-		static bool simpleCollideEntities(Entities const& entities, Entity const& entity);
-		static bool isGrounded(Entities const& entities, Entity const& entity);
+        static void patchDeplacement(Entities const& entities, Entity const& entity, irr::core::vector3df const& origin);
+        static bool simpleCollideEntities(Entities const& entities, Entity const& entity);
+        static bool isGrounded(Entities const& entities, Entity const& entity);
 
 	private:
 		Clock _prevUpdate = std::chrono::system_clock::now();
