@@ -74,7 +74,7 @@ namespace engine {
 
 				auto const& childsIt = _entities.find(it);
 				if (doChilds && childsIt != std::end(_entities))
-					this->_eachSibilings<ComponentsTypes...>(parentId, childsIt->second, callback, doChilds);
+					this->_eachSibilings<ComponentsTypes...>(it, childsIt->second, callback, doChilds);
 			}
 		}
 	};
