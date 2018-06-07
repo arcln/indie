@@ -56,7 +56,7 @@ namespace engine {
 		 * @param parentId Id of the Entity to which the spawned one should be attached
 		 * @return the spawned entity
 		 */
-		Entity const& spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId = Entity::nullId);
+		Entity spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId = Entity::nullId);
 
 		Entities& getEntities();
 

@@ -36,10 +36,10 @@ engine::Scene::spawnEntity(std::string const& name, EntityId parentId)
 	return _entities.add(parentId, _models[name]);
 }
 
-engine::Entity const&
+engine::Entity
 engine::Scene::spawnEntity(std::string const& name, EntityModel const& initialisation, EntityId parentId)
 {
-	engine::Entity const& entity = this->spawnEntity(name, parentId);
+	engine::Entity entity = this->spawnEntity(name, parentId);
 	initialisation(entity);
 	return entity;
 }
