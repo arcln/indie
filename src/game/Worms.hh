@@ -10,13 +10,15 @@
 #include "engine/core/Game.hpp"
 #include "engine/systems/DisplaySystem.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
+#include "engine/systems/AISystem.hpp"
 #include "game/scenes/Battle.hh"
 
 namespace worms {
 
 	static const auto worms = [](engine::Game& game) {
         game.registerSystem("physics", new engine::PhysicsSystem());
-        game.registerSystem("display", new engine::DisplaySystem(game));
+		game.registerSystem("display", new engine::DisplaySystem(game));
+		game.registerSystem("ai", new engine::AISystem(game.luaManager));
 
 		game.registerSceneModel("main", worms::scene::battle);
 	};

@@ -18,6 +18,7 @@
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
+#include "engine/components/AIComponent.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "game/events/Vector.hpp"
@@ -68,7 +69,8 @@ namespace worms { namespace scene {
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
-            auto& transformComponent = entity.set<engine::TransformComponent>();
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			auto& aiComponent = entity.set<engine::AIComponent>("scripts/test.lua");
             transformComponent.scale = {.5f, .5f, .5f};
             transformComponent.position = {0.f, 25.f, 0.f};
 

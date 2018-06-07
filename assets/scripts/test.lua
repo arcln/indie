@@ -6,4 +6,12 @@
 -- To change this template use File | Settings | File Templates.
 --
 
-function update() test() end
+function update()
+    test()
+    writeeee("ok man")
+end
+
+function write_sum(a, b)
+    writeeee(a + b)
+    return a + b
+end

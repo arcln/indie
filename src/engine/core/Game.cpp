@@ -9,6 +9,18 @@
 #include "engine/systems/System.hpp"
 #include "Game.hpp"
 
+int test(lua_State *state)
+{
+	std::cout << "aze aze aze!!!" << std::endl;
+	return 0;
+}
+
+static int l_write(lua_State* L)
+{
+	std::cout << lua_tostring(L, 1) << std::endl;
+	return 42;
+}
+
 engine::Game::Game(bool enableVideo, std::string const& cwd)
 	: eventsHandler(_keyEvents)
 	, meshManager(cwd)
@@ -33,11 +45,9 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	this->textureManager.onLoad([&](std::string const& asset) {
 		return this->_device->getVideoDriver()->getTexture(asset.c_str());
 	});
+
 	this->luaManager.onLoad([](std::string const& asset) {
-		return Lua(asset).registerFunction("test", [](lua_State *state) {
-			std::cout << "success" << std::endl;
-			return 0;
-		});
+		return Lua(asset).registerFunction("test", test).registerFunction("writeeee", l_write);
 	});
 
 }

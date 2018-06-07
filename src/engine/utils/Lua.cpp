@@ -18,11 +18,6 @@ engine::Lua::Lua(std::string const& filename) : _state(luaL_newstate())
 	luaL_openlibs(_state);
 }
 
-engine::Lua::~Lua()
-{
-	lua_close(_state);
-}
-
 void
 engine::Lua::_cleanStack() const
 {
@@ -30,9 +25,9 @@ engine::Lua::_cleanStack() const
 }
 
 engine::Lua const&
-engine::Lua::registerFunction(std::string const& name, std::function<int(lua_State*)> callback) const
+engine::Lua::registerFunction(std::string const& name, engine::Lua::CFunction callback) const
 {
-	lua_pushcfunction(_state, callback.target<int (lua_State*)>());
+	lua_pushcfunction(_state, callback);
 	lua_setglobal(_state, name.c_str());
 	return *this;
 }
@@ -46,18 +41,18 @@ engine::Lua::_checkState(std::string const& message) const
 }
 
 void
-engine::Lua::_putOnStack(std::string const& varPath) const
+engine::Lua::_putOnStack(std::string const& varName) const
 {
-	std::stringstream tokens(varPath);
+	std::stringstream tokens(varName);
 	std::string token;
 
 	std::getline(tokens, token, '.');
 	lua_getglobal(_state, token.c_str());
-	_checkState(varPath + " not defined.");
+	_checkState(varName + " not defined.");
 
 	while (std::getline(tokens, token, '.')) {
 		lua_getfield(_state, -1, token.c_str());
-		_checkState(varPath + " not defined.");
+		_checkState(varName + " not defined.");
 	}
 }
 
@@ -73,41 +68,104 @@ engine::Lua::pCall(int nargs, int nresults, int errFunc) const
 	return lua_pcall(_state, nargs, nresults, errFunc);
 }
 
+void
+engine::Lua::pushLightUserData(engine::Lua::LightUserData* lud) const
+{
+	lua_pushlightuserdata(_state, lud);
+}
+
+void
+engine::Lua::pushNumber(engine::Lua::Number number) const
+{
+	lua_pushnumber(_state, number);
+}
+
+void
+engine::Lua::pushInteger(engine::Lua::Integer integer) const
+{
+	lua_pushinteger(_state, integer);
+}
+
+std::string
+engine::Lua::pushString(engine::Lua::String string) const
+{
+	return lua_pushstring(_state, string);
+}
+
+void
+engine::Lua::pushBoolean(engine::Lua::Boolean boolean) const
+{
+	lua_pushboolean(_state, boolean);
+}
+
+void
+engine::Lua::pushNil() const
+{
+	lua_pushnil(_state);
+}
+
+void
+engine::Lua::pop(int idx) const
+{
+	lua_pop(_state, 1);
+}
+
 namespace engine {
 
 	template <>
-	bool
-	Lua::_getFromStack<bool>(std::string const& variable) const
+	Lua::LightUserData
+	Lua::to<Lua::LightUserData>(int idx) const
 	{
-		return static_cast<bool>(lua_toboolean(_state, -1));
+		return lua_touserdata(_state, idx);
 	}
 
 	template <>
-	int
-	Lua::_getFromStack<int>(std::string const& variable) const
+	Lua::LightUserDataConst
+	Lua::to<Lua::LightUserDataConst>(int idx) const
+	{
+		return lua_topointer(_state, idx);
+	}
+
+	template <>
+	Lua::Boolean
+	Lua::to<Lua::Boolean>(int idx) const
+	{
+		return static_cast<Lua::Boolean>(lua_toboolean(_state, -1));
+	}
+
+	template <>
+	Lua::Integer
+	Lua::to<Lua::Integer>(int idx) const
+	{
+		if (!lua_isinteger(_state, -1)) {
+			throw std::runtime_error("unable to get a variable, not an integer");
+		}
+		return lua_tointeger(_state, -1);
+	}
+
+	template <>
+	Lua::Number
+	Lua::to<Lua::Number>(int idx) const
 	{
 		if (!lua_isnumber(_state, -1)) {
-			throw std::runtime_error(variable + " isn't a number");
+			throw std::runtime_error("unable to get a variable, not a number");
 		}
-		return static_cast<int>(lua_tonumber(_state, -1));
+		return lua_tonumber(_state, -1);
 	}
 
 	template <>
 	float
-	Lua::_getFromStack<float>(std::string const& variable) const
+	Lua::to<float>(int idx) const
 	{
-		if (!lua_isnumber(_state, -1)) {
-			throw std::runtime_error(variable + " isn't a number");
-		}
-		return static_cast<int>(lua_tonumber(_state, -1));
+		return static_cast<float>(to<Lua::Number>(idx));
 	}
 
 	template <>
 	std::string
-	Lua::_getFromStack<std::string>(std::string const& variable) const
+	Lua::to<std::string>(int idx) const
 	{
 		if (!lua_isstring(_state, -1)) {
-			throw std::runtime_error(variable + " isn't a string");
+			throw std::runtime_error("unable to get a variable, not a string");
 		}
 		return std::string(lua_tostring(_state, -1));
 	}
