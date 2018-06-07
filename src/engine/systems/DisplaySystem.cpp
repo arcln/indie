@@ -58,6 +58,8 @@ engine::DisplaySystem::update(Scene& scene)
             return;
         }
         for (auto& segment : h.segments3D) {
+		segment.p1.Z = -1.f;
+		segment.p2.Z = -1.f;
             auto wSegment = engine::Segment3D{
                 (segment.p1* t.scale + t.position),
                 (segment.p2 * t.scale + t.position)

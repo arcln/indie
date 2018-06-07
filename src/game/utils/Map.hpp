@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <engine/core/Game.hpp>
+#include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Entity.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
@@ -33,11 +33,23 @@ public:
 		float 	Density;
 	};
 
+	typedef struct 		chunk
+	{
+		std::string 	string;
+		int 		length;
+		int 		height;
+		int 		mapLength;
+		int 		id;
+		int 		nbChunks;
+	}			chunk;
+
 	typedef struct 		mapSettings
 	{
-		std::string 	mapString;
-		int 		mapLength;
-		int 		mapHeight;
+		std::string 		string;
+		int 			length;
+		int 			height;
+		std::vector<Wornite::Map::chunk> chunks;
+		int 			nbChunks;
 	}			mapSettings;
 
 	void genMap(engine::Game* game, engine::Scene* scene, Settings* mapSettings);
@@ -45,7 +57,7 @@ public:
 private:
 	int _blockDisplayed = 0;
 
-	const float _mapPrecision = .1f;
+	const float _mapPrecision = .2f;
 
 	const char _grad3[12][3] = {
 		{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
@@ -94,12 +106,20 @@ private:
 	float __attribute__ ((const))	fade(float n);
 	float __attribute__((pure))	getPerlin2(unsigned int gi[8], irr::core::vector3df r, irr::core::vector3df f);
 	float __attribute__((pure)) getPerlin(float x, float y, float z);
-	void replaceBigChunks(engine::Game* game, engine::Scene* scene, Wornite::Map::mapSettings *map);
-	void spawnBigChunk(engine::Game* game, engine::Scene* scene, Bsq::t_map *map, Bsq::t_response *res);
-	void spawnMap(engine::Game* game, engine::Scene* scene, Wornite::Map::mapSettings *map);
+	void fillBigChunks(engine::Game* game, engine::Scene* scene,
+			   chunk *map);
+
+	void spawnBigChunk(engine::Game* game, engine::Scene* scene,
+			   Bsq::t_map *map, Bsq::t_response *res, chunk *chunk);
+
 	void spawnPieceMap(engine::Game* game, engine::Scene* scene,
 			   irr::core::vector3df position, irr::core::vector3df scale);
+
 	void removeBigChunk(Bsq::t_map *map, Bsq::t_response *res);
+
+	void getChunk(mapSettings *map);
+
+	void spawnChunkHitbox(engine::Game *pGame, engine::Scene *pScene, chunk *pChunk);
 };
 
 }

@@ -124,7 +124,7 @@ namespace worms { namespace scene {
 			animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 79));
 
             transformComponent.scale = {.5f, .5f, .5f};
-            transformComponent.position = {0.f, 25.f, 0.f};
+            transformComponent.position = {0.f, 50.f, 0.f};
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
             hitboxComponent.hasDebugMode = true;
@@ -147,7 +147,7 @@ namespace worms { namespace scene {
 			scene.registerEvent<std::string>("player.jump", [entity, &scene, &physicsComponent](std::string const& jump) {
                 if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
                     physicsComponent.velocity += (Vector2f) jump;
-                }
+//                }
 
 				return 0;
 			});
