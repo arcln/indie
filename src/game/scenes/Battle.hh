@@ -18,6 +18,8 @@
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
+#include "engine/components/ItemComponent.hpp"
+#include "engine/components/HoldComponent.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "game/events/Vector.hpp"
@@ -43,7 +45,7 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			entity.set<engine::TransformComponent>();
 			auto& cameraComponent = entity.set<engine::CameraComponent>(
-				game.device(), engine::CameraComponent::Coords {0.f, 0.f, -10.f}, engine::CameraComponent::Coords {0, 0, 0}
+				game.device(), engine::CameraComponent::Coords {0.f, 0.f, -30.f}, engine::CameraComponent::Coords {0, 0, 0}
 			);
 
 			scene.registerEvent<Vector3f>("camera.goto", [&](auto const& position) {
@@ -64,7 +66,8 @@ namespace worms { namespace scene {
 		});
 
         scene.registerEntityModel("player", [&](engine::Entity const& entity) {
-			entity.set<PlayerComponent>(0);
+            entity.set<PlayerComponent>(0);
+			entity.set<engine::HoldComponent>();
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
@@ -98,6 +101,19 @@ namespace worms { namespace scene {
 			transformComponent.position = {0.f, 0.f, 0.f};
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
+			hitboxComponent.rebound = 0.8;
+			hitboxComponent.hasDebugMode = true;
+		});
+
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+			entity.set<engine::ItemComponent>();
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {-10.f, 10.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
 			hitboxComponent.rebound = 0.8;
 			hitboxComponent.hasDebugMode = true;
 		});
@@ -156,6 +172,7 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
 		scene.spawnEntity("player");
 		scene.spawnEntity("block");
-		scene.spawnEntity("light");
+        scene.spawnEntity("light");
+		scene.spawnEntity("item");
 	};
 }}

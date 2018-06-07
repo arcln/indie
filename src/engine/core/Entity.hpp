@@ -42,7 +42,7 @@ namespace engine {
 		 * Attach a child to the entity
 		 * @param child Entity to become child
 		 */
-		void attach(Entity const& child);
+		Entity attach(Entity const& child) const;
 
 		/**
 		 * Detach the entity from its parent

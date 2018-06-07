@@ -41,7 +41,7 @@ engine::Entities::find(engine::EntityId parentId, engine::EntityId id)
 }
 
 engine::EntityId
-engine::Entities::findParent(engine::EntityId id)
+engine::Entities::findParent(engine::EntityId id) const
 {
 	for (auto& siblings : _entities) {
 		auto const& entityIt = std::find(std::begin(siblings.second), std::end(siblings.second), id);
@@ -66,11 +66,11 @@ engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 engine::Entity
 engine::Entities::attach(engine::EntityId parentId, engine::EntityId id)
 {
-	engine::Entities::Siblings& sibilings = _entities[engine::Entity::nullId];
+    engine::Entities::Siblings& sibilings = _entities[engine::Entity::nullId];
 	auto const& childIt = std::find(std::begin(sibilings), std::end(sibilings), id);
 
 	if (childIt == std::end(sibilings))
-		this->detach(parentId, id);
+		this->detach(this->findParent(id), id);
 
 	sibilings.erase(childIt);
 	_entities[parentId].push_back(id);

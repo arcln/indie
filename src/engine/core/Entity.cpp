@@ -39,10 +39,10 @@ engine::Entity::kill()
 	_entities->remove(_parentId, _id);
 }
 
-void
-engine::Entity::attach(engine::Entity const& child)
+engine::Entity
+engine::Entity::attach(engine::Entity const& child) const
 {
-	_entities->attach(_id, child.getId());
+	return _entities->attach(_id, child.getId());
 }
 
 void
