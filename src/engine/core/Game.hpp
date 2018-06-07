@@ -12,6 +12,8 @@
 #include <vector>
 #include <unordered_map>
 #include <irrlicht/irrlicht.h>
+#include <stack>
+#include "engine/utils/Lua.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/resource/ResourceManager.hpp"
 #include "EventsHandler.hpp"
@@ -50,6 +52,7 @@ namespace engine {
 		EventsHandler eventsHandler;
 		ResourceManager<MeshNode*> meshManager;
 		ResourceManager<Texture*> textureManager;
+		ResourceManager<Lua> luaManager;
 
 	private:
 		irr::IrrlichtDevice* _device;

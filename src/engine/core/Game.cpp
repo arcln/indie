@@ -13,6 +13,7 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	: eventsHandler(_keyEvents)
 	, meshManager(cwd)
 	, textureManager(cwd)
+	, luaManager(cwd)
 	, _eventReceiver(_keyEvents)
 	, _cwd(cwd)
 {
@@ -32,6 +33,13 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	this->textureManager.onLoad([&](std::string const& asset) {
 		return this->_device->getVideoDriver()->getTexture(asset.c_str());
 	});
+	this->luaManager.onLoad([](std::string const& asset) {
+		return Lua(asset).registerFunction("test", [](lua_State *state) {
+			std::cout << "success" << std::endl;
+			return 0;
+		});
+	});
+
 }
 
 engine::Game::~Game()

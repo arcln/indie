@@ -48,12 +48,16 @@ include_directories(
 	${IOKIT_INCLUDE_DIR}
 	${COCOA_INCLUDE_DIR}
 	${GTEST_INCLUDE_DIRS}
+	./vendor/lua
 	./src
 )
 
+
+file(GLOB LUA_SRC vendor/lua/*.c)
 file(GLOB_RECURSE GAME_SRCS src/game/*)
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
 
+add_library(lua STATIC ${LUA_SRC})
 add_library(engine STATIC ${ENGINE_SRCS})
 
 add_executable(worms src/main.cpp ${GAME_SRCS})
@@ -69,7 +73,7 @@ target_link_libraries(worms
 	${IOKIT_LIBRARY}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
-	engine pthread Irrlicht
+	engine lua pthread Irrlicht
 )
 
 target_link_libraries(worms-server
@@ -79,7 +83,7 @@ target_link_libraries(worms-server
 	${IOKIT_LIBRARY}
 	${GLUT_LIBRARIES}
 	${ZLIB_LIBRARIES}
-	engine pthread Irrlicht
+	engine lua pthread Irrlicht
 )
 
 if (NOT WIN32)
