@@ -71,7 +71,7 @@ namespace engine {
 	private:
 		std::unordered_map<KeyCode, KeyState, EnumClassHash> _keyStates;
 		Events& _keyEvents;
-		std::unordered_map<KeyCode, bool> _keyEventsState;
+		std::unordered_map<KeyCode, bool, EnumClassHash> _keyEventsState;
 
 		template <typename PayloadType>
 		using IsString = typename std::enable_if<std::is_same<std::string, PayloadType>::value, PayloadType>::type;

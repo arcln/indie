@@ -14,13 +14,13 @@ namespace engine {
 
 	struct AnimationBoundaries {
 		AnimationBoundaries() = default;
-		AnimationBoundaries(irr::s32 from, irr::s32 to) : from(from), to(to) {}
+		AnimationBoundaries(irr::s32 from, irr::s32 length) : from(from), to(from + length - 1) {}
 		irr::s32 from;
 		irr::s32 to;
 	};
 
 	struct AnimationComponent {
-		AnimationComponent(std::string const& initalState, irr::f32 frameRate) : currentState(initalState), frameRate(frameRate) {}
+		AnimationComponent(std::string const& initalState, irr::f32 frameRate = 60) : currentState(initalState), frameRate(frameRate) {}
 
 		using Constraint = ComponentConstraint<AnimationComponent, false>;
 
