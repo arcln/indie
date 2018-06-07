@@ -36,7 +36,7 @@ namespace engine {
 		/**
 		 * Remove the entity
 		 */
-		void kill();
+		void kill() const;
 
 		/**
 		 * Attach a child to the entity
@@ -47,7 +47,7 @@ namespace engine {
 		/**
 		 * Detach the entity from its parent
 		 */
-		void detach();
+		Entity detach() const;
 
 		/**
 		 * Enable back the Entity
