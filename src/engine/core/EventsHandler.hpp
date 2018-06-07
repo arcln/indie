@@ -80,11 +80,11 @@ namespace engine {
 		using IsNotString = typename std::enable_if<!std::is_same<std::string, PayloadType>::value, PayloadType>::type;
 
 		template <typename PayloadType>
-		void _bootstrapEvent(Scene& scene, std::string const& evt, IsString<PayloadType> const& serializedPayload, bool synced) {
+		void _bootstrapEvent(Scene& scene, std::string const& evt, IsString<PayloadType> const& payload, bool synced) {
 			if (synced) {
-				scene.triggerSyncedEvent(evt, serializedPayload);
+				scene.triggerSyncedEvent(evt, payload);
 			} else {
-				scene.triggerEvent<std::string>(evt, serializedPayload);
+				scene.triggerEvent<PayloadType>(evt, payload);
 			}
 		}
 
@@ -93,7 +93,7 @@ namespace engine {
 			if (synced) {
 				scene.triggerSyncedEvent(evt, serializablePayload.serialize());
 			} else {
-				scene.triggerEvent<std::string>(evt, serializablePayload.serialize());
+				scene.triggerEvent<PayloadType>(evt, serializablePayload);
 			}
 		}
 

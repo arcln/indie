@@ -138,6 +138,10 @@ namespace worms { namespace scene {
 					game.eventsHandler.disableKeyEvent(engine::KeyCode::KEY_KEY_D);
 					game.eventsHandler.disableKeyEvent(engine::KeyCode::KEY_KEY_Q);
 					game.eventsHandler.disableKeyEvent(engine::KeyCode::KEY_SPACE);
+				} else {
+					game.eventsHandler.enableKeyEvent(engine::KeyCode::KEY_KEY_D);
+					game.eventsHandler.enableKeyEvent(engine::KeyCode::KEY_KEY_Q);
+					game.eventsHandler.enableKeyEvent(engine::KeyCode::KEY_SPACE);
 				}
 			});
 
