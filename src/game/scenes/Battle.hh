@@ -9,8 +9,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include "engine/core/Game.hpp"
-#include "game/events/Vector.hpp"
 #include "engine/components/LightComponent.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 #include "engine/components/HitboxComponent.hpp"
@@ -18,6 +18,8 @@
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
+#include "game/components/PlayerComponent.hpp"
+#include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
 
@@ -57,6 +59,7 @@ namespace worms { namespace scene {
 		});
 
         scene.registerEntityModel("player", [&](engine::Entity const& entity) {
+			entity.set<PlayerComponent>(0);
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
@@ -109,9 +112,10 @@ namespace worms { namespace scene {
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", Vector2f(10.f, 0.f), engine::EVT_SYNCED);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", Vector2f(0.f, 100.f), engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_E, "player.spawn", Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 
 		scene.registerEvent<engine::GenericEvent>("player.spawn", [&](engine::GenericEvent const&) {
-			scene.spawnEntity("worm");
+			scene.spawnEntity("player");
 			return 0;
 		});
 
