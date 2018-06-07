@@ -49,14 +49,16 @@ namespace engine {
 		KeyState const& getKeyState(KeyCode keyCode);
 
 		void unregisterEventTarget(Scene const& target);
+		void enableKeyEvent(KeyCode code);
+		void disableKeyEvent(KeyCode code);
 
 		template <typename PayloadType>
 		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload, int config = 0) {
 			bool release = config & EventConfig::EVT_RELEASE;
 			bool sync = config & EventConfig::EVT_SYNCED;
 
-			_keyEvents[scene.id()].subscribe([&scene, evt, payload, key, sync, release](engine::KeyState const& k) -> int {
-				if (k.Key == key && release ^ k.PressedDown && scene.hasEvent(evt)) {
+			_keyEvents[scene.id()].subscribe([this, &scene, evt, payload, key, sync, release](engine::KeyState const& k) -> int {
+				if (k.Key == key && release ^ k.PressedDown && scene.hasEvent(evt) && _keyEventsState[key]) {
 					if (sync) {
 						scene.triggerSyncedEvent(evt, payload.serialize());
 					} else {
@@ -66,11 +68,14 @@ namespace engine {
 
 				return 0;
 			});
+
+			_keyEventsState[key] = true;
 		}
 
 	private:
 		std::unordered_map<KeyCode, KeyState, EnumClassHash> _keyStates;
 		Events& _keyEvents;
+		std::unordered_map<KeyCode, bool> _keyEventsState;
 
 		void _registerEventTarget(Scene const& target);
 	};

@@ -33,6 +33,18 @@ engine::EventsHandler::_registerEventTarget(Scene const& target)
 	});
 }
 
+void
+engine::EventsHandler::enableKeyEvent(KeyCode code)
+{
+	_keyEventsState[code] = true;
+}
+
+void
+engine::EventsHandler::disableKeyEvent(KeyCode code)
+{
+	_keyEventsState[code] = false;
+}
+
 engine::EventsReceiver::EventsReceiver(Events& keyEvents) : _keyEvents(keyEvents)
 {}
 
