@@ -16,57 +16,54 @@ namespace engine {
 
 	class Entities {
 	public:
-		using Roots = std::map<EntityId, Entity>;
-		using Siblings = std::vector<Entity>;
-		using Childs = std::map<EntityId, Siblings>;
+		using Siblings = std::vector<EntityId>;
+		struct FindResult {
+			Siblings& siblings;
+			Siblings::iterator it;
+		};
 
-		Entity const& add(Entity&& entity, EntityModel const& model);
-		void remove(EntityId id);
+		Entity add(EntityId parentId, EntityModel const& model);
+		void remove(EntityId parentId, EntityId id);
 
-		void attach(EntityId parentId, Entity const& child);
-		void detach(Entity const& entity);
+		FindResult find(EntityId parentId, EntityId id);
+		EntityId findParent(EntityId id);
 
-		template <typename... ComponentsTypes>
-		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true) const
-		{
-			for (auto& root : _roots) {
-				try {
-					_getEntityComponents<ComponentsTypes...>(root.second, callback);
-					if (doChilds)
-						this->eachChilds<ComponentsTypes...>(root.first, callback);
-				} catch (internal::ComponentPoolException const& e) {}
-			}
-		}
+		Entity attach(EntityId parentId, EntityId id);
+		Entity detach(EntityId parentId, EntityId id);
 
 		template <typename... ComponentsTypes>
-		void eachChilds(EntityId parentId, typename EntityCallback<ComponentsTypes...>::Get const& callback) const
+		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true)
 		{
-			Childs::const_iterator childs = _childs.find(parentId);
-
-			if (childs == std::end(_childs))
-				return;
-
-			for (auto& it : childs->second) {
-				try {
-					_getEntityComponents<ComponentsTypes...>(it, callback);
-					this->eachChilds<ComponentsTypes...>(it.getId(), callback);
-				} catch (internal::ComponentPoolException const& e) {}
-			}
+			this->_eachSibilings<ComponentsTypes...>(Entity::nullId, _entities[Entity::nullId], callback, doChilds);
 		}
 
-		void withTag(std::string tag, std::function<void (Entity const&)> callback) const;
+		void withTag(std::string tag, std::function<void (Entity const&)> callback);
 
 	private:
-		Roots _roots;
-		Childs _childs;
+		static EntityId _LastSpawnedEntityId;
+		std::map<EntityId, Siblings> _entities;
 
 		template<typename... ComponentsTypes>
 		void
-		_getEntityComponents(Entity const& entity, typename EntityCallback<ComponentsTypes...>::Get const& callback) const
+		_getEntityComponents(EntityId parentId, EntityId id, typename EntityCallback<ComponentsTypes...>::Get const& callback)
 		{
-			entity.get<ComponentsTypes...>([&](typename ComponentsTypes::Constraint::ReturnType&... components) {
-				callback(entity, components...);
+			ComponentFilter<ComponentsTypes...>().get(id, [&](typename ComponentsTypes::Constraint::ReturnType&... components) {
+				callback(Entity(id, parentId, this), components...);
 			});
+		}
+
+		template <typename... ComponentsTypes>
+		void _eachSibilings(EntityId parentId, Siblings& siblings, typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds)
+		{
+			for (auto& it : siblings) {
+				try {
+					_getEntityComponents<ComponentsTypes...>(parentId, it, callback);
+				} catch (internal::ComponentPoolException const& e) {}
+
+				auto const& childsIt = _entities.find(it);
+				if (doChilds && childsIt != std::end(_entities))
+					this->_eachSibilings<ComponentsTypes...>(parentId, childsIt->second, callback, doChilds);
+			}
 		}
 	};
 }

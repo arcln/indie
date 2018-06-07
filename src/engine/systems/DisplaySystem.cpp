@@ -24,7 +24,7 @@ engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game), _nodesMa
 void
 engine::DisplaySystem::update(Scene& scene)
 {
-	Entities const& entities = scene.getEntities();
+	Entities& entities = scene.getEntities();
 
 	_game.device()->run();
 	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
