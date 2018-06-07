@@ -36,7 +36,7 @@ namespace engine {
 		/**
 		 * Remove the entity
 		 */
-		void kill();
+		void kill() const;
 
 		/**
 		 * Attach a child to the entity
@@ -47,7 +47,7 @@ namespace engine {
 		/**
 		 * Detach the entity from its parent
 		 */
-		void detach();
+		Entity detach() const;
 
 		/**
 		 * Set a component on the entity. Add a new one if the component is multiple, set it or throw if it isn't
