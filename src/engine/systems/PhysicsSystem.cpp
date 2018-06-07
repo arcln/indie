@@ -13,6 +13,8 @@
 #include "../components/TransformComponent.hpp"
 #include "../components/HitboxComponent.hpp"
 #include "../components/PhysicsComponent.hpp"
+#include "../components/HoldComponent.hpp"
+#include "../components/ItemComponent.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
 const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
@@ -41,7 +43,7 @@ engine::PhysicsSystem::update(Scene& scene)
 
         this->applyCollision(entities, e);
         this->applyDeplacement(entities, e);
-    });
+    }, false);
 }
 
 void
@@ -61,24 +63,26 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
         GeometryHelper::transformHitbox(h, t);
 
-        entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
+        entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId())
                 return;
 
             GeometryHelper::transformHitbox(h2, t2);
 
-            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
-            if (mf2.isCollide && !mf2.hasError) {
-                mf.isCollide = true;
-                mf.normal += mf2.normal;
-                rebound *= h2.rebound;
+            Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
+            if (mf.isCollide) {
+                if (mf.hasError)
+                    return;
+                if (entity.has<HoldComponent>() && e2.has<ItemComponent>()) {
+                    auto ex =entity.attach(e2);
+                    std::cout << "entity attach to parent: " << ex.getParentId() << std::endl;
+                } else {
+                    p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
+                    p.velocity *= h.rebound * h2.rebound; // TODO: rebound velocity
+                    PhysicsSystem::patchCollision(entity, h2);
+                }
             }
-        });
-        if (mf.isCollide) {
-            p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
-            p.velocity *= h.rebound * rebound;
-            PhysicsSystem::patchCollision(entities, entity);
-        }
+        }, false);
     });
 }
 
@@ -203,7 +207,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
                 gmf.isCollide = true;
                 gmf.normal += mf.normal;
             }
-        });
+        }, false);
 
         if (gmf.isCollide) {
             auto dist = p.move.getLength() * _tick;
@@ -270,7 +274,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
 
             if (GeometryHelper::simplePolygonCollide(entity, e2))
                 isCollide = true;
-        });
+        }, false);
     });
 
     return isCollide;

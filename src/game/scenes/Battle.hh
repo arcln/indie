@@ -21,6 +21,8 @@
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
+#include "engine/components/ItemComponent.hpp"
+#include "engine/components/HoldComponent.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "game/events/Vector.hpp"
@@ -171,12 +173,10 @@ namespace worms { namespace scene {
 			game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, std::to_string(1));
 			game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_O, "master.changePlayer", 0, std::to_string(0));
 
-			scene.spawnEntity("camera");
-			scene.spawnEntity("player");
-			scene.spawnEntity("light");
-
-//			if (!WORMS_IS_SERVER) {
-//				scene.synchronizeWith("localhost", game);
-//			}
-		};
-	}}
+		scene.spawnEntity("camera");
+		scene.spawnEntity("player");
+		scene.spawnEntity("block");
+        scene.spawnEntity("light");
+		scene.spawnEntity("item");
+	};
+}}

@@ -29,7 +29,7 @@ namespace engine {
 		void remove(EntityId parentId, EntityId id);
 
 		FindResult find(EntityId parentId, EntityId id);
-		EntityId findParent(EntityId id);
+		EntityId findParent(EntityId id) const;
 
 		Entity attach(EntityId parentId, EntityId id, EntityId newParentId);
 		Entity detach(EntityId parentId, EntityId id);
