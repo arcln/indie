@@ -13,6 +13,8 @@
 #include "../components/TransformComponent.hpp"
 #include "../components/HitboxComponent.hpp"
 #include "../components/PhysicsComponent.hpp"
+#include "../components/HoldComponent.hpp"
+#include "../components/ItemComponent.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
 const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
@@ -37,7 +39,7 @@ engine::PhysicsSystem::update(Scene& scene)
 
         this->applyCollision(entities, e);
         this->applyDeplacement(entities, e);
-    });
+    }, false);
 }
 
 void
@@ -57,7 +59,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
         GeometryHelper::transformHitbox(h, t);
 
-        entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
+        entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId())
                 return;
 
@@ -199,7 +201,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
                 gmf.isCollide = true;
                 gmf.normal += mf.normal;
             }
-        });
+        }, false);
 
         if (gmf.isCollide) {
             auto dist = p.move.getLength() * _tick;
@@ -266,7 +268,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
 
             if (GeometryHelper::simplePolygonCollide(entity, e2))
                 isCollide = true;
-        });
+        }, false);
     });
 
     return isCollide;

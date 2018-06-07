@@ -20,6 +20,8 @@
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
+#include "engine/components/ItemComponent.hpp"
+#include "engine/components/HoldComponent.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "game/events/Vector.hpp"
@@ -62,10 +64,13 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_F, "camera.move", entity.getId(), Vector3f(0.f, 0.f, -1.f));
 			});
 
+		
+				
 			scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 				entity.set<PlayerComponent>(0);
 				entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj");
-
+	entity.set<engine::HoldComponent>();
+			
 				auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 				auto& transformComponent = entity.set<engine::TransformComponent>();
 				transformComponent.scale = {.5f, .5f, .5f};
@@ -118,7 +123,29 @@ namespace worms { namespace scene {
 				);
 			});
 
-			scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
+/********************************************************************\
+|*   SERVER SYNCED EVENTS *|
+\********************************************************************/
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+			entity.set<engine::ItemComponent>();
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {-10.f, 10.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitboxComponent.rebound = 0.8;
+			hitboxComponent.hasDebugMode = true;
+		});
+
+		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
+			entity.set<engine::LightComponent>(
+				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
+			);
+		});
+
+			scene.registerEvent<std::string>("player.spawn", [&](std::string const&) {
 				scene.spawnEntity("player");
 				return 0;
 			});

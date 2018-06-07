@@ -38,7 +38,7 @@ engine::Entities::find(engine::EntityId parentId, engine::EntityId id)
 }
 
 engine::EntityId
-engine::Entities::findParent(engine::EntityId id)
+engine::Entities::findParent(engine::EntityId id) const
 {
 	for (auto& siblings : _entities) {
 		auto const& entityIt = std::find(std::begin(siblings.second), std::end(siblings.second), id);
