@@ -12,7 +12,7 @@
 
 namespace engine {
 
-	static const std::string DefaultAssetsRoot = "../assets/";
+	static const std::string DefaultAssetsRoot = "./assets/";
 
 	class Engine {
 	public:

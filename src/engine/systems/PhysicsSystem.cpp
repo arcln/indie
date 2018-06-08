@@ -47,6 +47,12 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
         return;
 
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
+        float dist = std::sqrt(std::pow(t.position.X - t.prevPosition.X, 2) + std::pow(t.position.Y - t.prevPosition.Y, 2));
+
+        if (dist > 2.f) {
+            return this->applyCollisionFrac(entities, entity, dist);
+        }
+
         GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
@@ -64,6 +70,49 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                 PhysicsSystem::patchCollision(entity, h2);
             }
         });
+    });
+}
+
+void
+engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& entity, float dist)
+{
+    entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
+        float traveled = 0.f;
+        irr::core::vector3df pPrevPosition;
+
+        auto tSave = t;
+        auto _p = p;
+
+        _p.velocity.normalize();
+        t.position = t.prevPosition;
+
+        while (std::fabs(traveled) <= std::fabs(dist)) {
+
+            pPrevPosition = t.prevPosition;
+            t.prevPosition = t.position;
+            t.position.X += _p.velocity.X;
+            t.position.Y += _p.velocity.Y;
+            traveled += 1.f;
+
+            GeometryHelper::transformHitbox(h, t);
+
+            entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
+                if (e2.getId() == entity.getId())
+                return;
+
+                GeometryHelper::transformHitbox(h2, t2);
+
+                Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
+                if (mf.isCollide) {
+                    if (mf.hasError) {
+                        return;
+                    }
+                    t.prevPosition = tSave.prevPosition;
+                    p.velocity *= 0.f;
+                    PhysicsSystem::patchCollisionFrac(entity, h2);
+                }
+            });
+        }
     });
 }
 
@@ -95,6 +144,29 @@ engine::PhysicsSystem::patchCollision(Entity const& entity, HitboxComponent cons
     t.position = bound1;
     t.position.X += v.X;
     t.position.Y += v.Y;
+}
+
+void
+engine::PhysicsSystem::patchCollisionFrac(Entity const& entity, HitboxComponent const& collideWith)
+{
+    auto& t = entity.get<TransformComponent>();
+    auto& h = entity.get<HitboxComponent>();
+    auto bound1 = t.prevPosition;
+    auto bound2 = t.position;
+    auto cursor = (bound1 + bound2) / 2;
+
+    for (auto it = 0; it < 10; it += 1) {
+        t.position = cursor;
+        GeometryHelper::transformHitbox(h, t);
+        if (GeometryHelper::simplePolygonCollide(h, collideWith)) {
+            bound2 = cursor;
+        } else {
+            bound1 = cursor;
+        }
+        cursor = (bound1 + bound2) / 2;
+    }
+
+    t.position = bound1;
 }
 
 void

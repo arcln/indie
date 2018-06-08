@@ -43,7 +43,7 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			entity.set<engine::TransformComponent>();
 			auto& cameraComponent = entity.set<engine::CameraComponent>(
-				game.device(), engine::CameraComponent::Coords {0.f, 0.f, -10.f}, engine::CameraComponent::Coords {0, 0, 0}
+				game.device(), engine::CameraComponent::Coords {0.f, 0.f, -30.f}, engine::CameraComponent::Coords {0, 0, 0}
 			);
 
 			scene.registerEvent<Vector3f>("camera.goto", [&](auto const& position) {
