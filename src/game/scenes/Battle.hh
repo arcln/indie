@@ -138,7 +138,7 @@ namespace worms { namespace scene {
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", Vector2f(10.f, 0.f), engine::EVT_SYNCED);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
-		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", Vector2f(0.f, 6000.f), engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", Vector2f(0.f, 100.f), engine::EVT_SYNCED);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_E, "player.spawn", Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_RIGHT, "camera.move", Vector3f(-1.f, 0.f, 0.f));
 		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_LEFT,  "camera.move", Vector3f(1.f, 0.f, 0.f));
