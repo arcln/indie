@@ -54,7 +54,7 @@ include_directories(
 file(GLOB_RECURSE GAME_SRCS src/game/*)
 file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
 
-add_library(engine STATIC ${ENGINE_SRCS} src/game/entityModels/animated.hh)
+add_library(engine STATIC ${ENGINE_SRCS})
 
 add_executable(worms src/main.cpp ${GAME_SRCS})
 set_target_properties(worms PROPERTIES COMPILE_FLAGS "-DWORMS_IS_SERVER=false")
