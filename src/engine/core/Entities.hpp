@@ -28,7 +28,7 @@ namespace engine {
 		FindResult find(EntityId parentId, EntityId id);
 		EntityId findParent(EntityId id);
 
-		Entity attach(EntityId parentId, EntityId id);
+		Entity attach(EntityId parentId, EntityId id, engine::EntityId newParentId);
 		Entity detach(EntityId parentId, EntityId id);
 
 		template <typename... ComponentsTypes>

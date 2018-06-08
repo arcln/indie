@@ -64,17 +64,16 @@ engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 }
 
 engine::Entity
-engine::Entities::attach(engine::EntityId parentId, engine::EntityId id)
+engine::Entities::attach(engine::EntityId parentId, engine::EntityId id, engine::EntityId newParentId)
 {
-	engine::Entities::Siblings& sibilings = _entities[engine::Entity::nullId];
-	auto const& childIt = std::find(std::begin(sibilings), std::end(sibilings), id);
+	try {
+		this->remove(parentId, id);
+	} catch (std::runtime_error const& e) {
+		throw std::runtime_error(std::string("unable to attach an entity: ") + e.what());
+	}
 
-	if (childIt == std::end(sibilings))
-		this->detach(parentId, id);
-
-	sibilings.erase(childIt);
-	_entities[parentId].push_back(id);
-	return engine::Entity(id, parentId, this);
+	_entities.at(newParentId).push_back(id);
+	return engine::Entity(id, newParentId, this);
 }
 
 engine::Entity
@@ -84,17 +83,13 @@ engine::Entities::detach(engine::EntityId parentId, engine::EntityId id)
 		throw std::runtime_error("unable to detach an entity without parent");
 
 	try {
-		engine::Entities::FindResult findResult = this->find(parentId, id);
-		if (findResult.it == std::end(findResult.siblings))
-			throw std::runtime_error("unable to detach an entity, entity not found");
-
-		findResult.siblings.erase(findResult.it);
+		this->remove(parentId, id);
 	} catch (std::runtime_error const& e) {
 		throw std::runtime_error(std::string("unable to detach an entity: ") + e.what());
 	}
 
 	_entities[engine::Entity::nullId].push_back(id);
-	return engine::Entity(id, parentId, this);
+	return engine::Entity(id, engine::Entity::nullId, this);
 }
 
 void

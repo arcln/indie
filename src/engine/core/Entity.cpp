@@ -42,7 +42,7 @@ engine::Entity::kill()
 void
 engine::Entity::attach(engine::Entity const& child)
 {
-	_entities->attach(_id, child.getId());
+	_entities->attach(child.getParentId(), child.getId(), _id);
 }
 
 void
