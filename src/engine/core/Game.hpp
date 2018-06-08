@@ -41,6 +41,8 @@ namespace engine {
 
 		std::string const& getcwd() const;
 
+        std::list<Scene>& getScenes() { return _scenes; }
+
 	private:
 		 Events _keyEvents;
 

@@ -19,6 +19,7 @@ namespace engine {
         irr::core::vector3df prevPosition;
         irr::core::vector3df position;
 		irr::core::vector3df rotation;
+        irr::core::vector3df magicPosition{0.f, 0.f, 0.f};
         irr::core::vector3df scale{1.f, 1.f, 1.f};
 	};
 

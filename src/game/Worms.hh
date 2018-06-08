@@ -8,7 +8,7 @@
 #pragma once
 
 #include "engine/core/Game.hpp"
-#include "engine/systems/HoldSystem.hpp"
+#include "engine/systems/ItemSystem.hpp"
 #include "engine/systems/DisplaySystem.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
 #include "game/scenes/Battle.hh"
@@ -17,7 +17,7 @@
 namespace worms {
 
 	static const auto worms = [](engine::Game& game) {
-        game.registerSystem("hold", new engine::HoldSystem());
+        game.registerSystem("item", new engine::ItemSystem());
         game.registerSystem("physics", new engine::PhysicsSystem());
         game.registerSystem("display", new engine::DisplaySystem(game));
 

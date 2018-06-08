@@ -29,7 +29,7 @@ engine::DisplaySystem::update(Scene& scene)
 	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
 	entities.each<TransformComponent, IrrlichtComponent>([](auto const& e, auto& t, auto& i) {
-		i.node->setPosition(t.position);
+		i.node->setPosition(t.position + t.magicPosition);
 		i.node->setRotation(t.rotation);
 		i.node->setScale(t.scale);
 	});
