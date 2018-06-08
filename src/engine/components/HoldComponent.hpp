@@ -19,6 +19,7 @@ namespace engine {
         HoldComponent(std::size_t _capacity) : capacity(_capacity) {}
 
         std::size_t capacity;
+        int current = -1;
         std::vector<Entity> items;
         Entity reachableEntity;
         bool hasReachableEntity = false;
