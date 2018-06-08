@@ -98,6 +98,13 @@ namespace engine {
 	private:
 		Container _components;
 
-		UniqueComponentPool() = default;
+		UniqueComponentPool() {
+			internal::componentPoolReset.subscribe([&](bool reset) -> int {
+				if (reset) {
+					_components.clear();
+				}
+				return reset;
+			});
+		};
 	};
 }
