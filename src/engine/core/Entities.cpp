@@ -32,12 +32,7 @@ engine::Entities::add(engine::EntityId parentId, engine::EntityModel const& mode
 engine::Entities::FindResult
 engine::Entities::find(engine::EntityId parentId, engine::EntityId id)
 {
-	engine::Entities::Siblings& siblings = _entities.at(parentId);
-
-	return FindResult {
-		siblings,
-		std::find(std::begin(siblings), std::end(siblings), id)
-	};
+	return _find(parentId, id, _entities);
 }
 
 engine::EntityId
@@ -50,17 +45,14 @@ engine::Entities::findParent(engine::EntityId id)
 			return siblings.first;
 	}
 
-	throw std::runtime_error("unable to find a parent, entity not found");
+	throw std::runtime_error("Unable to find a parent, entity not found.");
 }
 
 void
 engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 {
-	engine::Entities::FindResult findResult = this->find(parentId, id);
-
-	if (findResult.it == std::end(findResult.siblings))
-		throw std::runtime_error("unable to kill entity " + std::to_string(id));
-	findResult.siblings.erase(findResult.it);
+	_remove(parentId, id, _entities);
+	_remove(parentId, id, _disabledEntities);
 }
 
 engine::Entity
@@ -69,7 +61,7 @@ engine::Entities::attach(engine::EntityId parentId, engine::EntityId id, engine:
 	try {
 		this->remove(parentId, id);
 	} catch (std::runtime_error const& e) {
-		throw std::runtime_error(std::string("unable to attach an entity: ") + e.what());
+		throw std::runtime_error(std::string("Unable to attach an entity: ") + e.what());
 	}
 
 	_entities.at(newParentId).push_back(id);
@@ -80,12 +72,12 @@ engine::Entity
 engine::Entities::detach(engine::EntityId parentId, engine::EntityId id)
 {
 	if (parentId == engine::Entity::nullId)
-		throw std::runtime_error("unable to detach an entity without parent");
+		throw std::runtime_error("Unable to detach an entity without parent.");
 
 	try {
 		this->remove(parentId, id);
 	} catch (std::runtime_error const& e) {
-		throw std::runtime_error(std::string("unable to detach an entity: ") + e.what());
+		throw std::runtime_error(std::string("Unable to detach an entity: ") + e.what());
 	}
 
 	_entities[engine::Entity::nullId].push_back(id);
@@ -100,4 +92,55 @@ engine::Entities::withTag(std::string tag, std::function<void (engine::Entity co
 			callback(entity);
 		}
 	});
+}
+
+void
+engine::Entities::enable(engine::EntityId parentId, engine::EntityId id)
+{
+	_remove(parentId, id, _disabledEntities);
+	_entities[parentId].push_back(id);
+}
+
+void
+engine::Entities::disable(engine::EntityId parentId, engine::EntityId id)
+{
+	_remove(parentId, id, _entities);
+	_disabledEntities[parentId].push_back(id);
+}
+
+bool
+engine::Entities::_remove(engine::EntityId parentId, engine::EntityId id, engine::Entities::Container& container)
+{
+	engine::Entities::FindResult findResult = _find(parentId, id, container);
+
+	if (findResult.it == std::end(findResult.siblings))
+		throw std::runtime_error("Unable to remove an entity.");
+
+	findResult.siblings.erase(findResult.it);
+	_removeChilds(id, container);
+	return true;
+}
+
+void
+engine::Entities::_removeChilds(engine::EntityId id, engine::Entities::Container& container)
+{
+	auto const& childs = container.find(id);
+
+	if (childs->first == id) {
+		for (auto child : childs->second) {
+			_removeChilds(child, container);
+		}
+		container.erase(childs);
+	}
+}
+
+engine::Entities::FindResult
+engine::Entities::_find(engine::EntityId parentId, engine::EntityId id, engine::Entities::Container& container)
+{
+	engine::Entities::Siblings& siblings = container.at(parentId);
+
+	return FindResult {
+		siblings,
+		std::find(std::begin(siblings), std::end(siblings), id)
+	};
 }

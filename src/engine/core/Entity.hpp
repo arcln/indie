@@ -50,6 +50,17 @@ namespace engine {
 		void detach();
 
 		/**
+		 * Enable back the Entity
+		 */
+		void enable();
+
+		/**
+		 * Disable the Entity
+		 * The Entity is removed from the scene and therefore should be considered killed/inaccessible until it's enabled back.
+		 */
+		void disable();
+
+		/**
 		 * Set a component on the entity. Add a new one if the component is multiple, set it or throw if it isn't
 		 * @tparam ComponentType Type of the component to set
 		 * @tparam CtorArgsTypes Types of the component ctor's parameters
