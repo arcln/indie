@@ -20,5 +20,7 @@ namespace engine {
 
         std::size_t capacity;
         std::vector<Entity> items;
+        Entity reachableEntity;
+        bool hasReachableEntity = false;
 	};
 }

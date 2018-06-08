@@ -7,14 +7,15 @@
 #pragma once
 
 #include <irrlicht/irrlicht.h>
+#include "engine/core/Game.hpp"
 #include "engine/systems/System.hpp"
 
 namespace engine {
 
-	class HoldSystem : public System {
+	class ItemSystem : public System {
 	public:
-		HoldSystem() = default;
-		~HoldSystem() = default;
+		ItemSystem() = default;
+		~ItemSystem() = default;
 
 		void update(Scene& scene) override;
 	};

@@ -66,11 +66,18 @@ engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 engine::Entity
 engine::Entities::attach(engine::EntityId parentId, engine::EntityId id)
 {
+    std::cout << "cc" << std::endl;
+
     engine::Entities::Siblings& sibilings = _entities[engine::Entity::nullId];
+    std::cout << "cc" << std::endl;
+
 	auto const& childIt = std::find(std::begin(sibilings), std::end(sibilings), id);
+
+    std::cout << "cc" << std::endl;
 
 	if (childIt == std::end(sibilings))
 		this->detach(this->findParent(id), id);
+        std::cout << "cc" << std::endl;
 
 	sibilings.erase(childIt);
 	_entities[parentId].push_back(id);

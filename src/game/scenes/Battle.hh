@@ -67,7 +67,8 @@ namespace worms { namespace scene {
 
         scene.registerEntityModel("player", [&](engine::Entity const& entity) {
             entity.set<PlayerComponent>(0);
-			entity.set<engine::HoldComponent>();
+            entity.set<engine::TagComponent>(std::string("player"));
+			auto& hc = entity.set<engine::HoldComponent>();
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
@@ -91,6 +92,15 @@ namespace worms { namespace scene {
 
 				return 0;
 			});
+
+            scene.registerEvent<std::string>("player.pick", [&](std::string const& s) {
+                if (hc.hasReachableEntity) {
+                    std::cout << hc.reachableEntity.getId() << std::endl;
+                    std::cout << hc.reachableEntity.getParentId() << std::endl;
+                    entity.attach(hc.reachableEntity);
+                }
+                return 0;
+            });
 		});
 
 		scene.registerEntityModel("block", [&](engine::Entity const& entity) {
@@ -129,6 +139,7 @@ namespace worms { namespace scene {
 		\********************************************************************/
 
 		scene.registerEvent<std::string>("player.spawn", [&](std::string const&) {
+            scene.spawnEntity("item");
 			scene.spawnEntity("player");
 			return 0;
 		});
@@ -156,6 +167,7 @@ namespace worms { namespace scene {
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", Vector2f(0.f, 100.f), engine::EVT_SYNCED);
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_E, "player.spawn", Vector2f(0.f, 0.f), engine::EVT_SYNCED);
+        game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", "0", engine::EVT_SYNCED);
 		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_RIGHT, "camera.move", Vector3f(-1.f, 0.f, 0.f));
 		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_LEFT,  "camera.move", Vector3f(1.f, 0.f, 0.f));
 		game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_UP,    "camera.move", Vector3f(0.f, 1.f, 0.f));
