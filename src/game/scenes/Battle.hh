@@ -20,7 +20,7 @@
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
-#include "game/utils/Map.hpp"
+#include "game/map/Map.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
@@ -69,7 +69,15 @@ namespace worms { namespace scene {
 			});
 		});
 
+	Wornite::Map map;
+	Wornite::Map::Settings mapSettings;
+	mapSettings.Size = Wornite::Map::mapSize::SMALL;
+	mapSettings.Density = 0.8f;
+
+	map.genMap(&game, &scene, &mapSettings);
+
         scene.registerEntityModel("player", [&](engine::Entity const& entity) {
+<<<<<<< refs/remotes/origin/develop
 			entity.set<PlayerComponent>(0);
 <<<<<<< refs/remotes/origin/develop
 			entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
@@ -82,38 +90,28 @@ namespace worms { namespace scene {
 
 		scene.registerEntityModel("block", [&](engine::Entity const& entity) {
             entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+=======
+		entity.set<PlayerComponent>(0);
+
+		scene.registerEntityModel("block", [&](engine::Entity const &entity) {
+			entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+>>>>>>> map: bug segfault on entity
 			entity.set<engine::TagComponent>(std::string("map"));
 
-            auto& transformComponent = entity.set<engine::TransformComponent>();
-            transformComponent.position = {0.f, 0.f, 0.f};
+			auto &transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {0.f, 0.f, 0.f};
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
-            hitboxComponent.rebound = 0.8;
-            hitboxComponent.hasDebugMode = true;
+			auto &hitboxComponent = entity.set<engine::HitboxComponent>(
+				"(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
+			hitboxComponent.rebound = 0.8;
+			hitboxComponent.hasDebugMode = true;
 		});
+	});
 
-		Wornite::Map map;
-		Wornite::Map::Settings mapSettings;
-		mapSettings.Size = Wornite::Map::mapSize::SMALL;
-		mapSettings.Density = 0.8f;
 
-		map.genMap(&game, &scene, &mapSettings);
-
-		/*scene.registerEntityModel("map", [&](engine::Entity const& entity) {
-			auto& IrrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/map.obj");
-			IrrlichtComponent.node->setPosition(irr::core::vector3df {0.f, 0.f, 0.f});
-			IrrlichtComponent.node->setRotation(irr::core::vector3df {0.f, 90.f, 0.f});
-			IrrlichtComponent.node->setMaterialFlag(irr::video::EMF_LIGHTING, false);
-			IrrlichtComponent.node->setMD2Animation(irr::scene::EMAT_STAND);
-			IrrlichtComponent.node->setMaterialTexture(0, game.textureManager.get("texture/map.png"));
-
-			entity.get<engine::IrrlichtComponent,
-				engine::IrrlichtComponent>([](engine::IrrlichtComponent const& irrlichtComponent,
-							    engine::IrrlichtComponent const& irrlichtComponent2) {
-			});
-		});*/
 
         scene.registerEntityModel("worm", [&](engine::Entity const& entity) {
+<<<<<<< refs/remotes/origin/develop
 			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 >>>>>>> game: feature class map (spawnMap)
 
@@ -125,11 +123,20 @@ namespace worms { namespace scene {
 
             transformComponent.scale = {.5f, .5f, .5f};
             transformComponent.position = {0.f, 50.f, 0.f};
+=======
+		entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
-            hitboxComponent.hasDebugMode = true;
-			hitboxComponent.rebound = 0.1f;
+		auto &physicsComponent = entity.set<engine::PhysicsComponent>();
+		auto &transformComponent = entity.set<engine::TransformComponent>();
+		transformComponent.scale = {.5f, .5f, .5f};
+		transformComponent.position = {0.f, 50.f, 0.f};
+>>>>>>> map: bug segfault on entity
 
+		auto &hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
+		hitboxComponent.hasDebugMode = true;
+		hitboxComponent.rebound = 0.1f;
+
+<<<<<<< refs/remotes/origin/develop
 			scene.registerEvent<std::string>("player.move", [&](std::string const& move) {
 				physicsComponent.move = (Vector2f) move;
 
@@ -143,27 +150,35 @@ namespace worms { namespace scene {
 
 				return 0;
 			});
-
-			scene.registerEvent<std::string>("player.jump", [entity, &scene, &physicsComponent](std::string const& jump) {
-                if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
-                    physicsComponent.velocity += (Vector2f) jump;
-//                }
-
-				return 0;
-			});
+=======
+		scene.registerEvent<std::string>("player.move", [&](std::string const &move) {
+			physicsComponent.move = (Vector2f) move;
+			return 0;
 		});
+>>>>>>> map: bug segfault on entity
 
-		scene.registerEntityModel("block", [&](engine::Entity const& entity) {
-			entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
-			entity.set<engine::TagComponent>(std::string("map"));
+		scene.registerEvent<std::string>("player.jump",
+						 [entity, &scene, &physicsComponent](std::string const &jump) {
+							 if (engine::PhysicsSystem::isGrounded(scene.getEntities(),
+											       entity)) {
+								 physicsComponent.velocity += (Vector2f) jump;
 
-			auto& transformComponent = entity.set<engine::TransformComponent>();
-			transformComponent.position = {0.f, 0.f, 0.f};
+								 return 0;
+							 };
+						 });
+	});
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
-			hitboxComponent.rebound = 0.8;
-			hitboxComponent.hasDebugMode = true;
-		});
+	scene.registerEntityModel("block", [&](engine::Entity const& entity) {
+		entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+		entity.set<engine::TagComponent>(std::string("map"));
+
+		auto& transformComponent = entity.set<engine::TransformComponent>();
+		transformComponent.position = {0.f, 0.f, 0.f};
+
+		auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
+		hitboxComponent.rebound = 0.8;
+		hitboxComponent.hasDebugMode = true;
+	});
 
 		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(

@@ -207,9 +207,9 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             if (moveVec.dotProduct(p.move) < 0 || PhysicsSystem::simpleCollideEntities(entities, entity)) {
                 t.position = t.prevPosition;
                 if (!isCorrection) {
-                    p.move.Y += 0.1;
+                    p.move.Y += 0.25f;
                     this->applyDeplacement(entities, entity, true);
-                    p.move.Y -= 0.1;
+                    p.move.Y -= 0.25f ;
                 }
             }
         }

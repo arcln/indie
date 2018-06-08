@@ -41,6 +41,7 @@ public:
 		int 		mapLength;
 		int 		id;
 		int 		nbChunks;
+		engine::Entity chunkHitboxEntity;
 	}			chunk;
 
 	typedef struct 		mapSettings
@@ -112,14 +113,22 @@ private:
 	void spawnBigChunk(engine::Game* game, engine::Scene* scene,
 			   Bsq::t_map *map, Bsq::t_response *res, chunk *chunk);
 
-	void spawnPieceMap(engine::Game* game, engine::Scene* scene,
-			   irr::core::vector3df position, irr::core::vector3df scale);
+	void spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core::vector3df position, irr::core::vector3df scale,
+				   engine::Entity entity);
 
 	void removeBigChunk(Bsq::t_map *map, Bsq::t_response *res);
 
 	void getChunk(mapSettings *map);
 
-	void spawnChunkHitbox(engine::Game *pGame, engine::Scene *pScene, chunk *pChunk);
+	const engine::Entity & spawnChunkHitbox(engine::Game *pGame, engine::Scene *pScene, chunk *pChunk);
+
+	void getNextNode(irr::f32 x, irr::f32 y, chunk *chunk, irr::core::vector2df *node);
+
+	int isNextNode(float x, float y, Wornite::Map::chunk *chunk);
+
+	void getHitboxEdge(irr::core::vector2df last, irr::core::vector2df first, chunk *chunk, std::string *String);
+
+	const engine::Entity & spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox);
 };
 
 }

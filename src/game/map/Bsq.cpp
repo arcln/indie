@@ -17,7 +17,7 @@ Wornite::Bsq::test_row(t_map *map, t_vector *cur, int size, int row)
 	limit = cur->x - 1;
 	index = limit + size;
 	cmptd_row = cur->y + row;
-	if (cur->y + row >= map->row)
+	if (cur->y + row >= (int) map->row)
 		return (0);
 	while (index != limit)
 	{
@@ -33,12 +33,12 @@ Wornite::Bsq::test_col(t_map *map, t_vector *cur, int size, int col)
 {
 	int		index;
 	int		limit;
-	unsigned int	cmptd_col;
+	int	cmptd_col;
 
 	limit = cur->y - 1;
 	index = limit + size;
 	cmptd_col = cur->x + col;
-	if (cur->x + col >= map->col)
+	if (cur->x + col >= (int) map->col)
 		return (0);
 	while (index != limit)
 	{
