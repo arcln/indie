@@ -177,6 +177,16 @@ namespace worms { namespace scene {
                 std::cout << "use item" << std::endl;
             });
 
+            scene.registerEvent<std::string>("player.pick", [&](std::string const& s) {
+                if (hc.hasReachableEntity) {
+                    std::cout << hc.reachableEntity.getId() << std::endl;
+                    std::cout << hc.reachableEntity.getParentId() << std::endl;
+                    entity.attach(hc.reachableEntity);
+                }
+                return 0;
+            });
+		});
+
 			Wornite::Map map;
             ic.offset = {1.f, 2.f, 0.f};
 
@@ -219,7 +229,12 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			scene.registerEvent<std::string>("master.changePlayer", 0, [&](std::string const& player) {
+		scene.registerEvent<std::string>("player.spawn", [&](std::string const&) {
+            scene.spawnEntity("item");
+			scene.spawnEntity("player");
+			return 0;
+		});
+			scene.registerEvent<std::string>("master.changePlayer", [&](std::string const& player) {
 				scene.getEntities().each<MasterComponent>([&](engine::Entity const& e, auto& m) {
 					m.currentPlayer = std::stoi(player);
 					if (m.currentPlayer != 0) { //TODO: Replace by player id

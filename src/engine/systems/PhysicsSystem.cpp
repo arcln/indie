@@ -73,18 +73,16 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
             GeometryHelper::transformHitbox(h2, t2);
 
-            Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
-            if (mf.isCollide) {
-                if (mf.hasError)
-                    return;
+            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
+            if (mf2.isCollide && !mf2.hasError) {
                 if (entity.has<HoldComponent>() && e2.has<ItemComponent>()) {
                     auto& hc = entity.get<HoldComponent>();
                     hc.reachableEntity = e2;
                     hc.hasReachableEntity = true;
                 } else {
-                    p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
-                    p.velocity *= h.rebound * h2.rebound; // TODO: rebound velocity
-                    PhysicsSystem::patchCollision(entity, h2);
+                    mf.isCollide = true;
+                    mf.normal += mf2.normal;
+                    rebound *= h2.rebound;
                 }
             }
         }, false);
@@ -283,7 +281,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
             if (e2.getId() == entity.getId())
                 return;
 
-            if (GeometryHelper::simplePolygonCollide(h, h2) && !(entity.has<HoldComponent>() && e2.has<ItemComponent>()))
+            if (GeometryHelper::simplePolygonCollide(entity, e2) && !(entity.has<HoldComponent>() && e2.has<ItemComponent>()))
                 isCollide = true;
         }, false);
     });
