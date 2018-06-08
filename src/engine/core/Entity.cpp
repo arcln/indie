@@ -19,13 +19,15 @@ engine::Entity::Entity(EntityId id, EntityId parentId, Entities* entities)
 {}
 
 engine::Entity::Entity(engine::Entity const& entity)
-	: _id(entity._id)
+	: _id(entity._id), _parentId(entity._parentId), _entities(entity._entities)
 {}
 
 engine::Entity&
 engine::Entity::operator=(const engine::Entity& entity)
 {
 	_id = entity._id;
+	_parentId = entity._parentId;
+	_entities = entity._entities;
 	return *this;
 }
 
@@ -39,10 +41,10 @@ engine::Entity::kill() const
 	_entities->remove(_parentId, _id);
 }
 
-void
-engine::Entity::attach(engine::Entity const& child)
+engine::Entity
+engine::Entity::attach(engine::Entity const& child) const
 {
-	_entities->attach(child.getParentId(), child.getId(), _id);
+	return _entities->attach(child.getParentId(), child.getId(), _id);
 }
 
 engine::Entity
@@ -64,13 +66,13 @@ engine::Entity::getParentId() const
 }
 
 void
-engine::Entity::enable()
+engine::Entity::enable() const
 {
 	_entities->enable(_parentId, _id);
 }
 
 void
-engine::Entity::disable()
+engine::Entity::disable() const
 {
 	_entities->disable(_parentId, _id);
 }

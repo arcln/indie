@@ -42,7 +42,7 @@ namespace engine {
 		 * Attach a child to the entity
 		 * @param child Entity to become child
 		 */
-		void attach(Entity const& child);
+		Entity attach(Entity const& child) const;
 
 		/**
 		 * Detach the entity from its parent
@@ -52,13 +52,13 @@ namespace engine {
 		/**
 		 * Enable back the Entity
 		 */
-		void enable();
+		void enable() const;
 
 		/**
 		 * Disable the Entity
 		 * The Entity is removed from the scene and therefore should be considered killed/inaccessible until it's enabled back.
 		 */
-		void disable();
+		void disable() const;
 
 		/**
 		 * Set a component on the entity. Add a new one if the component is multiple, set it or throw if it isn't

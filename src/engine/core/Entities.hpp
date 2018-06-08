@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <map>
+#include <irrlicht/irrlicht.h>
 
 namespace engine {
 
@@ -47,6 +48,7 @@ namespace engine {
 		static EntityId _LastSpawnedEntityId;
 		Container _entities;
 		Container _disabledEntities;
+		static const irr::core::vector3df _DisabledOffset;
 
 		bool _remove(EntityId parentId, EntityId id, Container& container);
 		void _removeChilds(EntityId id, Container& container);
