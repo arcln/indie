@@ -17,11 +17,15 @@ engine::Menu::MenuEngineSystem::~MenuEngineSystem()
 {
 }
 
-void engine::Menu::MenuEngineSystem::update(Entities const& entities)
+void engine::Menu::MenuEngineSystem::update(Scene &scene)
 {
-	entities.each<ButtonComponent>([](auto const& e, auto& button) {
+	Entities entities = scene.getEntities();
+	entities.each<ButtonComponent>([&](auto const& e, auto& button) {
 		if (button.node->isPressed() == true) {
-			std::cout << "Event : " << button.node->getName() << std::endl;
+			if (button.node->getName() != "") {
+				std::cout << "Event -> " << button.node->getName() << std::endl;
+				scene.triggerEvent<bool>(button.node->getName(), false);
+			}
 		}
 	});
 }

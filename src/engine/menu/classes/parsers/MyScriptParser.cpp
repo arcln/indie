@@ -93,7 +93,6 @@ void engine::Menu::MyScriptParser::manageButton()
 {
 	Entity entity = _scene->spawnEntity("button");
 	engine::ButtonComponent buttoCompo = entity.get<engine::ButtonComponent>();
-
 	std::string line;
 	std::string command;
 	std::string param;

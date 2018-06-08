@@ -18,6 +18,8 @@
 #include "engine/components/ButtonComponent.hpp"
 #include "engine/components/ImageComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
+#include "game/events/Vector.hpp"
+
 
 namespace worms { namespace scene {
 
@@ -117,21 +119,17 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
+		scene.registerEvent<worms::Vector2i>("to mainMenu", [&](worms::Vector2i const&) {
+			game.replaceScene("mainMenu");
+			return 0;
+		});
+
 		scene.spawnEntity("camera");
 		engine::Menu::MyScriptParser parser("engine/menu/script/postMenu", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();
 
-		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			std::cout << "Enter event POST MENU" << std::endl;
-			if (keystate.PressedDown) {
-				std::cout << "Post Menu EVENT" << std::endl;
-				//game.popScene();
-				//game.pushScene("mainMenu");
-				game.replaceScene("mainMenu");
-			}
-			return 0;
-		});
+		game.eventsHandler.subscribe<worms::Vector2i>(scene, irr::KEY_KEY_A, "to mainMenu", worms::Vector2i(0, 0), 0);
 	};
 }}

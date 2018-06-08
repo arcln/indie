@@ -19,7 +19,7 @@ namespace engine { namespace Menu {
 			MenuEngineSystem();
 			~MenuEngineSystem();
 
-			void update(Entities const& entities) override;
+			void update(Scene &scene) override;
 
 		protected:
 	};

@@ -23,6 +23,7 @@ namespace engine { namespace Menu {
 
 			int imageCommand(std::string param);
 			int posCommand(std::string param);
+			int nameCommand(std::string param);
 		private:
 			irr::gui::IGUIImage *_node;
 			engine::Game *_game;

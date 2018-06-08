@@ -17,6 +17,7 @@ engine::Menu::EditBoxFactory::EditBoxFactory(irr::gui::IGUIEditBox *node, engine
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setText", [this](std::string param) {setTextCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("color", [this](std::string param) {colorCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("size", [this](std::string param) {sizeCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setMax", [this](std::string param) {setMaxCommand(param);}));
 	_device = game->device();
 }
 
@@ -105,5 +106,13 @@ int engine::Menu::EditBoxFactory::sizeCommand(std::string param)
 	irr::core::rect<irr::s32> newPos(pos.X, pos.Y, pos.X + size.X, pos.Y + size.Y);
 
 	_node->setRelativePosition(newPos);
+	return 0;
+}
+
+int engine::Menu::EditBoxFactory::setMaxCommand(std::string param)
+{
+	irr::s32 size = atoi(param.c_str());
+
+	_node->setMax(size);
 	return 0;
 }

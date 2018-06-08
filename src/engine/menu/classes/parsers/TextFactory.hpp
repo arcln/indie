@@ -29,6 +29,7 @@ namespace engine { namespace Menu {
 			int fontSizeCommand(std::string param);
 			int setTextCommand(std::string param);
 			int colorCommand(std::string param);
+			int nameCommand(std::string param);
 		private:
 			irr::gui::IGUIStaticText *_node;
 			engine::Game *_game;

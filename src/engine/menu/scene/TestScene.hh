@@ -126,9 +126,5 @@ namespace worms { namespace scene {
 		std::cout << "\nDEBUG\n" << std::endl;
 		parser.parseFile();
 		parser.fillMap();
-
-		game.eventsHandler.subscribe([&](engine::KeyState const& keystate) -> int {
-			return 0;
-		});
 	};
 }}

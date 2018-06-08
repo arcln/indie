@@ -13,6 +13,7 @@ engine::Menu::ImageFactory::ImageFactory(irr::gui::IGUIImage *node, engine::Game
 	_game = game;
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("image", [this](std::string param) {imageCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("pos", [this](std::string param) {posCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("name", [this](std::string param) {nameCommand(param);}));
 }
 
 int engine::Menu::ImageFactory::imageCommand(std::string param)
@@ -47,5 +48,14 @@ int engine::Menu::ImageFactory::posCommand(std::string param)
 {
 	irr::core::position2di pos = findPos(param);
 	_node->setRelativePosition(pos);
+	return 0;
+}
+
+int engine::Menu::ImageFactory::nameCommand(std::string param)
+{
+	std::wstring widestr = std::wstring(param.begin(), param.end());
+	const wchar_t *tmp = widestr.c_str();
+
+	_node->setName(tmp);
 	return 0;
 }
