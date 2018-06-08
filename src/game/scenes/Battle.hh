@@ -104,8 +104,18 @@ namespace worms { namespace scene {
 						animationComponent.nextState = "inAir";
 					}
 
-					return 0;
-				});
+				return 0;
+			});
+
+            scene.registerEvent<std::string>("player.pick", [&](std::string const& s) {
+                if (hc.hasReachableEntity) {
+                    std::cout << hc.reachableEntity.getId() << std::endl;
+                    std::cout << hc.reachableEntity.getParentId() << std::endl;
+                    entity.attach(hc.reachableEntity);
+                }
+                return 0;
+            });
+		});
 
 				scene.registerEvent<std::string>("player.explode", entity.getId(), [&](std::string const& move) {
 					for (int i = 0; i < 4; i++)

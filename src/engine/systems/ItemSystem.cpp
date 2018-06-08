@@ -5,31 +5,33 @@
 ** Thomas Arbona
 */
 #include "../core/Entity.hpp"
-#include "HoldSystem.hpp"
+#include "ItemSystem.hpp"
 #include "../components/TransformComponent.hpp"
+#include "../components/HoldComponent.hpp"
+#include "../components/ItemComponent.hpp"
 
 void
-engine::HoldSystem::update(Scene& scene)
+engine::ItemSystem::update(Scene& scene)
 {
     Entities& entities = scene.getEntities();
 
-    std::cout << "boucle sur les parentId des entity:" << std::endl;
     entities.each<TransformComponent>([&](Entity const& e, auto& t) {
-        std::cout << e.getParentId() << std::endl;
         auto parentID = e.getParentId();
+
+        if (e.has<ItemComponent>() && parentID == Entity::nullId) {
+            t.rotation.Y += 1.f;
+            t.magicPosition.Y = 1.f;
+        }
 
         if (parentID == Entity::nullId)
             return;
 
         Entity const& parent = entities.getParentEntity(e);
-        std::cout << "cc3" << std::endl;
 
         if (parent.has<TransformComponent>()) {
-            std::cout << "cc4" << std::endl;
             auto& t2 = parent.get<TransformComponent>();
             t.position.X = t2.position.X;
             t.position.Y = t2.position.Y;
         }
     });
-    std::cout << std::endl;
 }
