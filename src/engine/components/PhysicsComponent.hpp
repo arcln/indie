@@ -7,7 +7,7 @@
 #pragma once
 
 #include <irrlicht/irrlicht.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
 

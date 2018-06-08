@@ -10,7 +10,7 @@
 #include <string>
 #include <irrlicht/ICameraSceneNode.h>
 #include <irrlicht/IrrlichtDevice.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 
 namespace engine {
 

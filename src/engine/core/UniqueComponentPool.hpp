@@ -13,7 +13,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include "engine/core/EntityId.hpp"
-#include <engine/exceptions/ComponentPoolException.hpp>
+#include "engine/exceptions/ComponentPoolException.hpp"
 
 namespace engine {
 
@@ -22,7 +22,7 @@ namespace engine {
 	 * @tparam ComponentType Type of the components handled by the container, can be anything
 	 */
 	template <typename ComponentType>
-	using UniqueComponentContainer = std::map<EntityId, ComponentType>;
+	using UniqueComponentContainer = std::unordered_map<EntityId, ComponentType>;
 
 	/**
 	 * Singleton that contains all unique components of a type
@@ -98,6 +98,13 @@ namespace engine {
 	private:
 		Container _components;
 
-		UniqueComponentPool() = default;
+		UniqueComponentPool() {
+			internal::componentPoolReset.subscribe([&](bool reset) -> int {
+				if (reset) {
+					_components.clear();
+				}
+				return reset;
+			});
+		};
 	};
 }

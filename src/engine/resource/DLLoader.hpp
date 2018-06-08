@@ -11,7 +11,7 @@
 #include <string>
 #include <dlfcn.h>
 #include <cassert>
-#include "engine/systems/System.hpp"
+#include "engine/core/System.hpp"
 
 namespace engine {
 	/**

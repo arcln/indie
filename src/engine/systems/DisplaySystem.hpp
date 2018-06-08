@@ -10,7 +10,7 @@
 #include <irrlicht/irrlicht.h>
 #include "engine/core/Game.hpp"
 #include "engine/resource/ResourceManager.hpp"
-#include "engine/systems/System.hpp"
+#include "engine/core/System.hpp"
 
 namespace engine {
 

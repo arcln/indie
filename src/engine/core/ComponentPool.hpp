@@ -8,9 +8,9 @@
 #pragma once
 
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <list>
-#include <engine/exceptions/ComponentPoolException.hpp>
+#include "engine/exceptions/ComponentPoolException.hpp"
 #include "engine/core/EntityId.hpp"
 #include "engine/core/Event.hpp"
 
@@ -29,7 +29,7 @@ namespace engine {
 	 * @tparam ComponentType Type of the components handled by the container, can be anything
 	 */
 	template <typename ComponentType>
-	using ComponentContainer = std::map<EntityId, std::vector<ComponentType> >;
+	using ComponentContainer = std::unordered_map<EntityId, std::vector<ComponentType> >;
 
 	/**
 	 * Singleton that contains all components of a type

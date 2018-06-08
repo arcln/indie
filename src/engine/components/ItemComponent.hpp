@@ -8,7 +8,7 @@
 
 #include <functional>
 #include <irrlicht/irrlicht.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 #include "engine/core/Entity.hpp"
 
 namespace engine {

@@ -41,7 +41,7 @@ namespace engine {
 
 	private:
 		static EntityId _LastSpawnedEntityId;
-		std::map<EntityId, Siblings> _entities;
+		std::unordered_map<EntityId, Siblings> _entities;
 
 		template<typename... ComponentsTypes>
 		void

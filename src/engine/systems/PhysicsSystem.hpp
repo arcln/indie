@@ -9,7 +9,7 @@
 #include <vector>
 #include <chrono>
 #include <irrlicht/irrlicht.h>
-#include "engine/systems/System.hpp"
+#include "engine/core/System.hpp"
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/TransformComponent.hpp"

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 
 namespace worms {
 
