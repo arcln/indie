@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 
 namespace engine {
 

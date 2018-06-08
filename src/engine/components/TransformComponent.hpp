@@ -9,7 +9,7 @@
 
 #include <string>
 #include <irrlicht/irrlicht.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 
 namespace engine {
 

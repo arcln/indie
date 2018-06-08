@@ -6,7 +6,7 @@
 */
 
 #include <unistd.h>
-#include "engine/systems/System.hpp"
+#include "System.hpp"
 #include "Game.hpp"
 
 engine::Game::Game(bool enableVideo, std::string const& cwd)

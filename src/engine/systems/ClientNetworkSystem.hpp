@@ -9,7 +9,7 @@
 
 #include <thread>
 #include "engine/core/Scene.hpp"
-#include "engine/systems/System.hpp"
+#include "engine/core/System.hpp"
 #include "engine/network/Selector.hpp"
 
 namespace engine {

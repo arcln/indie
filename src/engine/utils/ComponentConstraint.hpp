@@ -8,8 +8,8 @@
 #pragma once
 
 #include <functional>
-#include "engine/components/ComponentPool.hpp"
-#include "engine/components/UniqueComponentPool.hpp"
+#include "engine/core/ComponentPool.hpp"
+#include "engine/core/UniqueComponentPool.hpp"
 
 namespace engine {
 

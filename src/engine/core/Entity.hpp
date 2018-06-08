@@ -8,10 +8,10 @@
 #pragma once
 
 #include <cstddef>
-#include <engine/core/Event.hpp>
-#include <engine/core/EntityId.hpp>
-#include <engine/components/ComponentConstraint.hpp>
-#include <engine/components/ComponentFilter.hpp>
+#include "engine/core/Event.hpp"
+#include "engine/core/EntityId.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
+#include "engine/utils/ComponentFilter.hpp"
 
 namespace engine {
 

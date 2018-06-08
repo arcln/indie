@@ -9,9 +9,9 @@
 
 #include <vector>
 #include <map>
-#include <engine/core/Entity.hpp>
-#include <engine/core/Scene.hpp>
-#include <engine/components/ComponentPool.hpp>
+#include "engine/core/Entity.hpp"
+#include "engine/core/Scene.hpp"
+#include "engine/core/ComponentPool.hpp"
 
 namespace engine {
 

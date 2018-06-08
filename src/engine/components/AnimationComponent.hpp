@@ -8,7 +8,7 @@
 #pragma once
 
 #include <irrlicht/irrTypes.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 
 namespace engine {
 
