@@ -24,7 +24,7 @@ namespace engine {
 
 		using Constraint = ComponentConstraint<AnimationComponent, false>;
 
-		std::map<std::string, AnimationBoundaries> states;
+		std::unordered_map<std::string, AnimationBoundaries> states;
 		std::string currentState;
 		irr::f32 frameRate;
 	};

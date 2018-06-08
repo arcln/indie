@@ -22,7 +22,7 @@ namespace engine {
 	 * @tparam ComponentType Type of the components handled by the container, can be anything
 	 */
 	template <typename ComponentType>
-	using UniqueComponentContainer = std::map<EntityId, ComponentType>;
+	using UniqueComponentContainer = std::unordered_map<EntityId, ComponentType>;
 
 	/**
 	 * Singleton that contains all unique components of a type

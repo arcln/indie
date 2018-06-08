@@ -30,7 +30,7 @@ namespace engine {
 
 	using KeyCode = irr::EKEY_CODE;
 	using KeyState = irr::SEvent::SKeyInput;
-	using Events = std::map<std::size_t, Event<KeyState>>;
+	using Events = std::unordered_map<std::size_t, Event<KeyState>>;
 
 	class EventsReceiver : public irr::IEventReceiver {
 	public:
