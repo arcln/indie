@@ -177,11 +177,33 @@ namespace worms { namespace scene {
                 std::cout << "use item" << std::endl;
             });
 
-            scene.registerEvent<std::string>("player.pick", [&](std::string const& s) {
+            scene.registerEvent<std::string>("player.pick", [entity, &hc](std::string const& s) {
                 if (hc.hasReachableEntity) {
-                    std::cout << hc.reachableEntity.getId() << std::endl;
-                    std::cout << hc.reachableEntity.getParentId() << std::endl;
-                    entity.attach(hc.reachableEntity);
+                    if (hc.items.size() < hc.capacity) {
+                        auto item = entity.attach(hc.reachableEntity);
+                        hc.items.push_back(item);
+                        hc.current += 1;
+                    }
+                }
+                return 0;
+            });
+
+            scene.registerEvent<std::string>("player.use", [entity, &hc](std::string const& s) {
+                if (hc.current >= 0) {
+                    engine::Entity& item = hc.items[hc.current];
+                    if (item.has<engine::ItemComponent>()) {
+                        item.get<engine::ItemComponent>().use();
+                    }
+                }
+                return 0;
+            });
+
+            scene.registerEvent<std::string>("player.throw", [entity, &hc](std::string const& s) {
+                if (hc.current >= 0) {
+                    engine::Entity& item = hc.items[hc.current];
+                    item.detach();
+                    hc.items.erase(hc.items.begin() + hc.current);
+                    hc.current -= 1;
                 }
                 return 0;
             });
@@ -208,10 +230,15 @@ namespace worms { namespace scene {
         scene.registerEntityModel("item", [&](engine::Entity const& entity) {
             entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
             entity.set<engine::PhysicsComponent>();
-			entity.set<engine::ItemComponent>();
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+                std::cout << "use item" << std::endl;
+            });
+
+            ic.offset = {1.f, 2.f, 0.f};
 
 			auto& transformComponent = entity.set<engine::TransformComponent>();
 			transformComponent.position = {-10.f, 10.f, 0.f};
+            transformComponent.scale = {0.5f, 0.5f, 0.5f};
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
 			hitboxComponent.rebound = 0.8;
