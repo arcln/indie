@@ -17,6 +17,7 @@ engine::Menu::TextFactory::TextFactory(irr::gui::IGUIStaticText *node, engine::G
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("fontSize", [this](std::string param) {fontSizeCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setText", [this](std::string param) {setTextCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("color", [this](std::string param) {colorCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("name", [this](std::string param) {nameCommand(param);}));
 	_device = game->device();
 }
 
@@ -109,5 +110,14 @@ int engine::Menu::TextFactory::setTextCommand(std::string param)
 int engine::Menu::TextFactory::colorCommand(std::string param)
 {
 	_node->setOverrideColor(getColor(param));
+	return 0;
+}
+
+int engine::Menu::TextFactory::nameCommand(std::string param)
+{
+	std::wstring widestr = std::wstring(param.begin(), param.end());
+	const wchar_t *tmp = widestr.c_str();
+
+	_node->setName(tmp);
 	return 0;
 }

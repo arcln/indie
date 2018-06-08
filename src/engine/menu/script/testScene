@@ -1,13 +1,13 @@
 text:
 	pos: 200, 200
-	overrideFont: ../assets/font/FontArial68/myfont.xml
+	overrideFont: ../assets/font/PTSans42/PTSans42.xml
 	setText: Salut
 	color: 255, 255, 0, 0
 
 editBox:
 	pos: 400, 400
 	size: 500, 100
-	overrideFont: ../assets/font/FontArial68/myfont.xml
+	overrideFont: ../assets/font/PTSans42/PTSans42.xml
 	color: 255, 0, 0, 255
 
 checkBox:

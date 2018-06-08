@@ -22,7 +22,7 @@
 
 namespace worms { namespace scene {
 
-	static const auto mainMenu = [](engine::Game& game, engine::Scene& scene) {
+	static const auto keyAssign = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -118,22 +118,12 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		scene.registerEvent<engine::GenericEvent>("Options", [&](engine::GenericEvent const&) {
-			game.replaceScene("optionsMenu");
-			return 0;
-		});
-
-		scene.registerEvent<bool>("Quit", [&](engine::GenericEvent const&) {
-			exit(0);
-			return 0;
-		});
-
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/mainMenu", &scene, &game);
+		engine::Menu::MyScriptParser parser("engine/menu/script/keyAssignement", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();
 
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_KEY_O, "Options", Vector2i(0, 0), 0);
+		//game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_KEY_O, "O", Vector2i(0, 0), 0);
 	};
 }}

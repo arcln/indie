@@ -29,6 +29,7 @@ namespace engine { namespace Menu {
 			int overrideFontCommand(std::string param);
 			int setTextCommand(std::string param);
 			int colorCommand(std::string param);
+			int setMaxCommand(std::string param);
 		private:
 			irr::gui::IGUIEditBox *_node;
 			engine::Game *_game;

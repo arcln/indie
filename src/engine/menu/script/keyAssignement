@@ -11,11 +11,10 @@ image:
 image:
 	- name: logo
 	- image: texture/Wornite2100.png
-	- pos: 460 , 100
+	- pos: 460, 100
 
-button:
-	- image: texture/firstButton.png
-	- rect: 343, 328, 937, 392
-	- border: false
-	- pos: 640, 300
-	- event: to mainMenu
+editBox:
+	- pos: 400, 200
+	- size: 50, 50
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- setMax: 1

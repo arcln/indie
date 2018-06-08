@@ -1,30 +1,42 @@
 image:
 	- name: background
-	- image: texture/wormsWpp.jpg
+	- image: texture/gameBack.jpg
 	- pos: 0, 0
 
 image:
+	- name: background2
+	- image: texture/woodSign.png
+	- pos: 200, 70
+
+image:
 	- name: logo
-	- image: texture/WormNiteLogo.png
-	- pos: 259, 50
+	- image: texture/Wornite2100.png
+	- pos: 460 , 100
 
 button:
 	- image: texture/button_play.png
 	- imagePressed: texture/button_play(1).png
-	- rect: 525, 330, 755, 390
+	- rect: 343, 250, 937, 316
 	- border: false
-	- name: Play
+	- event: Play
 
 button:
 	- image: texture/button_options.png
 	- imagePressed: texture/button_options(1).png
-	- rect: 525, 410, 755, 470
+	- rect: 343, 338, 937, 404
 	- border: false
-	- name: Options
+	- event: Options
+
+button:
+	- image: texture/button_credits.png
+	- imagePressed: texture/button_credits(1).png
+	- rect: 343, 426, 937, 492
+	- border: false
+	- event: Credits
 
 button:
 	- image: texture/button_quit.png
 	- imagePressed: texture/button_quit(1).png
-	- rect: 525, 490, 755, 550
+	- rect: 343, 514, 937, 580
 	- border: false
-	- name: Quit
+	- event: Quit
