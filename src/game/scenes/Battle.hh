@@ -15,6 +15,7 @@
 #include "engine/components/IrrlichtComponent.hpp"
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/TransformComponent.hpp"
+#include "engine/components/AnimationComponent.hpp"
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
@@ -65,10 +66,14 @@ namespace worms { namespace scene {
 
         scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 			entity.set<PlayerComponent>(0);
-			entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj", "texture/worm.png");
+			entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
 
             auto& physicsComponent = entity.set<engine::PhysicsComponent>();
             auto& transformComponent = entity.set<engine::TransformComponent>();
+			auto& animationComponent = entity.set<engine::AnimationComponent>("idle");
+			animationComponent.states.emplace("run", engine::AnimationBoundaries(0, 40));
+			animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 79));
+
             transformComponent.scale = {.5f, .5f, .5f};
             transformComponent.position = {0.f, 25.f, 0.f};
 
@@ -78,6 +83,15 @@ namespace worms { namespace scene {
 
 			scene.registerEvent<std::string>("player.move", [&](std::string const& move) {
 				physicsComponent.move = (Vector2f) move;
+
+				if (physicsComponent.move.X == 0) {
+					animationComponent.currentState = "idle";
+				} else {
+					animationComponent.currentState = "run";
+					if (physicsComponent.move.X * transformComponent.scale.X < 0)
+						transformComponent.scale.X *= -1;
+				}
+
 				return 0;
 			});
 
@@ -124,6 +138,10 @@ namespace worms { namespace scene {
 					game.eventsHandler.disableKeyEvent(engine::KeyCode::KEY_KEY_D);
 					game.eventsHandler.disableKeyEvent(engine::KeyCode::KEY_KEY_Q);
 					game.eventsHandler.disableKeyEvent(engine::KeyCode::KEY_SPACE);
+				} else {
+					game.eventsHandler.enableKeyEvent(engine::KeyCode::KEY_KEY_D);
+					game.eventsHandler.enableKeyEvent(engine::KeyCode::KEY_KEY_Q);
+					game.eventsHandler.enableKeyEvent(engine::KeyCode::KEY_SPACE);
 				}
 			});
 
