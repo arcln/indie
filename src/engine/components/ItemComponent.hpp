@@ -21,5 +21,6 @@ namespace engine {
         ItemComponent(UseFunction _use) : use(_use) {}
 
         UseFunction use;
+        irr::core::vector3df offset{0.f, 0.f, 0.f};
 	};
 }

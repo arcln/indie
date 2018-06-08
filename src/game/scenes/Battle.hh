@@ -107,11 +107,33 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-            scene.registerEvent<std::string>("player.pick", [&](std::string const& s) {
+            scene.registerEvent<std::string>("player.pick", [entity, &hc](std::string const& s) {
                 if (hc.hasReachableEntity) {
-                    std::cout << hc.reachableEntity.getId() << std::endl;
-                    std::cout << hc.reachableEntity.getParentId() << std::endl;
-                    entity.attach(hc.reachableEntity);
+                    if (hc.items.size() < hc.capacity) {
+                        auto item = entity.attach(hc.reachableEntity);
+                        hc.items.push_back(item);
+                        hc.current += 1;
+                    }
+                }
+                return 0;
+            });
+
+            scene.registerEvent<std::string>("player.use", [entity, &hc](std::string const& s) {
+                if (hc.current >= 0) {
+                    engine::Entity& item = hc.items[hc.current];
+                    if (item.has<engine::ItemComponent>()) {
+                        item.get<engine::ItemComponent>().use();
+                    }
+                }
+                return 0;
+            });
+
+            scene.registerEvent<std::string>("player.throw", [entity, &hc](std::string const& s) {
+                if (hc.current >= 0) {
+                    engine::Entity& item = hc.items[hc.current];
+                    item.detach();
+                    hc.items.erase(hc.items.begin() + hc.current);
+                    hc.current -= 1;
                 }
                 return 0;
             });
@@ -146,8 +168,19 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 			});
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+                std::cout << "use item" << std::endl;
+            });
 
 			Wornite::Map map;
+            ic.offset = {1.f, 2.f, 0.f};
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {-10.f, 10.f, 0.f};
+            transformComponent.scale = {0.5f, 0.5f, 0.5f};
 
 			map.genMap(game, scene);
 
