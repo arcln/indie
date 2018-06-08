@@ -120,7 +120,7 @@ private:
 
 	void getChunk(mapSettings *map);
 
-	const engine::Entity & spawnChunkHitbox(engine::Game *pGame, engine::Scene *pScene, chunk *pChunk);
+	void spawnChunkHitbox(engine::Game *pGame, engine::Scene *pScene, chunk *pChunk);
 
 	void getNextNode(irr::f32 x, irr::f32 y, chunk *chunk, irr::core::vector2df *node);
 
@@ -128,7 +128,7 @@ private:
 
 	void getHitboxEdge(irr::core::vector2df last, irr::core::vector2df first, chunk *chunk, std::string *String);
 
-	const engine::Entity & spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox);
+	void spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox);
 };
 
 }

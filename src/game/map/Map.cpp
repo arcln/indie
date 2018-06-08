@@ -82,7 +82,7 @@ Wornite::Map::getChunk(Wornite::Map::mapSettings *map)
 	map->nbChunks = (int) std::ceil(static_cast<float>(map->length) / static_cast<float>(map->height));
 
 	for (int i = 0; i < map->nbChunks; i++) {
-		chunk chunk = {"", map->length / map->nbChunks, map->height, map->length, i, map->nbChunks};
+		chunk chunk = {"", map->length / map->nbChunks, map->height, map->length, i, map->nbChunks, engine::Entity()};
 		map->chunks.push_back(chunk);
 	}
 
@@ -112,7 +112,7 @@ void Wornite::Map::fillBigChunks(engine::Game *game, engine::Scene *scene, chunk
 	mapBsq.col = (unsigned int) chunk->string.find_first_of('\n', 0);
 	chunk->length = mapBsq.row;
 	chunk->height = mapBsq.col;
-	chunk->chunkHitboxEntity = spawnChunkHitbox(game, scene, chunk);
+	spawnChunkHitbox(game, scene, chunk);
 	bsq.find_bsq(&mapBsq, &res);
 	while (res.size > 0) {
 		spawnBigChunk(game, scene, &mapBsq, &res, chunk);
@@ -176,13 +176,13 @@ Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core:
 	transform.position = position;
 	transform.scale = scale;
     auto& h = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-//	h.hasDebugMode = true;
+	h.hasDebugMode = true;
 	hitboxEntity.attach(entity);
 	_blockDisplayed += 1;
 }
 
 
-const engine::Entity &
+void
 Wornite::Map::spawnChunkHitbox(engine::Game *game, engine::Scene *scene,
 			       Wornite::Map::chunk *chunk)
 {
@@ -220,11 +220,11 @@ Wornite::Map::spawnChunkHitbox(engine::Game *game, engine::Scene *scene,
 
 
 //	getHitboxEdge(node, nextNode, chunk, &hitbox);
-	return spawnHitbox(game, scene, chunk, hitbox);
+	spawnHitbox(game, scene, chunk, hitbox);
 }
 
 
-const engine::Entity &
+void
 Wornite::Map::spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox)
 {
 	scene->registerEntityModel("hitboxChunk", [&](engine::Entity const &entity) {
@@ -242,7 +242,8 @@ Wornite::Map::spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk
 	auto& hitboxComponenet = hitboxEntity.set<engine::HitboxComponent>(hitbox);
 	hitboxComponenet.hasDebugMode = true;
 
-	return hitboxEntity;
+	chunk->chunkHitboxEntity = hitboxEntity;
+
 }
 
 void

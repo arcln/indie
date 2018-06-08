@@ -93,6 +93,7 @@ namespace worms { namespace scene {
 =======
 		entity.set<PlayerComponent>(0);
 
+<<<<<<< refs/remotes/origin/develop
 		scene.registerEntityModel("block", [&](engine::Entity const &entity) {
 			entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
 >>>>>>> map: bug segfault on entity
@@ -106,6 +107,20 @@ namespace worms { namespace scene {
 			hitboxComponent.rebound = 0.8;
 			hitboxComponent.hasDebugMode = true;
 		});
+=======
+//		scene.registerEntityModel("block", [&](engine::Entity const &entity) {
+//			entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+//			entity.set<engine::TagComponent>(std::string("map"));
+//
+//			auto &transformComponent = entity.set<engine::TransformComponent>();
+//			transformComponent.position = {0.f, 0.f, 0.f};
+//
+//			auto &hitboxComponent = entity.set<engine::HitboxComponent>(
+//				"(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
+//			hitboxComponent.rebound = 0.8;
+//			hitboxComponent.hasDebugMode = true;
+//		});
+>>>>>>> map: map spawn witch chunk filled with block
 	});
 
 
@@ -168,18 +183,6 @@ namespace worms { namespace scene {
 						 });
 	});
 
-	scene.registerEntityModel("block", [&](engine::Entity const& entity) {
-		entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
-		entity.set<engine::TagComponent>(std::string("map"));
-
-		auto& transformComponent = entity.set<engine::TransformComponent>();
-		transformComponent.position = {0.f, 0.f, 0.f};
-
-		auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-50 -10, -50 20, -28 20, -28 4, -20 1, -10 1, 1 2, 2 8, 5 8, 5 -10, 1 -10)");
-		hitboxComponent.rebound = 0.8;
-		hitboxComponent.hasDebugMode = true;
-	});
-
 		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(
 				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
@@ -237,7 +240,6 @@ namespace worms { namespace scene {
 
 		scene.spawnEntity("camera");
 		scene.spawnEntity("player");
-		scene.spawnEntity("block");
 		scene.spawnEntity("light");
 	};
 }}
