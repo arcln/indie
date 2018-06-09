@@ -23,7 +23,6 @@ namespace engine {
 
 	private:
 		Game& _game;
-		ResourceManager<irr::scene::IAnimatedMeshSceneNode*> _nodesManager;
 
 		irr::video::IVideoDriver* _videoDriver;
 		irr::scene::ISceneManager* _sceneManager;

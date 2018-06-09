@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <future>
 #include <functional>
 #include <fstream>
 #include <unordered_map>
@@ -18,6 +19,9 @@
  */
 namespace engine {
 
+	using MeshNode = irr::scene::IAnimatedMesh;
+	using Texture = irr::video::ITexture;
+
 	/**
 	 * @brief Provided ressource manager for libraries
 	 * @tparam T Resource to be managed
@@ -25,10 +29,10 @@ namespace engine {
 	template<typename T>
 	class ResourceManager {
 	public:
-		explicit ResourceManager(std::string const& root) : _root(root) {}
 		~ResourceManager() = default;
 
 		using LoadFuncType = T (std::string const&);
+		using Callback = std::function<void (bool)>;
 
 		/**
 		 * @brief Get the requested resource. Automaticaly loads from disk if asset isn't found in cache
@@ -47,11 +51,48 @@ namespace engine {
 		 * @brief Define the function that will be used to load the resource
 		 * @param loadFunc Conversion function from raw data to T
 		 */
-		void onLoad(std::function<LoadFuncType> const& loadFunc) {
+		ResourceManager<T>& onLoad(std::function<LoadFuncType> const& loadFunc) {
 			_loadFunc = loadFunc;
+			return *this;
+		}
+
+		ResourceManager<T>& loadFrom(std::string const& root) {
+			_root = root;
+			return *this;
+		}
+
+		bool syncLoad(std::vector<std::string> const& files) {
+			try {
+				for (auto& file : files) {
+					this->get(file);
+				}
+			} catch (std::exception& e) {
+				std::cerr << "worms: " << e.what() << std::endl;
+				return true;
+			}
+
+			return false;
+		}
+
+		std::future<bool> asyncLoad(std::vector<std::string> const& files) {
+			return std::async(std::launch::async, [this](std::vector<std::string> const& files) -> bool {
+				return this->syncLoad(files);
+			}, files);
+		}
+
+		static ResourceManager<T>& instance() {
+			static ResourceManager<T> inst;
+
+			return inst;
 		}
 
 	private:
+		ResourceManager() = default;
+		ResourceManager(ResourceManager const&) = delete;
+		ResourceManager(ResourceManager&&) = delete;
+		ResourceManager& operator =(ResourceManager const&) = delete;
+		ResourceManager& operator =(ResourceManager&&) = delete;
+
 		/**
 		 * @brief Resources cache
 		 */

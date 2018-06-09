@@ -11,8 +11,6 @@
 
 engine::Game::Game(bool enableVideo, std::string const& cwd)
 	: eventsHandler(_keyEvents)
-	, meshManager(cwd)
-	, textureManager(cwd)
 	, _eventReceiver(_keyEvents)
 	, _cwd(cwd)
 {
@@ -25,12 +23,12 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	}
 	_device->setWindowCaption(L"Worms");
 
-	this->meshManager.onLoad([&](std::string const& asset) {
-		return this->_device->getSceneManager()->getMesh(asset.c_str());
+	ResourceManager<MeshNode*>::instance().loadFrom(cwd).onLoad([&](std::string const& asset) {
+		return this->device()->getSceneManager()->getMesh(asset.c_str());
 	});
 
-	this->textureManager.onLoad([&](std::string const& asset) {
-		return this->_device->getVideoDriver()->getTexture(asset.c_str());
+	ResourceManager<Texture*>::instance().loadFrom(cwd).onLoad([&](std::string const& asset) {
+		return this->device()->getVideoDriver()->getTexture(asset.c_str());
 	});
 }
 
