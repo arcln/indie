@@ -32,7 +32,6 @@ engine::Scene::spawnEntity(std::string const& name, EntityId parentId)
 	if (_models.find(name) == std::end(_models))
 		throw std::runtime_error("entity model '" + name + "' not found");
 
-
 	return _entities.add(parentId, _models[name]);
 }
 

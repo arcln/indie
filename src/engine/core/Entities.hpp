@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <map>
+#include <irrlicht/irrlicht.h>
 
 namespace engine {
 
@@ -17,6 +18,7 @@ namespace engine {
 	class Entities {
 	public:
 		using Siblings = std::vector<EntityId>;
+		using Container = std::unordered_map<EntityId, Siblings>;
 		struct FindResult {
 			Siblings& siblings;
 			Siblings::iterator it;
@@ -28,8 +30,11 @@ namespace engine {
 		FindResult find(EntityId parentId, EntityId id);
 		EntityId findParent(EntityId id);
 
-		Entity attach(EntityId parentId, EntityId id);
+		Entity attach(EntityId parentId, EntityId id, EntityId newParentId);
 		Entity detach(EntityId parentId, EntityId id);
+
+		void enable(EntityId parentId, EntityId id);
+		void disable(EntityId parentId, EntityId id);
 
 		template <typename... ComponentsTypes>
 		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true)
@@ -41,7 +46,13 @@ namespace engine {
 
 	private:
 		static EntityId _LastSpawnedEntityId;
-		std::unordered_map<EntityId, Siblings> _entities;
+		Container _entities;
+		Container _disabledEntities;
+		static const irr::core::vector3df _DisabledOffset;
+
+		bool _remove(EntityId parentId, EntityId id, Container& container);
+		void _removeChilds(EntityId id, Container& container);
+		FindResult _find(EntityId parentId, EntityId id, Container& container);
 
 		template<typename... ComponentsTypes>
 		void
@@ -62,7 +73,7 @@ namespace engine {
 
 				auto const& childsIt = _entities.find(it);
 				if (doChilds && childsIt != std::end(_entities))
-					this->_eachSibilings<ComponentsTypes...>(parentId, childsIt->second, callback, doChilds);
+					this->_eachSibilings<ComponentsTypes...>(it, childsIt->second, callback, doChilds);
 			}
 		}
 	};
