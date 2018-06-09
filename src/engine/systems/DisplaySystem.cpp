@@ -39,6 +39,17 @@ engine::DisplaySystem::update(Scene& scene)
 
 		if (boundaries.from != i.node->getStartFrame() || boundaries.to != i.node->getEndFrame()) {
 			i.node->setFrameLoop(boundaries.from, boundaries.to);
+			i.node->setLoopMode(true);
+		}
+
+		if (a.playOnce && i.node->getEndFrame() - i.node->getFrameNr() < 1.5) {
+			if (a.nextState != "") {
+				a.currentState = a.nextState;
+				a.nextState = "";
+				a.playOnce = false;
+			} else {
+				i.node->setLoopMode(false);
+			}
 		}
 
 		i.node->setAnimationSpeed(a.frameRate);
