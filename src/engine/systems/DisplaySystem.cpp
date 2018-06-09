@@ -25,7 +25,6 @@ engine::DisplaySystem::update(Scene& scene)
 {
 	Entities& entities = scene.getEntities();
 
-	_game.lockDevice();
 	_game.device()->run();
 	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
@@ -75,7 +74,6 @@ engine::DisplaySystem::update(Scene& scene)
     _videoDriver->draw3DLine({0, 0, -100}, {0, 0, 100}, irr::video::SColor(255, 0, 0, 255));
 
 	_videoDriver->endScene();
-	_game.releaseDevice();
 }
 
 engine::DisplaySystem::~DisplaySystem()
