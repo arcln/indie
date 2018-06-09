@@ -39,7 +39,13 @@ namespace engine {
 		template <typename... ComponentsTypes>
 		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true)
 		{
-			this->_eachSibilings<ComponentsTypes...>(Entity::nullId, _entities[Entity::nullId], callback, doChilds);
+			this->eachChilds<ComponentsTypes...>(Entity::nullId, callback, doChilds);
+		}
+
+		template <typename... ComponentsTypes>
+		void eachChilds(EntityId parentId, typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true)
+		{
+			_eachSibilings<ComponentsTypes...>(parentId, _entities.at(parentId), callback, doChilds);
 		}
 
 		void withTag(std::string tag, std::function<void (Entity const&)> callback);

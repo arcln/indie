@@ -28,9 +28,9 @@ namespace engine {
 
 		void applyCollision(Entities& entities, Entity const& entity);
         void applyCollisionFrac(Entities& entities, Entity const& entity, float dist);
-        void applyDeplacement(Entities& entities, Entity const& e, bool isCorrection = false);
-        static void patchCollision(Entity const& entity, HitboxComponent const& collideWith);
-		static void patchCollisionFrac(Entity const& entity, HitboxComponent const& collideWith);
+        void applyDeplacement(Entities& entities, Entity const& e);
+        static void patchCollision(Entities& entities, Entity const& entity);
+		static void patchCollisionFrac(Entity const& entity, Entity const& entity2);
         static void patchDeplacement(Entities& entities, Entity const& entity, irr::core::vector3df const& origin);
         static bool simpleCollideEntities(Entities& entities, Entity const& entity);
         static bool isGrounded(Entities& entities, Entity const& entity);

@@ -47,6 +47,8 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
         return;
 
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
+        Manifold mf;
+        float rebound = 1.f;
         float dist = std::sqrt(std::pow(t.position.X - t.prevPosition.X, 2) + std::pow(t.position.Y - t.prevPosition.Y, 2));
 
         if (dist > 2.f) {
@@ -61,15 +63,18 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
             GeometryHelper::transformHitbox(h2, t2);
 
-            Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
-            if (mf.isCollide) {
-                if (mf.hasError)
-                    return;
-                p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
-                p.velocity *= h.rebound * h2.rebound; // TODO: rebound velocity
-                PhysicsSystem::patchCollision(entity, h2);
+            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
+            if (mf2.isCollide && !mf2.hasError) {
+                mf.isCollide = true;
+                mf.normal += mf2.normal;
+                rebound *= h2.rebound;
             }
         });
+        if (mf.isCollide) {
+            p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
+            p.velocity *= h.rebound * rebound;
+            PhysicsSystem::patchCollision(entities, entity);
+        }
     });
 }
 
@@ -102,14 +107,14 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 
                 GeometryHelper::transformHitbox(h2, t2);
 
-                Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
+                Manifold mf = GeometryHelper::polygonCollide(entity, e2);
                 if (mf.isCollide) {
                     if (mf.hasError) {
                         return;
                     }
                     t.prevPosition = tSave.prevPosition;
                     p.velocity *= 0.f;
-                    PhysicsSystem::patchCollisionFrac(entity, h2);
+                    PhysicsSystem::patchCollisionFrac(entity, e2);
                 }
             });
         }
@@ -117,7 +122,7 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 }
 
 void
-engine::PhysicsSystem::patchCollision(Entity const& entity, HitboxComponent const& collideWith)
+engine::PhysicsSystem::patchCollision(Entities& entities, Entity const& entity)
 {
     auto& t = entity.get<TransformComponent>();
     auto& h = entity.get<HitboxComponent>();
@@ -129,7 +134,7 @@ engine::PhysicsSystem::patchCollision(Entity const& entity, HitboxComponent cons
     for (auto it = 0; it < 10; it += 1) {
         t.position = cursor;
         GeometryHelper::transformHitbox(h, t);
-        if (GeometryHelper::simplePolygonCollide(h, collideWith)) {
+        if (PhysicsSystem::simpleCollideEntities(entities, entity)) {
             bound2 = cursor;
         } else {
             bound1 = cursor;
@@ -147,7 +152,7 @@ engine::PhysicsSystem::patchCollision(Entity const& entity, HitboxComponent cons
 }
 
 void
-engine::PhysicsSystem::patchCollisionFrac(Entity const& entity, HitboxComponent const& collideWith)
+engine::PhysicsSystem::patchCollisionFrac(Entity const& entity, Entity const& entity2)
 {
     auto& t = entity.get<TransformComponent>();
     auto& h = entity.get<HitboxComponent>();
@@ -158,7 +163,7 @@ engine::PhysicsSystem::patchCollisionFrac(Entity const& entity, HitboxComponent 
     for (auto it = 0; it < 10; it += 1) {
         t.position = cursor;
         GeometryHelper::transformHitbox(h, t);
-        if (GeometryHelper::simplePolygonCollide(h, collideWith)) {
+        if (GeometryHelper::simplePolygonCollide(entity, entity2)) {
             bound2 = cursor;
         } else {
             bound1 = cursor;
@@ -170,7 +175,7 @@ engine::PhysicsSystem::patchCollisionFrac(Entity const& entity, HitboxComponent 
 }
 
 void
-engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity, bool isCorrection)
+engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity)
 {
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
         if (p.move.X == 0.f && p.move.Y == 0.f)
@@ -187,7 +192,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             if (e2.getId() == entity.getId())
                 return;
 
-            Manifold mf = GeometryHelper::polygonCollide(entity, h, h2);
+            Manifold mf = GeometryHelper::polygonCollide(entity, e2);
             if (mf.isCollide) {
                 if (mf.hasError)
                     return;
@@ -206,39 +211,26 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             t.position.Y += moveVec.Y * std::fabs(dist);
             if (moveVec.dotProduct(p.move) < 0 || PhysicsSystem::simpleCollideEntities(entities, entity)) {
                 t.position = t.prevPosition;
-                if (!isCorrection) {
-                    p.move.Y += 0.1;
-                    this->applyDeplacement(entities, entity, true);
-                    p.move.Y -= 0.1;
-                }
+                p.velocity.Y += 20.f;
             }
         }
-        if (!isCorrection) {
-            PhysicsSystem::patchDeplacement(entities, entity, origin);
-        }
+        PhysicsSystem::patchDeplacement(entities, entity, origin);
     });
 }
 
 void
 engine::PhysicsSystem::patchDeplacement(Entities& entities, Entity const& entity, irr::core::vector3df const& origin)
 {
-    bool unique = true;
-
     entities.withTag("map", [&](Entity const& entMap) {
-        if (!unique)
-            return;
-        unique = false;
-
         auto& t = entity.get<TransformComponent>();
         auto& h = entity.get<HitboxComponent>();
-        auto& hMap = entMap.get<HitboxComponent>();
 
         t.prevPosition = t.position;
         t.position = origin;
         t.position.Y -= 0.01;
         GeometryHelper::transformHitbox(h, t);
         t.position = t.prevPosition;
-        if (!GeometryHelper::simplePolygonCollide(h, hMap))
+        if (!GeometryHelper::simplePolygonCollide(entity, entMap))
             return;
 
         auto prevPos = t.position;
@@ -247,7 +239,7 @@ engine::PhysicsSystem::patchDeplacement(Entities& entities, Entity const& entity
             t.prevPosition = t.position;
             t.position.Y -= 0.02;
             GeometryHelper::transformHitbox(h, t);
-            if (GeometryHelper::simplePolygonCollide(h, hMap)) {
+            if (GeometryHelper::simplePolygonCollide(entity, entMap)) {
                 isOk = true;
                 t.position = t.prevPosition;
                 break;
@@ -272,7 +264,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
             if (e2.getId() == entity.getId())
                 return;
 
-            if (GeometryHelper::simplePolygonCollide(h, h2))
+            if (GeometryHelper::simplePolygonCollide(entity, e2))
                 isCollide = true;
         });
     });
@@ -283,23 +275,20 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
 bool
 engine::PhysicsSystem::isGrounded(Entities& entities, Entity const& entity)
 {
-    bool unique = true;
     bool isGrounded = false;
 
     entities.withTag("map", [&](Entity const& entMap) {
-        if (!unique)
+        if (isGrounded)
             return;
-        unique = false;
 
         auto& t = entity.get<TransformComponent>();
         auto& h = entity.get<HitboxComponent>();
-        auto& hMap = entMap.get<HitboxComponent>();
 
         t.prevPosition = t.position;
-        t.position.Y -= 0.1;
+        t.position.Y -= 0.25f;
         GeometryHelper::transformHitbox(h, t);
         t.position = t.prevPosition;
-        isGrounded = GeometryHelper::simplePolygonCollide(h, hMap);
+        isGrounded = GeometryHelper::simplePolygonCollide(entity, entMap);
     });
 
     return isGrounded;
