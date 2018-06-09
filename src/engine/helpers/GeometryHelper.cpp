@@ -9,7 +9,6 @@
 #include "../components/PhysicsComponent.hpp"
 #include "../components/TransformComponent.hpp"
 #include "../core/Entity.hpp"
-#include "../core/Entities.hpp"
 #include "GeometryHelper.hpp"
 
 const float engine::GeometryHelper::epsilon = 0.01;
@@ -51,32 +50,12 @@ engine::GeometryHelper::segmentsAreCollinear(Segment const& s1, Segment const& s
 }
 
 bool
-engine::GeometryHelper::simplePolygonCollide(Entity const& entity, Entity const& entity2)
+engine::GeometryHelper::simplePolygonCollide(HitboxComponent& h1, HitboxComponent const& h2)
 {
     std::deque<Polygon> inter;
-    auto& h1 = entity.get<HitboxComponent>();
-    auto& h2 = entity2.get<HitboxComponent>();
 
     if (!GeometryHelper::AABBCollide(h1, h2))
         return false;
-
-    if (h2.isAABBOnly) {
-        bool isCollide = false;
-        Entities* entities = entity.getEntities();
-
-        if (!entities)
-            return isCollide;
-
-        entities->eachChilds(entity2.getId(), [&](Entity const& child) {
-            auto& h3 = child.get<HitboxComponent>();
-            boost::geometry::intersection(h1.hitboxW2D, h3.hitboxW2D, inter);
-            if (!inter.empty()) {
-                isCollide = true;
-            }
-        }, false);
-
-        return isCollide;
-    }
 
     boost::geometry::intersection(h1.hitboxW2D, h2.hitboxW2D, inter);
     return !inter.empty();
@@ -85,19 +64,17 @@ engine::GeometryHelper::simplePolygonCollide(Entity const& entity, Entity const&
 bool
 engine::GeometryHelper::AABBCollide(HitboxComponent const& h1, HitboxComponent const& h2)
 {
-    return !((h2.AABBWPosition.X >= h1.AABBWPosition.X + h1.WSize.X)
-        || (h2.AABBWPosition.X + h2.WSize.X <= h1.AABBWPosition.X)
-        || (h2.AABBWPosition.Y <= h1.AABBWPosition.Y - h1.WSize.Y)
-        || (h2.AABBWPosition.Y - h2.WSize.Y >= h1.AABBWPosition.Y));
+    return !((h2.AABBWPosition.X >= h1.AABBWPosition.X + h1.size.X)
+        || (h2.AABBWPosition.X + h2.size.X <= h1.AABBWPosition.X)
+        || (h2.AABBWPosition.Y <= h1.AABBWPosition.Y - h1.size.Y)
+        || (h2.AABBWPosition.Y - h2.size.Y >= h1.AABBWPosition.Y));
 }
 
 engine::Manifold
-engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entity2, int call)
+engine::GeometryHelper::polygonCollide(Entity const& entity, HitboxComponent& h1, HitboxComponent const& h2, int call)
 {
     std::deque<Polygon> inter;
     Manifold mf;
-    auto& h1 = entity.get<HitboxComponent>();
-    auto& h2 = entity2.get<HitboxComponent>();
 
     if (call > 42) {
         mf.isCollide = true;
@@ -107,10 +84,6 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entit
 
     if (call == 0 && !GeometryHelper::AABBCollide(h1, h2))
         return mf;
-
-    if (h2.isAABBOnly) {
-        return GeometryHelper::polygonCollideChilds(entity, entity2);
-    }
 
     boost::geometry::intersection(h1.hitboxW2D, h2.hitboxW2D, inter);
     mf.isCollide = !inter.empty();
@@ -128,7 +101,7 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entit
             t1.position.X += h1.patch.X;
             t1.position.Y += h1.patch.Y;
             GeometryHelper::transformHitbox(h1, t1);
-            return GeometryHelper::polygonCollide(entity, entity2, call + 1);
+            return GeometryHelper::polygonCollide(entity, h1, h2, call + 1);
         }
 
         Point lineVec = GeometryHelper::mergeSegmentsIntoVector(segments);
@@ -141,27 +114,6 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entit
         mf.normal.Y = dot < 0 ? normal1.y() : normal2.y();
         mf.normal.normalize();
     }
-
-    return mf;
-}
-
-engine::Manifold
-engine::GeometryHelper::polygonCollideChilds(Entity const& entity, Entity const& entity2)
-{
-    Manifold mf;
-    Entities* entities = entity.getEntities();
-
-    if (!entities)
-        return mf;
-
-    entities->eachChilds(entity2.getId(), [&](Entity const& child) {
-        Manifold mf2 = GeometryHelper::polygonCollide(entity, child);
-
-        if (mf2.isCollide && !mf2.hasError) {
-            mf.isCollide = true;
-            mf.normal += mf2.normal;
-        }
-    }, false);
 
     return mf;
 }
@@ -203,6 +155,4 @@ engine::GeometryHelper::transformHitbox(HitboxComponent& hitbox, TransformCompon
     hitbox.hitboxW2D = out;
     hitbox.AABBWPosition.X = (hitbox.AABBPosition.X * transform.scale.X) + transform.position.X;
     hitbox.AABBWPosition.Y = (hitbox.AABBPosition.Y * transform.scale.Y) + transform.position.Y;
-    hitbox.WSize.X = (hitbox.size.X * transform.scale.X);
-    hitbox.WSize.Y = (hitbox.size.Y * transform.scale.Y);
 }

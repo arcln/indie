@@ -23,12 +23,10 @@ namespace engine {
         float rebound = 0.3;
         Vec2D patch;
         Vec2D size;
-        Vec2D WSize;
         Vec2D AABBPosition;
         Vec2D AABBWPosition;
         Polygon hitbox2D;
 		Polygon hitboxW2D;
-        bool hasDebugMode = false;
-        bool isAABBOnly = false;
+        bool hasDebugMode;
 	};
 }

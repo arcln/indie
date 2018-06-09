@@ -113,8 +113,6 @@ namespace engine {
 
 		EntityId getParentId() const;
 
-        Entities* getEntities() const;
-
 		static EntityId const nullId;
 
 	private:
