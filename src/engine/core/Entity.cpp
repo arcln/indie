@@ -65,6 +65,12 @@ engine::Entity::getParentId() const
 	return _parentId;
 }
 
+engine::Entities*
+engine::Entity::getEntities() const
+{
+	return _entities;
+}
+
 void
 engine::Entity::enable() const
 {
