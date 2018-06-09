@@ -27,9 +27,12 @@ namespace engine { namespace Menu {
 			int borderCommand(std::string param);
 			int eventCommand(std::string param);
 			int setTextCommand(std::string param);
+			int overrideFontCommand(std::string param);
+			int setIsPushButtonCommand(std::string param);
 		private:
 			irr::gui::IGUIButton *_node;
 			engine::Game *_game;
+			irr::IrrlichtDevice *_device;
 	};
 }}
 

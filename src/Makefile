@@ -14,6 +14,7 @@ LDFLAGS = 	-lIrrlicht -lGL -lGLU -lglut -lX11 -lstdc++ -lpthread
 RM	=	rm -f
 
 SRCS	=	engine/menu/main.cpp					\
+		engine/menu/classes/utils/KeyFinder.cpp			\
 		engine/menu/classes/system/MenuEngineSystem.cpp		\
 		engine/menu/classes/parsers/MyScriptParser.cpp		\
 		engine/menu/classes/parsers/ButtonFactory.cpp		\
@@ -21,25 +22,25 @@ SRCS	=	engine/menu/main.cpp					\
 		engine/menu/classes/parsers/TextFactory.cpp		\
 		engine/menu/classes/parsers/EditBoxFactory.cpp		\
 		engine/menu/classes/parsers/CheckBoxFactory.cpp		\
-		engine/components/ButtonComponent.cpp		\
-		engine/components/TextComponent.cpp		\
-		engine/components/EditBoxComponent.cpp		\
-		engine/components/CheckBoxComponent.cpp		\
-		engine/components/ImageComponent.cpp		\
-		engine/components/CameraComponent.cpp		\
+		engine/components/ButtonComponent.cpp			\
+		engine/components/TextComponent.cpp			\
+		engine/components/EditBoxComponent.cpp			\
+		engine/components/CheckBoxComponent.cpp			\
+		engine/components/ImageComponent.cpp			\
+		engine/components/CameraComponent.cpp			\
 		engine/components/ComponentPoolEvent.cpp		\
-		engine/components/IrrlichtComponent.cpp		\
-		engine/components/LightComponent.cpp		\
+		engine/components/IrrlichtComponent.cpp			\
+		engine/components/LightComponent.cpp			\
 		engine/core/Entities.cpp				\
-		engine/core/Entity.cpp				\
-		engine/core/EventsHandler.cpp			\
-		engine/core/Game.cpp				\
-		engine/core/Scene.cpp				\
-		engine/exceptions/ComponentPoolException.cpp	\
+		engine/core/Entity.cpp					\
+		engine/core/EventsHandler.cpp				\
+		engine/core/Game.cpp					\
+		engine/core/Scene.cpp					\
+		engine/exceptions/ComponentPoolException.cpp		\
 		engine/network/Selector.cpp				\
 		engine/network/Socket.cpp				\
 		engine/network/Message.cpp				\
-		engine/systems/ClientNetworkSystem.cpp		\
+		engine/systems/ClientNetworkSystem.cpp			\
 		engine/systems/DisplaySystem.cpp			\
 		engine/utils/EntityComparator.cpp			\
 		engine/utils/TagComparator.cpp

@@ -75,6 +75,7 @@ button:
 	- border: false
 
 button:
-	- event: to keyAssign
+	- event: to assignKey
 	- image: texture/button_keyAssignment.png
 	- border: false
+	- rect: 487, 500, 793, 554
