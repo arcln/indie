@@ -13,7 +13,7 @@
 
 namespace engine {
 
-	using GenericEvent = int;
+	using GenericEvent = std::string;
 
 	template <typename PayloadType, typename ResponseType = int>
 	class Event {
