@@ -8,7 +8,7 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <map>
 #include <functional>
 
 namespace engine {
@@ -23,7 +23,7 @@ namespace engine {
 
 		void emit(PayloadType const& payload, ResponseCallbackType const& callback) {
 			for (auto& sub : _subscribers) {
-				callback(sub(payload));
+				callback(sub.second(payload));
 			}
 		}
 
@@ -31,11 +31,21 @@ namespace engine {
 			this->emit(payload, [](ResponseType const&) {});
 		}
 
-		void subscribe(CallbackType const& callback) {
-			_subscribers.push_back(callback);
+		void subscribe(CallbackType const& callback, std::size_t id = 0) {
+			_subscribers[id] = callback;
+		}
+
+		void unsubscribe(std::size_t id = 0) {
+			auto sub = _subscribers.find(id);
+
+			if (sub == std::end(_subscribers)) {
+				throw std::runtime_error("specified event wasn't linked to entity " + std::to_string(id));
+			}
+
+			_subscribers.erase(sub);
 		}
 
 	protected:
-		std::vector<CallbackType> _subscribers;
+		std::map<std::size_t, CallbackType> _subscribers;
 	};
 }

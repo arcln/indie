@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <map>
+#include <vector>
 #include <irrlicht/irrlicht.h>
 
 namespace engine {
