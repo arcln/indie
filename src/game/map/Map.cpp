@@ -11,7 +11,9 @@
 #include <cstdlib>
 #include <ctime>
 #include <algorithm>
-#include <engine/components/HitboxComponent.hpp>
+#include "engine/components/HitboxComponent.hpp"
+#include "engine/components/TagComponent.hpp"
+#include "engine/helpers/GeometryHelper.hpp"
 
 void
 Wornite::Map::genMap(engine::Game *game, engine::Scene *scene)
@@ -159,9 +161,10 @@ Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core:
 
 	transform.position = position;
 	transform.scale = scale;
-    	auto& h = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+    auto& h = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
 
 	h.hasDebugMode = true;
+    engine::GeometryHelper::transformHitbox(h, transform);
 	hitboxEntity.attach(entity);
 }
 
@@ -188,7 +191,9 @@ void
 Wornite::Map::spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox)
 {
 	scene->registerEntityModel("hitboxChunk", [&](engine::Entity const &entity) {
-		entity.set<engine::TransformComponent>();
+        entity.set<engine::IrrlichtComponent>(game, "obj/pieceMap.obj");
+        entity.set<engine::TransformComponent>();
+		entity.set<engine::TagComponent>(std::string("map"));
 	});
 
 	auto const& hitboxEntity = scene->spawnEntity("hitboxChunk");
@@ -197,8 +202,10 @@ Wornite::Map::spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk
 				       0.f,
 					0.f};
 	transformComponent.scale = {1.f, 1.f, 1.f};
-	auto& hitboxComponenet = hitboxEntity.set<engine::HitboxComponent>(hitbox);
-	hitboxComponenet.hasDebugMode = true;
+	auto& hitboxComponent = hitboxEntity.set<engine::HitboxComponent>(hitbox);
+	hitboxComponent.hasDebugMode = true;
+	hitboxComponent.isAABBOnly = true;
+    engine::GeometryHelper::transformHitbox(hitboxComponent, transformComponent);
 	chunk->chunkHitboxEntity = hitboxEntity;
 }
 
