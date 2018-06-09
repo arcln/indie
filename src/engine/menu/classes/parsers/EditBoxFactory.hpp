@@ -30,6 +30,11 @@ namespace engine { namespace Menu {
 			int setTextCommand(std::string param);
 			int colorCommand(std::string param);
 			int setMaxCommand(std::string param);
+			int setAutoScrollCommand(std::string param);
+			int setDrawBackgroundCommand(std::string param);
+			int setDrawBorderCommand(std::string param);
+			int setMultiLineCommand(std::string param);
+			int setWordWrapCommand(std::string param);
 		private:
 			irr::gui::IGUIEditBox *_node;
 			engine::Game *_game;

@@ -22,8 +22,8 @@ namespace worms {
 		engine::Game game(true, "../assets/");
 		engine::DisplaySystem display(game);
 		engine::Menu::MenuEngineSystem effects;
-		game.registerSystem("display", &display);
 		game.registerSystem("effects", &effects);
+		game.registerSystem("display", &display);
 
 		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);

@@ -18,6 +18,11 @@ engine::Menu::EditBoxFactory::EditBoxFactory(irr::gui::IGUIEditBox *node, engine
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("color", [this](std::string param) {colorCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("size", [this](std::string param) {sizeCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setMax", [this](std::string param) {setMaxCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setAutoScroll", [this](std::string param) {setAutoScrollCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setDrawBackground", [this](std::string param) {setDrawBackgroundCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setDrawBorder", [this](std::string param) {setDrawBorderCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setMultiLine", [this](std::string param) {setMultiLineCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setWordWrap", [this](std::string param) {setWordWrapCommand(param);}));
 	_device = game->device();
 }
 
@@ -114,5 +119,75 @@ int engine::Menu::EditBoxFactory::setMaxCommand(std::string param)
 	irr::s32 size = atoi(param.c_str());
 
 	_node->setMax(size);
+	return 0;
+}
+
+int engine::Menu::EditBoxFactory::setAutoScrollCommand(std::string param)
+{
+	bool _bool = false;
+
+	if (param == "true")
+		_bool = true;
+	else if (param == "false")
+		_bool = false;
+	else
+		return 1;
+	_node->setAutoScroll(_bool);
+	return 0;
+}
+
+int engine::Menu::EditBoxFactory::setDrawBackgroundCommand(std::string param)
+{
+	bool _bool = false;
+
+	if (param == "true")
+		_bool= true;
+	else if (param == "false")
+		_bool= false;
+	else
+		return 1;
+	_node->setDrawBackground(_bool);
+	return 0;
+}
+
+int engine::Menu::EditBoxFactory::setDrawBorderCommand(std::string param)
+{
+	bool _bool= false;
+
+	if (param == "true")
+		_bool= true;
+	else if (param == "false")
+		_bool= false;
+	else
+		return 1;
+	_node->setDrawBorder(_bool);
+	return 0;
+}
+
+int engine::Menu::EditBoxFactory::setMultiLineCommand(std::string param)
+{
+	bool _bool= false;
+
+	if (param == "true")
+		_bool= true;
+	else if (param == "false")
+		_bool= false;
+	else
+		return 1;
+	_node->setMultiLine(_bool);
+	return 0;
+}
+
+int engine::Menu::EditBoxFactory::setWordWrapCommand(std::string param)
+{
+	bool _bool= false;
+
+	if (param == "true")
+		_bool= true;
+	else if (param == "false")
+		_bool= false;
+	else
+		return 1;
+	_node->setWordWrap(_bool);
 	return 0;
 }

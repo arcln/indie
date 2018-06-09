@@ -18,6 +18,7 @@
 #include "engine/components/ButtonComponent.hpp"
 #include "engine/components/ImageComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
+#include "engine/menu/classes/utils/KeyFinder.hpp"
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
@@ -113,6 +114,121 @@ namespace worms { namespace scene {
 			checkBoxComponent.node->setChecked(false);
 		});
 
+		scene.registerEvent<engine::GenericEvent>("key left", [&](engine::GenericEvent const&) {
+			engine::Entities entities = scene.getEntities();
+			static int check = 0;
+
+			if (check == 0) {
+				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+					std::string name = button.node->getName();
+					if (name != "key left") {
+						button.node->setPressed(false);
+					}
+				});
+			}
+			check = (check + 1) % 10;
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("key right", [&](engine::GenericEvent const&) {
+			engine::Entities entities = scene.getEntities();
+			static int check = 0;
+
+			if (check == 0) {
+				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+					std::string name = button.node->getName();
+					if (name != "key right") {
+						button.node->setPressed(false);
+					}
+				});
+			}
+			check = (check + 1) % 10;
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("jump", [&](engine::GenericEvent const&) {
+			engine::Entities entities = scene.getEntities();
+			static int check = 0;
+
+			if (check == 0) {
+				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+					std::string name = button.node->getName();
+					if (name != "jump") {
+						button.node->setPressed(false);
+					}
+				});
+			}
+			check = (check + 1) % 10;
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("shoot", [&](engine::GenericEvent const&) {
+			engine::Entities entities = scene.getEntities();
+			static int check = 0;
+
+			if (check == 0) {
+				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+					std::string name = button.node->getName();
+					if (name != "shoot") {
+						button.node->setPressed(false);
+					}
+				});
+			}
+			check = (check + 1) % 10;
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("validate", [&](engine::GenericEvent const&) {
+			engine::Entities entities = scene.getEntities();
+			static int check = 0;
+
+			if (check == 0) {
+				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+					std::string name = button.node->getName();
+					if (name != "validate") {
+						button.node->setPressed(false);
+					}
+				});
+			}
+			check = (check + 1) % 10;
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("grab", [&](engine::GenericEvent const&) {
+			engine::Entities entities = scene.getEntities();
+			static int check = 0;
+
+			if (check == 0) {
+				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+					std::string name = button.node->getName();
+					if (name != "grab") {
+						button.node->setPressed(false);
+					}
+				});
+			}
+			check = (check + 1) % 10;
+			return 0;
+		});
+
+		scene.registerEvent<Vector2i>("assign key", [&](Vector2i const& key) {
+			std::cout << key.x << std::endl;
+			engine::Entities entities = scene.getEntities();
+			entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
+				std::string name = button.node->getName();
+				if (button.node->isPressed() == true) {
+					engine::Menu::KeyFinder finder;
+					std::string str = finder.findKey((irr::EKEY_CODE)key.x);
+					std::wstring widestr = std::wstring(str.begin(), str.end());
+					const wchar_t *tmp = widestr.c_str();
+
+					button.node->setText(tmp);
+					button.node->setPressed(false);
+				}
+			});
+
+			return 0;
+		});
+
 		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
 			scene.spawnEntity("button");
 			return 0;
@@ -125,5 +241,8 @@ namespace worms { namespace scene {
 		parser.fillMap();
 
 		//game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_KEY_O, "O", Vector2i(0, 0), 0);
+		for (int i = 0; i < 166; i = i + 1) {
+			game.eventsHandler.subscribe<Vector2i>(scene, (irr::EKEY_CODE)i, "assign key", Vector2i(i, 0), 0);	
+		}
 	};
 }}

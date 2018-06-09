@@ -34,6 +34,5 @@ namespace engine { namespace Menu {
 			irr::gui::IGUIStaticText *_node;
 			engine::Game *_game;
 			irr::IrrlichtDevice *_device;
-			std::vector<int> _fontSize;
 	};
 }}

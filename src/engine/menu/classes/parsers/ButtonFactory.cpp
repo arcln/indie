@@ -17,6 +17,8 @@ engine::Menu::ButtonFactory::ButtonFactory(irr::gui::IGUIButton *node, engine::G
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("border", [this](std::string param) {borderCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("event", [this](std::string param) {eventCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setText", [this](std::string param) {setTextCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("overrideFont", [this](std::string param) {overrideFontCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setIsPushButton", [this](std::string param) {setIsPushButtonCommand(param);}));
 }
 
 irr::core::rect<irr::s32> engine::Menu::ButtonFactory::getRectPos(std::string param)
@@ -98,5 +100,29 @@ int engine::Menu::ButtonFactory::setTextCommand(std::string param)
 	const wchar_t *tmp = widestr.c_str();
 
 	_node->setText(tmp);
+	return 0;
+}
+
+int engine::Menu::ButtonFactory::overrideFontCommand(std::string param)
+{
+	irr::IrrlichtDevice *tmp = _game->device();
+	irr::gui::IGUIFont *font = tmp->getGUIEnvironment()->getFont(param.c_str());
+	_node->setOverrideFont(font);
+	return 0;
+}
+
+int engine::Menu::ButtonFactory::setIsPushButtonCommand(std::string param)
+{
+	bool _bool;
+
+	if (param == "true")
+		_bool = true;
+	else if (param == "false")
+		_bool = false;
+	else {
+		std::cerr << "Wrong param for setIsPushButton command : [" << param << "]." << std::endl;
+		return 1;
+	}
+	_node->setIsPushButton(_bool);
 	return 0;
 }
