@@ -14,7 +14,7 @@ engine::IrrlichtComponent::IrrlichtComponent()
 void
 engine::IrrlichtComponent::initialize(Game* game, std::string const& obj)
 {
-    auto mesh = game->meshManager.get(obj);
+	auto mesh = ResourceManager<MeshNode*>::instance().get(obj);
 
 	if (mesh == nullptr) {
 		throw std::runtime_error("failed to load asset: '" + obj + "'");
@@ -33,7 +33,7 @@ engine::IrrlichtComponent::initialize(Game* game, std::string const& obj)
 engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& obj, std::string const& text)
 {
     this->initialize(game, obj);
-    this->node->setMaterialTexture(0, game->textureManager.get(text));
+    this->node->setMaterialTexture(0, ResourceManager<Texture*>::instance().get(text));
 }
 
 engine::IrrlichtComponent::IrrlichtComponent(Game* game, std::string const& obj)

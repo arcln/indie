@@ -152,12 +152,12 @@ Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core:
 	scene->registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
 		auto &irrlichtComponent = entity.set<engine::IrrlichtComponent>(game,
 										"obj/pieceMap.obj");
-		irrlichtComponent.node->setMaterialTexture(0, game->textureManager.get("texture/map.png"));
+		irrlichtComponent.node->setMaterialTexture(0, engine::ResourceManager<engine::Texture*>::instance().get("texture/map.png"));
 		entity.set<engine::TransformComponent>();
 	});
 
 	auto const& entity = scene->spawnEntity("pieceMap");
-    	auto& transform = entity.get<engine::TransformComponent>();
+	auto& transform = entity.get<engine::TransformComponent>();
 
 	transform.position = position;
 	transform.scale = scale;

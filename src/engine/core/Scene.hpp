@@ -62,32 +62,32 @@ namespace engine {
 
 		template <typename ContextType>
 		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
-			if (this->events.find(name) == std::end(this->events)) {
-				this->events[name] = reinterpret_cast<Event<GenericEvent>*>(::new Event<ContextType>());
+			if (_events.find(name) == std::end(_events)) {
+				_events[name] = reinterpret_cast<Event<GenericEvent>*>(::new Event<ContextType>());
 			}
 
-			reinterpret_cast<Event<ContextType>*>(this->events[name])->subscribe(handler);
+			reinterpret_cast<Event<ContextType>*>(_events[name])->subscribe(handler);
 		}
 
 		template <typename ContextType>
 		void triggerEvent(std::string const& name, ContextType const& context = ContextType()) {
-			if (this->events.find(name) == std::end(this->events)) {
+			if (_events.find(name) == std::end(_events)) {
 				throw std::runtime_error("event '" + name + "' does not exists");
 			}
 
-			reinterpret_cast<Event<ContextType>*>(this->events[name])->emit(context);
+			reinterpret_cast<Event<ContextType>*>(_events[name])->emit(context);
 		}
 
 		void triggerSyncedEvent(std::string const& name, std::string const& serializedContext) {
 			this->triggerEvent<std::string>(name, serializedContext);
 
 			if (_synced) {
-				this->socket.send<network::TextMessage>(name + "|" + serializedContext);
+				_socket.send<network::TextMessage>(name + "|" + serializedContext);
 			}
 		}
 
+		void deleteEvent(std::string const& evt, EntityId id = Entity::nullId);
 		void synchronizeWith(std::string const& hostname, class Game& game);
-
 		bool isRunning() const;
 		bool hasEvent(std::string const& evtName) const;
 		std::size_t id() const;
@@ -98,8 +98,8 @@ namespace engine {
 	private:
 		static std::size_t _LastSceneId;
 
-		Events events;
-		network::ClientSocket socket;
+		Events _events;
+		network::ClientSocket _socket;
 		EntityModels _models;
 		Entities _entities;
 		bool _running;

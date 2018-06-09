@@ -5,7 +5,7 @@ const {remote} = require('electron');
 const settings = require('electron-settings');
 
 const downloadUrl = 'http://localhost:5555/download/' + process.platform;
-const delivery = '/tmp/wornite.tar.gz' + process.platform;
+const delivery = '/tmp/wornite-' + process.platform + '.tar.gz';
 
 function start(done) {
 	remote.BrowserWindow.getFocusedWindow().minimize();

@@ -64,7 +64,7 @@ engine::Scene::id() const
 bool
 engine::Scene::hasEvent(std::string const& eventName) const
 {
-	return this->events.find(eventName) != std::end(this->events);
+	return _events.find(eventName) != std::end(_events);
 }
 
 engine::Entities&
@@ -74,18 +74,24 @@ engine::Scene::getEntities()
 }
 
 void
+engine::Scene::deleteEvent(std::string const& evt, EntityId id)
+{
+	_events[evt]->unsubscribe(id);
+}
+
+void
 engine::Scene::synchronizeWith(std::string const& hostname, Game& game)
 {
-	this->socket.create().connect(hostname);
+	_socket.create().connect(hostname);
 
-	this->socket.send<network::TextMessage>(engine::network::version);
-	auto res = this->socket.receive<engine::network::TextMessage>();
+	_socket.send<network::TextMessage>(engine::network::version);
+	auto res = _socket.receive<engine::network::TextMessage>();
 
 	if (std::string(res.text) != engine::network::version) {
 		throw std::runtime_error(std::string("server version ") + res.text + " does not match current version " + engine::network::version);
 	}
 	std::cout << "worms: network: successfuly connected to " << hostname << std::endl;
 
-	game.registerSystem("network", new ClientNetworkSystem(this->socket, this->events));
+	game.registerSystem("network", new ClientNetworkSystem(_socket, _events));
 	_synced = true;
 }

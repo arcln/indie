@@ -19,8 +19,6 @@
 namespace engine {
 
 	class System;
-	using MeshNode = irr::scene::IAnimatedMesh;
-	using Texture = irr::video::ITexture;
 
 	class Game {
 	public:
@@ -48,8 +46,6 @@ namespace engine {
 
 	public:
 		EventsHandler eventsHandler;
-		ResourceManager<MeshNode*> meshManager;
-		ResourceManager<Texture*> textureManager;
 
 	private:
 		irr::IrrlichtDevice* _device;

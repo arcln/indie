@@ -12,12 +12,11 @@
 #include "engine/components/TransformComponent.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 
-engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game), _nodesManager(game.getcwd())
+engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 {
 	_videoDriver = _game.device()->getVideoDriver();
 	_sceneManager = _game.device()->getSceneManager();
 	_guiEnv = _game.device()->getGUIEnvironment();
-
 	_sceneManager->addCameraSceneNode(0, irr::core::vector3df(0, 30, -200), irr::core::vector3df(0, 5, 0));
 }
 
