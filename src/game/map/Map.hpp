@@ -21,12 +21,6 @@ public:
 	Map() = default;
 	~Map() = default;
 
-	enum mapSize{
-		SMALL,
-		MEDIUM,
-		LARGE
-	};
-
 	struct 	Settings
 	{
 		int 	Size;
@@ -53,7 +47,7 @@ public:
 		int 			nbChunks;
 	}			mapSettings;
 
-	void genMap(engine::Game* game, engine::Scene* scene, Settings* mapSettings);
+	void genMap(engine::Game* game, engine::Scene* scene);
 
 private:
 	int _blockDisplayed = 0;
@@ -120,13 +114,7 @@ private:
 
 	void getChunk(mapSettings *map);
 
-	void spawnChunkHitbox(engine::Game *pGame, engine::Scene *pScene, chunk *pChunk);
-
-	void getNextNode(irr::f32 x, irr::f32 y, chunk *chunk, irr::core::vector2df *node);
-
-	int isNextNode(float x, float y, Wornite::Map::chunk *chunk);
-
-	void getHitboxEdge(irr::core::vector2df last, irr::core::vector2df first, chunk *chunk, std::string *String);
+	void spawnChunkHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk);
 
 	void spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox);
 };
