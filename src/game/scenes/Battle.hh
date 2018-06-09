@@ -12,6 +12,7 @@
 #include <vector>
 #include <game/map/Map.hpp>
 #include "engine/core/Game.hpp"
+#include "engine/systems/PhysicsSystem.hpp"
 #include "engine/components/LightComponent.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
 #include "engine/components/HitboxComponent.hpp"
@@ -64,38 +65,41 @@ namespace worms { namespace scene {
 
 			scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 				entity.set<PlayerComponent>(0);
-				entity.set<engine::IrrlichtComponent>(&game, "obj/worm.obj");
+				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
 
 				auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 				auto& transformComponent = entity.set<engine::TransformComponent>();
-				transformComponent.scale = {.5f, .5f, .5f};
+				auto& animationComponent = entity.set<engine::AnimationComponent>("idle");
+				animationComponent.states.emplace("run", engine::AnimationBoundaries(0, 40));
+				animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 80));
+				animationComponent.states.emplace("jump", engine::AnimationBoundaries(230, 19));
+				animationComponent.states.emplace("inAir", engine::AnimationBoundaries(240, 9)); // TODO
+
+				transformComponent.scale = {0.5f, 0.5f, 0.5f};
 				transformComponent.position = {0.f, 25.f, 0.f};
 
 				auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
 				hitboxComponent.hasDebugMode = true;
 				hitboxComponent.rebound = 0.1f;
-				
-//				auto& animationComponent = entity.set<engine::AnimationComponent>("idle");
-//				animationComponent.states.emplace("run", engine::AnimationBoundaries(0, 40));
-//				animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 79));
 
 				scene.registerEvent<std::string>("player.move", entity.getId(), [&](std::string const& move) {
 					physicsComponent.move = (Vector2f) move;
 
-//					if (physicsComponent.move.X == 0) {
-//						animationComponent.currentState = "idle";
-//					} else {
-//						animationComponent.currentState = "run";
-//						if (physicsComponent.move.X * transformComponent.scale.X < 0)
-//							transformComponent.scale.X *= -1;
-//					}
+					if (physicsComponent.move.X < 0) {
+						transformComponent.rotation.Y = 180;
+					} else if (physicsComponent.move.X > 0) {
+						transformComponent.rotation.Y = 0;
+					}
 
 					return 0;
 				});
 
-				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent](std::string const& jump) {
+				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent](std::string const& jump) {
 					if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
 						physicsComponent.velocity += (Vector2f) jump;
+						animationComponent.currentState = "jump";
+						animationComponent.playOnce = true;
+						animationComponent.nextState = "inAir";
 					}
 
 					return 0;
