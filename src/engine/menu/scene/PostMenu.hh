@@ -128,7 +128,5 @@ namespace worms { namespace scene {
 
 		parser.parseFile();
 		parser.fillMap();
-
-		game.eventsHandler.subscribe<worms::Vector2i>(scene, irr::KEY_F1, "to mainMenu", worms::Vector2i(0, 0), 0);
 	};
 }}

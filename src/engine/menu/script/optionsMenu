@@ -86,4 +86,4 @@ button:
 	- event: go back
 	- image: texture/button_back.png
 	- border: false
-	- rect: 760, 620, 900, 675
+	- rect: 380, 620, 520, 675

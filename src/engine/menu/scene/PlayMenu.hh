@@ -140,6 +140,7 @@ namespace worms { namespace scene {
 					text.node->setText(tmp);
 					(void) e;
 				}
+				return 0;
 			});
 			if (i == 0)
 				return 1;
@@ -150,6 +151,7 @@ namespace worms { namespace scene {
 				} else if (atoi(name.c_str()) != 0) {
 					image.node->setVisible(false);
 				}
+				(void) e;
 			});
 			return 0;
 		});
@@ -174,6 +176,7 @@ namespace worms { namespace scene {
 					text.node->setText(tmp);
 					(void) e;
 				}
+				return 0;
 			});
 			if (i == 0)
 				return 1;
@@ -184,12 +187,13 @@ namespace worms { namespace scene {
 				} else if (atoi(name.c_str()) != 0) {
 					image.node->setVisible(false);
 				}
+				(void) e;
 			});
 			return 0;
 		});
 
-		scene.registerEvent<Vector2i>("find matchmaking", [&](Vector2i const&) {
-			game.replaceScene("matchmakingScene");
+		scene.registerEvent<Vector2i>("matchmaking", [&](Vector2i const&) {
+			game.replaceScene("waintingMenu");
 			return 0;
 		});
 

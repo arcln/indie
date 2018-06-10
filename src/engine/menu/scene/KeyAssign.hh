@@ -216,7 +216,6 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEvent<Vector2i>("assign key", [&](Vector2i const& key) {
-			std::cout << key.x << std::endl;
 			engine::Entities entities = scene.getEntities();
 			entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
 				std::string name = button.node->getName();

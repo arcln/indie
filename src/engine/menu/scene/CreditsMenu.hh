@@ -20,10 +20,11 @@
 #include "engine/components/CheckBoxComponent.hpp"
 #include "engine/components/EditBoxComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
+#include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
 
-	static const auto testScene = [](engine::Game& game, engine::Scene& scene) {
+	static const auto creditsScene = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -83,7 +84,7 @@ namespace worms { namespace scene {
 			static irr::s32 id = 0;
 			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
 										      L"TEST TEXT",
-										      irr::core::rect<irr::s32>(10, 10, 200, 200),
+										      irr::core::rect<irr::s32>(10, 10, 2000, 2000),
 										      false,
 										      false,
 										      nullptr,
@@ -119,11 +120,16 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/testScene", &scene, &game);
+		scene.registerEvent<Vector2i>("go back", [&](Vector2i const&) {
+			game.replaceScene("mainMenu");
+			return 0;
+		});
 
-		std::cout << "\nDEBUG\n" << std::endl;
+		scene.spawnEntity("camera");
+		engine::Menu::MyScriptParser parser("engine/menu/script/creditsMenu", &scene, &game);
+
 		parser.parseFile();
 		parser.fillMap();
+
 	};
 }}
