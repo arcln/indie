@@ -81,7 +81,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                     rebound *= h2.rebound;
                 }
             }
-        });
+        }, false);
         if (mf.isCollide) {
             p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
             p.velocity *= h.rebound * rebound;
@@ -128,7 +128,7 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
                     p.velocity *= 0.f;
                     PhysicsSystem::patchCollisionFrac(entity, e2);
                 }
-            });
+            }, false);
         }
     });
 }
