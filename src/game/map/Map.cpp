@@ -162,8 +162,8 @@ Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core:
 	transform.position = position;
 	transform.scale = scale;
     auto& h = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-
 	h.hasDebugMode = true;
+	h.isStatic = true;
     engine::GeometryHelper::transformHitbox(h, transform);
 	hitboxEntity.attach(entity);
 }
@@ -205,6 +205,7 @@ Wornite::Map::spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk
 	auto& hitboxComponent = hitboxEntity.set<engine::HitboxComponent>(hitbox);
 	hitboxComponent.hasDebugMode = true;
 	hitboxComponent.isAABBOnly = true;
+	hitboxComponent.isStatic = true;
     engine::GeometryHelper::transformHitbox(hitboxComponent, transformComponent);
 	chunk->chunkHitboxEntity = hitboxEntity;
 }
