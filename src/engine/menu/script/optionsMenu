@@ -1,0 +1,89 @@
+image:
+	- name: background
+	- image: texture/gameBack.png
+	- pos: 0, 0
+
+image:
+	- name: background2
+	- image: texture/frontBack.png
+	- pos: 280, 0
+
+image:
+	- name: logo
+	- image: texture/wornite720PTsans.png
+	- pos: 390 , 60
+
+image:
+	- name: soundBar
+	- image: texture/soundBar.png
+	- pos: 340, 351
+
+image:
+	- name: volume button
+	- image: texture/volume.png
+	- pos: 411, 338
+
+image:
+	- name: volume marge1
+	- image: texture/baton.png
+	- pos: 428, 345
+
+image:
+	- name: volume marge2
+	- image: texture/baton.png
+	- pos: 533, 345
+
+image:
+	- name: volume marge3
+	- image: texture/baton.png
+	- pos: 638, 345
+
+image:
+	- name: volume marge4
+	- image: texture/baton.png
+	- pos: 743, 345
+
+image:
+	- name: volume marge2
+	- image: texture/baton.png
+	- pos: 850, 345
+
+text:
+	- name: Volume
+	- setText: Volume:
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- pos: 320, 280
+	- color: 255, 255, 255, 255
+
+text:
+	- name: VolumeLvl
+	- setText: 0
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- pos: 470, 280
+	- color: 255, 255, 255, 255
+
+button:
+	- event: volume plus
+	- image: texture/right.png
+	- imagePressed: texture/right(1).png
+	- rect: 910, 338, 966, 388
+	- border: false
+
+button:
+	- event: volume minus
+	- image: texture/left.png
+	- imagePressed: texture/left(1).png
+	- rect: 320, 338, 376, 388
+	- border: false
+
+button:
+	- event: to assignKey
+	- image: texture/button_keyAssignment.png
+	- border: false
+	- rect: 343, 500, 937, 554
+
+button:
+	- event: go back
+	- image: texture/button_back.png
+	- border: false
+	- rect: 380, 620, 520, 675

@@ -1,0 +1,93 @@
+image:
+	- name: background
+	- image: texture/gameBack.png
+	- pos: 0, 0
+
+image:
+	- name: background2
+	- image: texture/frontBack.png
+	- pos: 280, 0
+
+image:
+	- name: logo
+	- image: texture/wornite720PTsans.png
+	- pos: 390 , 60
+
+text:
+	- name: CharName
+	- setText: Waiting
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- color: 255, 255, 255, 255
+	- pos: 575, 225
+
+image:
+	- name: spinner0
+	- image: texture/spinner/spinner0.png
+	- pos: 480, 320
+	- setVisible: true
+
+image:
+	- name: spinner1
+	- image: texture/spinner/spinner1.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner2
+	- image: texture/spinner/spinner2.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner3
+	- image: texture/spinner/spinner3.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner4
+	- image: texture/spinner/spinner4.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner5
+	- image: texture/spinner/spinner5.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner6
+	- image: texture/spinner/spinner6.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner7
+	- image: texture/spinner/spinner7.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner8
+	- image: texture/spinner/spinner8.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner9
+	- image: texture/spinner/spinner9.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner10
+	- image: texture/spinner/spinner10.png
+	- pos: 480, 320
+	- setVisible: false
+
+image:
+	- name: spinner11
+	- image: texture/spinner/spinner11.png
+	- pos: 480, 320
+	- setVisible: false

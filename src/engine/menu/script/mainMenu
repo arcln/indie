@@ -1,0 +1,42 @@
+image:
+	- name: background
+	- image: texture/gameBack.png
+	- pos: 0, 0
+
+image:
+	- name: background2
+	- image: texture/frontBack.png
+	- pos: 280, 0
+
+image:
+	- name: logo
+	- image: texture/wornite720PTsans.png
+	- pos: 390 , 60
+
+button:
+	- image: texture/button_play.png
+	- imagePressed: texture/button_play(1).png
+	- rect: 343, 250, 937, 316
+	- border: false
+	- event: Play
+
+button:
+	- image: texture/button_options.png
+	- imagePressed: texture/button_options(1).png
+	- rect: 343, 338, 937, 404
+	- border: false
+	- event: Options
+
+button:
+	- image: texture/button_credits.png
+	- imagePressed: texture/button_credits(1).png
+	- rect: 343, 426, 937, 492
+	- border: false
+	- event: Credits
+
+button:
+	- image: texture/button_quit.png
+	- imagePressed: texture/button_quit(1).png
+	- rect: 343, 514, 937, 580
+	- border: false
+	- event: Quit
