@@ -19,7 +19,7 @@ engine::Menu::ImageFactory::ImageFactory(irr::gui::IGUIImage *node, engine::Game
 
 int engine::Menu::ImageFactory::imageCommand(std::string param)
 {
-	irr::video::ITexture *image = _game->textureManager.get(param);
+	irr::video::ITexture *image = ResourceManager<Texture*>::instance().get(param);
 	_node->setImage(image);
 	return 0;
 }

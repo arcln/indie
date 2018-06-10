@@ -82,6 +82,10 @@ engine::Game::popScene()
 void
 engine::Game::registerSystem(std::string const& name, System* system)
 {
+	if (_systems[name] != nullptr) {
+		delete system;
+	}
+
 	_systems[name] = system;
 }
 

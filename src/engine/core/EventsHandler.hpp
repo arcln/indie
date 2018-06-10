@@ -63,7 +63,7 @@ namespace engine {
 				}
 
 				return 0;
-			}, target);
+			});
 
 			_keyEventsState[key] = true;
 		}

@@ -1,4 +1,4 @@
-/*
+ /*
  ** EPITECH PROJECT, 2018
  ** worms
  ** File description:
@@ -11,6 +11,7 @@
 #include <map>
 #include <functional>
 #include <vector>
+#include "engine/core/EntityId.hpp"
 
 namespace engine {
 
@@ -22,16 +23,12 @@ namespace engine {
 		using ResponseCallbackType = std::function<void (ResponseType const&)>;
 		using CallbackType = std::function<ResponseType (PayloadType const&)>;
 
-		void emit(PayloadType const& payload, ResponseCallbackType const& callback) {
-			for (auto& subL : _subscribers) {
-				for (auto& sub : subL.second) {
-					callback(sub(payload));
+		void emit(PayloadType const& payload, EntityId target = 0) {
+			for (auto& sub : _subscribers[target]) {
+				if (sub) {
+					sub(payload);
 				}
 			}
-		}
-
-		void emit(PayloadType const& payload) {
-			this->emit(payload, [](ResponseType const&) {});
 		}
 
 		void subscribe(CallbackType const& callback, std::size_t id = 0) {

@@ -66,7 +66,7 @@ namespace engine {
 				_events[name] = reinterpret_cast<Event<GenericEvent>*>(::new Event<ContextType>());
 			}
 
-			reinterpret_cast<Event<ContextType>*>(_events[name])->subscribe(handler);
+			reinterpret_cast<Event<ContextType>*>(_events[name])->subscribe(handler, target);
 		}
 
 		template <typename ContextType>
@@ -75,7 +75,7 @@ namespace engine {
 				throw std::runtime_error("event '" + name + "' does not exists");
 			}
 
-			reinterpret_cast<Event<ContextType>*>(_events[name])->emit(context);
+			reinterpret_cast<Event<ContextType>*>(_events[name])->emit(context, target);
 		}
 
 		void triggerSyncedEvent(std::string const& name, EntityId target, std::string const& serializedContext) {
