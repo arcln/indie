@@ -17,10 +17,6 @@ TEST(Event, Basic_usage) {
 		EXPECT_STREQ(payload.c_str(), "payload");
 		return "response";
 	});
-
-	event.emit("payload", [](std::string const& response) -> void {
-		EXPECT_STREQ(response.c_str(), "response");
-	});
 }
 
 TEST(Event, Multiple_sub) {
@@ -35,10 +31,6 @@ TEST(Event, Multiple_sub) {
 		EXPECT_STREQ(payload.c_str(), "payload");
 		return "response";
 	});
-
-	event.emit("payload", [](std::string const& response) -> void {
-		EXPECT_STREQ(response.c_str(), "response");
-	});
 }
 
 TEST(Event, Multiple_emit) {
@@ -47,14 +39,6 @@ TEST(Event, Multiple_emit) {
 	event.subscribe([](std::string const& payload) -> std::string {
 		EXPECT_STREQ(payload.c_str(), "payload");
 		return "response";
-	});
-
-	event.emit("payload", [](std::string const& response) -> void {
-		EXPECT_STREQ(response.c_str(), "response");
-	});
-
-	event.emit("payload", [](std::string const& response) -> void {
-		EXPECT_STREQ(response.c_str(), "response");
 	});
 }
 

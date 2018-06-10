@@ -49,7 +49,7 @@ namespace engine { namespace network {
 
 			auto data = reinterpret_cast<MessageType*>(buffer);
 			if (data->size != sizeof(MessageType)) {
-				std::cerr << "warning: ignoring corrupted packet" << std::endl;
+				std::cerr << "warning: ignoring corrupted packet (size " << data->size << ")" << std::endl;
 				return MessageType();
 			}
 

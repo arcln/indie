@@ -171,8 +171,8 @@ namespace worms { namespace scene {
 			scene.spawnEntity("player");
 			scene.spawnEntity("light");
 
-			if (!WORMS_IS_SERVER) {
-				scene.synchronizeWith("localhost", game);
-			}
+//			if (!WORMS_IS_SERVER) {
+//				scene.synchronizeWith("localhost", game);
+//			}
 		};
 	}}

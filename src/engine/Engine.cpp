@@ -16,7 +16,7 @@ engine::Engine::Engine(bool isServer, std::string const& cwd)
 int
 engine::Engine::play(std::function<void (Game&)> const& model)
 {
-	try {
+//	try {
 		model(_game);
 
 		if (_isServer) {
@@ -24,10 +24,10 @@ engine::Engine::play(std::function<void (Game&)> const& model)
 		}
 
 		_game.play("main");
-	} catch (std::exception& e) {
-		std::cerr << "worms: ERROR: " << e.what() << std::endl;
-		return 1;
-	}
+//	} catch (std::exception& e) {
+//		std::cerr << "worms: ERROR: " << e.what() << std::endl;
+//		return 1;
+//	}
 
 	return 0;
 }

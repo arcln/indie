@@ -17,10 +17,10 @@ engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket c
 			}
 			
 			std::string head = msg.substr(0, msg.find('|'));
-			std::string body = msg.substr(msg.find('|') + 1);
-//			std::string body = msg.substr(msg.find('|', msg.find('|') + 1) + 1);
+			std::string target = msg.substr(msg.find('|') + 1);
+			std::string body = msg.substr(msg.find('|', msg.find('|') + 1) + 1);
 
-			reinterpret_cast<Event<std::string>*>(events[head])->emit(body);
+			reinterpret_cast<Event<std::string>*>(events[head])->emit(body, std::stoi(target));
 		}
 }, events) {}
 
