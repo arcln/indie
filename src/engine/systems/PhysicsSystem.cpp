@@ -75,6 +75,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
             Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
             if (mf2.isCollide && !mf2.hasError) {
                 if (h.onCollide) {
+                    std::cout << "cc" << std::endl;
                     h.onCollide(e2);
                 } else if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
@@ -128,6 +129,9 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 
                 Manifold mf = GeometryHelper::polygonCollide(entity, e2);
                 if (mf.isCollide && !mf.hasError) {
+                    if (h.onCollide) {
+                        h.onCollide(e2);
+                    }
                     t.prevPosition = tSave.prevPosition;
                     p.velocity *= 0.f;
                     PhysicsSystem::patchCollisionFrac(entity, e2);
