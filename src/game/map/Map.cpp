@@ -27,7 +27,6 @@ Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 		entity.set<engine::TagComponent>(std::string("map"));
 	});
 	scene.registerEntityModel("hitboxBlast", [&](engine::Entity const &entity) {
-		entity.set<engine::IrrlichtComponent>(&game, "obj/pieceMap.obj", "");
 		entity.set<engine::TransformComponent>();
 	});
 	scene.registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
@@ -205,7 +204,7 @@ Wornite::Map::spawnHitbox(engine::Scene& scene, chunk *chunk, std::string hitbox
 	hitboxComponent.hasDebugMode = true;
 	hitboxComponent.isAABBOnly = true;
 	hitboxComponent.isStatic = true;
-    engine::GeometryHelper::transformHitbox(hitboxComponent, transformComponent);
+    	engine::GeometryHelper::transformHitbox(hitboxComponent, transformComponent);
 	chunk->chunkHitboxEntity = hitboxEntity;
 }
 
@@ -286,16 +285,36 @@ Wornite::Map::divideBlock(engine::Scene& scene, engine::Entity entity)
 
 	parent = entity.getEntities()->getParentEntity(entity);
 	auto& t = entity.get<engine::TransformComponent>();
-	entitySize = t.scale.X * 2.f;
 	irr::core::vector3df position;
 	irr::core::vector3df scale;
+
+	entitySize = t.scale.X / 2.f;
+	scale.X = entitySize;
+	scale.Y = entitySize;
+	scale.Z = 1.f;
+
+//	std::cout << "x: " << t.position.X << " y: " << t.position.Y << " size : " << t.scale.X << std::endl;
+
+//	std::cout << "scale : " << t.scale.X << std::endl;
+//	entitySize = t.scale.X / 0.1f;
+//	scale.X = 0.1f;
+//	scale.Y = 0.1f;
+//	scale.Z = 1.f;
+//	for (float y = 0.f; y < entitySize; y += scale.Y) {
+//		for (float x = 0.f; x < entitySize; x += scale.X) {
+//			position.X = t.position.X + x - (entitySize * 0.1f / 2.f);
+//			position.Y = t.position.Y - y - (entitySize * 0.1f / 2.f);
+//			position.Z = t.position.Z;
+//
+//			Wornite::Map::spawnPieceMap(scene, position, scale, parent);
+//		}
+//	}
+//
+//	entity.kill();
 
 	position.X = t.position.X - entitySize;
 	position.Y = t.position.Y + entitySize;
 	position.Z = t.position.Z;
-	scale.X = t.scale.X / 2.f;
-	scale.Y = t.scale.Y / 2.f;
-	scale.Z = 1.f;
 	Wornite::Map::spawnPieceMap(scene, position, scale, parent);
 	position.X = t.position.X + entitySize;
 	position.Y = t.position.Y + entitySize;
@@ -306,25 +325,29 @@ Wornite::Map::divideBlock(engine::Scene& scene, engine::Entity entity)
 	position.X = t.position.X - entitySize;
 	position.Y = t.position.Y - entitySize;
 	Wornite::Map::spawnPieceMap(scene, position, scale, parent);
+	entity.kill();
 }
 
 std::vector<engine::Entity>
 Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blastHitbox)
 {
 	std::vector<engine::Entity> blastCollision;
+	int x = 0;
 
-//	std::cout << "xx" << std::endl;
 	entities.withTag("map", [&](engine::Entity const& chunk) {
-//		std::cout << "aa" << std::endl;
 		engine::GeometryHelper::transformHitbox(chunk.get<engine::HitboxComponent>(), chunk.get<engine::TransformComponent>());
 		engine::GeometryHelper::transformHitbox(blastHitbox.get<engine::HitboxComponent>(), blastHitbox.get<engine::TransformComponent>());
 		if (engine::GeometryHelper::simplePolygonCollide(chunk, blastHitbox)) {
-//			std::cout << "cc" << std::endl;
 			entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
 				if (engine::GeometryHelper::simplePolygonCollide(child, blastHitbox)) {
+
+//					std::cout << "childId: " << child.getId() << " parentId: " << child.getParentId() << std::endl;
+//					child.kill();
+
 					auto &t = child.get<engine::TransformComponent>();
 
-					if (t.scale.X == 0.1f) {
+//					std::cout << "scale : " << ceil(t.scale.X * 10.f) / 10.f << std::endl;
+					if (ceil(t.scale.X * 10.f) / 10.f <= 0.1f) {
 						child.kill();
 					} else {
 						blastCollision.push_back(child);
@@ -341,12 +364,18 @@ void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float r
 {
 	engine::Entity blast = engine::GeometryHelper::createBlastPolygon(scene, x, y, radius);
 	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
+
 	while (!blockToDivide.empty()) {
-//		std::cout << "yes" << std::endl;
-		blockToDivide = getBlastCollision(scene.getEntities(), blast);
+//		std::cout << "nb block to divide : " << blockToDivide.size() << std::endl;
 		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
 			divideBlock(scene, blockToDivide[idx]);
 		}
+		blockToDivide = getBlastCollision(scene.getEntities(), blast);
 	}
-//	blast.kill();
+	blockToDivide = getBlastCollision(scene.getEntities(), blast);
+	for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
+		blockToDivide[idx].kill();
+	}
+
+	blast.kill();
 }

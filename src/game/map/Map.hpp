@@ -59,8 +59,6 @@ public:
 
 	static std::vector<engine::Entity> getBlastCollision(engine::Entities& , engine::Entity);
 
-
-
 private:
 	int _blockDisplayed = 0;
 
