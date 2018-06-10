@@ -123,18 +123,29 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-            scene.registerEvent<std::string>("player.pick", [entity, &hc](std::string const& s) {
+            scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
                 if (hc.hasReachableEntity) {
-                    if (hc.items.size() < hc.capacity) {
+                    if (hc.items.size() == hc.count) {
+                        engine::Entity& item = hc.items[hc.current];
+                        item.detach();
+
+
+                        auto item2 = entity.attach(hc.reachableEntity);
+                        hc.items[hc.current] = item2;
+                    } else {
+                        if (hc.current >= 0) {
+                            hc.items[hc.current].disable();
+                        }
                         auto item = entity.attach(hc.reachableEntity);
-                        hc.items.push_back(item);
-                        hc.current += 1;
+                        hc.items[++hc.current] = item;
+                        hc.count += 1;
                     }
+                    hc.hasReachableEntity = false;
                 }
                 return 0;
             });
 
-            scene.registerEvent<std::string>("player.use", [entity, &hc](std::string const& s) {
+            scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const& s) {
                 if (hc.current >= 0) {
                     engine::Entity& item = hc.items[hc.current];
                     if (item.has<engine::ItemComponent>()) {
@@ -144,48 +155,40 @@ namespace worms { namespace scene {
                 return 0;
             });
 
-            scene.registerEvent<std::string>("player.throw", [entity, &hc](std::string const& s) {
-                if (hc.current >= 0) {
-                    engine::Entity& item = hc.items[hc.current];
-                    item.detach();
-                    hc.items.erase(hc.items.begin() + hc.current);
-                    hc.current -= 1;
-                }
+            scene.registerEvent<std::string>("player.explode", entity.getId(), [&](std::string const& move) {
+                for (int i = 0; i < 4; i++)
+                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+                std::cout << "end" << std::endl;
                 return 0;
             });
+
+            scene.registerEvent<std::string>("player.hitbox", entity.getId(), [&](std::string const& move) {
+                static bool DebugMode = false;
+                engine::Entities entities = scene.getEntities();
+                entities.withTag("map", [&](engine::Entity const& chunk) {
+                    entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
+                        auto& h = child.get<engine::HitboxComponent>();
+
+                        h.hasDebugMode = DebugMode;
+                    });
+                });
+                DebugMode = !DebugMode;
+                return 0;
+            });
+
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(-10.f, 0.f), engine::EVT_SYNCED);
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(10.f, 0.f), engine::EVT_SYNCED);
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 100.f), engine::EVT_SYNCED);
+            game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED);
+            game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_U, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
+            game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 		});
 
-				scene.registerEvent<std::string>("player.explode", entity.getId(), [&](std::string const& move) {
-					for (int i = 0; i < 4; i++)
-						Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
-					std::cout << "end" << std::endl;
-					return 0;
-				});
 
-				scene.registerEvent<std::string>("player.hitbox", entity.getId(), [&](std::string const& move) {
-					static bool DebugMode = false;
-					engine::Entities entities = scene.getEntities();
-					entities.withTag("map", [&](engine::Entity const& chunk) {
-						entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
-							auto& h = child.get<engine::HitboxComponent>();
 
-							h.hasDebugMode = DebugMode;
-						});
-					});
-					DebugMode = !DebugMode;
-					return 0;
-				});
-
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(-10.f, 0.f), engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(10.f, 0.f), engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 100.f), engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED);
-		        game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_U, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
-			});
         scene.registerEntityModel("item", [&](engine::Entity const& entity) {
             entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
             entity.set<engine::PhysicsComponent>();
@@ -193,46 +196,15 @@ namespace worms { namespace scene {
                 std::cout << "use item" << std::endl;
             });
 
-				scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
-					if (hc.hasReachableEntity) {
-						if (hc.items.size() == hc.count) {
-                            engine::Entity& item = hc.items[hc.current];
-    						item.detach();
-
-
-                            auto item2 = entity.attach(hc.reachableEntity);
-							hc.items[hc.current] = item2;
-						} else {
-                            if (hc.current >= 0) {
-                                hc.items[hc.current].disable();
-                            }
-                            auto item = entity.attach(hc.reachableEntity);
-							hc.items[++hc.current] = item;
-                            hc.count += 1;
-                        }
-                        hc.hasReachableEntity = false;
-					}
-					return 0;
-				});
-
-				scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const& s) {
-					if (hc.current >= 0) {
-						engine::Entity& item = hc.items[hc.current];
-						if (item.has<engine::ItemComponent>()) {
-							item.get<engine::ItemComponent>().use();
-						}
-					}
-					return 0;
-				});
-			});
+            ic.offset = {1.f, 2.f, 0.f};
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.position = {-10.f, 10.f, 0.f};
+            transformComponent.scale = {0.5f, 0.5f, 0.5f};
+		});
 
 
 			Wornite::Map map;
-            ic.offset = {1.f, 2.f, 0.f};
 
-			auto& transformComponent = entity.set<engine::TransformComponent>();
-			transformComponent.position = {-10.f, 10.f, 0.f};
-            transformComponent.scale = {0.5f, 0.5f, 0.5f};
 
 			map.genMap(game, scene);
 
