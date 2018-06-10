@@ -53,8 +53,8 @@ engine::Entities::findParent(engine::EntityId id)
 void
 engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 {
-	if (!_remove(parentId, id, _entities) && !_remove(parentId, id, _disabledEntities))
-		throw std::runtime_error("Unable to remove an entity, Entity not found.");
+	if (!_remove(parentId, id, _entities) && !_remove(parentId, id, _disabledEntities));
+//		throw std::runtime_error("Unable to remove an entity, Entity not found.");
 }
 
 engine::Entity

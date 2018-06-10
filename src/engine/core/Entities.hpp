@@ -51,6 +51,18 @@ namespace engine {
 
 		void withTag(std::string tag, std::function<void (Entity const&)> callback);
 
+		Entity
+		getParentEntity(Entity const& entity)
+		{
+			auto parentID = entity.getParentId();
+
+			if (parentID == Entity::nullId) {
+				throw std::runtime_error("unable to get parent entity of " + std::to_string(entity.getId()));
+			}
+
+			return Entity(parentID, this->findParent(parentID), this);
+		}
+
 	private:
 		static EntityId _LastSpawnedEntityId;
 		Container _entities;

@@ -101,16 +101,39 @@ namespace worms { namespace scene {
 					return 0;
 				});
 
+				scene.registerEvent<std::string>("player.explode", entity.getId(), [&](std::string const& move) {
+					for (int i = 0; i < 4; i++)
+						Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+					std::cout << "end" << std::endl;
+					return 0;
+				});
+
+				scene.registerEvent<std::string>("player.hitbox", entity.getId(), [&](std::string const& move) {
+					static bool DebugMode = false;
+					engine::Entities entities = scene.getEntities();
+					entities.withTag("map", [&](engine::Entity const& chunk) {
+						entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
+							auto& h = child.get<engine::HitboxComponent>();
+
+							h.hasDebugMode = DebugMode;
+						});
+					});
+					DebugMode = !DebugMode;
+					return 0;
+				});
+
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(-10.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(10.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 100.f), engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 			});
 
 			Wornite::Map map;
 
-			map.genMap(&game, &scene);
+			map.genMap(game, scene);
 
 			scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 				entity.set<engine::LightComponent>(

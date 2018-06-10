@@ -11,6 +11,7 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
+#include "../core/Scene.hpp"
 
 namespace engine {
 
@@ -47,6 +48,7 @@ namespace engine {
         static bool simplePolygonCollide(Entity const& entity, Entity const& entity2);
         static Point mergeSegmentsIntoVector(std::vector<Segment> const& segments);
         static bool AABBCollide(HitboxComponent const& h1, HitboxComponent const& h2);
+		static Entity createBlastPolygon(Scene& scene, float x, float y, float radius);
 
         static const float epsilon;
 
