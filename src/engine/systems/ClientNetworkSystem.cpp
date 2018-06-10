@@ -12,8 +12,13 @@ engine::ClientNetworkSystem::ClientNetworkSystem(engine::network::ClientSocket c
 	: System(), _netThread([socket](Scene::Events events) {
 		while (true) {
 			std::string msg = socket.receive<network::TextMessage>().text;
+			if (!msg.length()) {
+				continue;
+			}
+			
 			std::string head = msg.substr(0, msg.find('|'));
 			std::string body = msg.substr(msg.find('|') + 1);
+//			std::string body = msg.substr(msg.find('|', msg.find('|') + 1) + 1);
 
 			reinterpret_cast<Event<std::string>*>(events[head])->emit(body);
 		}
