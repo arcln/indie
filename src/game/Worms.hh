@@ -26,7 +26,7 @@
 namespace worms {
 
 	static const auto worms = [](engine::Game& game) {
-        // game.registerSystem("item", new engine::ItemSystem());
+        game.registerSystem("item", new engine::ItemSystem());
         game.registerSystem("physics", new engine::PhysicsSystem());
         game.registerSystem("display", new engine::DisplaySystem(game));
 		game.registerSystem("player", new PlayerSystem());

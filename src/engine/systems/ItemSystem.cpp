@@ -40,7 +40,6 @@ engine::ItemSystem::update(Scene& scene)
             t.position.Y = t2.position.Y;
 
             if (e.has<ItemComponent>()) {
-                auto& i = e.get<ItemComponent>();
                 t.position.X += i.offset.X;
                 t.position.Y += i.offset.Y;
                 t.position.Z += i.offset.Z;

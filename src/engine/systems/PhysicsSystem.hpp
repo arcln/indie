@@ -34,6 +34,7 @@ namespace engine {
         static void patchDeplacement(Entities& entities, Entity const& entity, irr::core::vector3df const& origin);
         static bool simpleCollideEntities(Entities& entities, Entity const& entity);
         static bool isGrounded(Entities& entities, Entity const& entity);
+        static bool isImmobile(PhysicsComponent const& p);
 
 	private:
 		Clock _prevUpdate = std::chrono::system_clock::now();

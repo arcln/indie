@@ -107,6 +107,7 @@ namespace worms { namespace scene {
 
 				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent](std::string const& jump) {
 					if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
+						std::cout << "jump" << std::endl;
 						physicsComponent.velocity += (Vector2f) jump;
 						animationComponent.currentState = "jump";
 						animationComponent.playOnce = true;
@@ -174,6 +175,8 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(10.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 100.f), engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED);
+		        game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_U, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 			});
@@ -186,11 +189,23 @@ namespace worms { namespace scene {
 
 				scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
 					if (hc.hasReachableEntity) {
-						if (hc.items.size() < hc.capacity) {
-							auto item = entity.attach(hc.reachableEntity);
-							hc.items.push_back(item);
-							hc.current += 1;
-						}
+						if (hc.items.size() == hc.count) {
+                            std::cout << "drop" << std::endl;
+                            engine::Entity& item = hc.items[hc.current];
+    						item.detach();
+
+                            std::cout << "get" << std::endl;
+
+                            auto item2 = entity.attach(hc.reachableEntity);
+							hc.items[hc.current] = item2;
+						} else {
+                            std::cout << "get 2" << std::endl;
+
+                            auto item = entity.attach(hc.reachableEntity);
+							hc.items[++hc.current] = item;
+                            hc.count += 1;
+                        }
+                        hc.hasReachableEntity = false;
 					}
 					return 0;
 				});
@@ -201,16 +216,6 @@ namespace worms { namespace scene {
 						if (item.has<engine::ItemComponent>()) {
 							item.get<engine::ItemComponent>().use();
 						}
-					}
-					return 0;
-				});
-
-				scene.registerEvent<std::string>("player.throw", entity.getId(), [entity, &hc](std::string const& s) {
-					if (hc.current >= 0) {
-						engine::Entity& item = hc.items[hc.current];
-						item.detach();
-						hc.items.erase(hc.items.begin() + hc.current);
-						hc.current -= 1;
 					}
 					return 0;
 				});
@@ -249,7 +254,7 @@ namespace worms { namespace scene {
             transformComponent.scale = {0.5f, 0.5f, 0.5f};
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-			hitboxComponent.rebound = 0.8;
+			hitboxComponent.rebound = 0.2;
 			hitboxComponent.hasDebugMode = true;
 		});
 
@@ -282,6 +287,9 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
+            game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_E, "player.spawn", 0, std::to_string(1));
+		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, std::to_string(1));
+		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_O, "master.changePlayer", 0, std::to_string(0));
 
 		scene.spawnEntity("camera");
 		scene.spawnEntity("player");

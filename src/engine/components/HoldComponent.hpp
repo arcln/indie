@@ -15,10 +15,10 @@ namespace engine {
 	struct HoldComponent {
         using Constraint = ComponentConstraint<HoldComponent, false>;
 
-        HoldComponent() : capacity(3) {}
-        HoldComponent(std::size_t _capacity) : capacity(_capacity) {}
+        HoldComponent() : items(3) {}
+        HoldComponent(std::size_t _capacity) : items(_capacity) {}
 
-        std::size_t capacity;
+        std::size_t count = 0;
         int current = -1;
         std::vector<Entity> items;
         Entity reachableEntity;
