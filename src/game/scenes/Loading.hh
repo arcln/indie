@@ -19,12 +19,12 @@ namespace worms { namespace scene {
 		|*				  		CLIENT ONLY EVENTS							*|
 		\********************************************************************/
 
-		scene.registerEvent<engine::GenericEvent>("loadMeshes", [&](engine::GenericEvent const&) {
+		scene.registerEvent<engine::GenericEvent>("loadMeshes", 0, [&](engine::GenericEvent const&) {
 			engine::ResourceManager<engine::MeshNode*>::instance().asyncLoad({"obj/worm.obj"}).wait();
 			return 0;
 		});
 
-		scene.registerEvent<engine::GenericEvent>("loadTextures", [&](engine::GenericEvent const&) {
+		scene.registerEvent<engine::GenericEvent>("loadTextures", 0, [&](engine::GenericEvent const&) {
 			engine::ResourceManager<engine::Texture*>::instance().syncLoad({"texture/worm.png"});
 			return 0;
 		});
@@ -33,8 +33,8 @@ namespace worms { namespace scene {
 		|*					  			START								*|
 		\********************************************************************/
 
-		scene.triggerEvent<engine::GenericEvent>("loadMeshes");
-		scene.triggerEvent<engine::GenericEvent>("loadTextures");
+		scene.triggerEvent<engine::GenericEvent>("loadMeshes", 0);
+		scene.triggerEvent<engine::GenericEvent>("loadTextures", 0);
 		game.replaceScene("battle");
 	};
 }}

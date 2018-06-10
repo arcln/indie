@@ -61,7 +61,7 @@ namespace engine {
 		Entities& getEntities();
 
 		template <typename ContextType>
-		void registerEvent(std::string const& name, typename Event<ContextType>::CallbackType const& handler) {
+		void registerEvent(std::string const& name, EntityId target, typename Event<ContextType>::CallbackType const& handler) {
 			if (_events.find(name) == std::end(_events)) {
 				_events[name] = reinterpret_cast<Event<GenericEvent>*>(::new Event<ContextType>());
 			}
@@ -70,7 +70,7 @@ namespace engine {
 		}
 
 		template <typename ContextType>
-		void triggerEvent(std::string const& name, ContextType const& context = ContextType()) {
+		void triggerEvent(std::string const& name, EntityId target, ContextType const& context = ContextType()) {
 			if (_events.find(name) == std::end(_events)) {
 				throw std::runtime_error("event '" + name + "' does not exists");
 			}
@@ -78,8 +78,8 @@ namespace engine {
 			reinterpret_cast<Event<ContextType>*>(_events[name])->emit(context);
 		}
 
-		void triggerSyncedEvent(std::string const& name, std::string const& serializedContext) {
-			this->triggerEvent<std::string>(name, serializedContext);
+		void triggerSyncedEvent(std::string const& name, EntityId target, std::string const& serializedContext) {
+			this->triggerEvent<std::string>(name, target, serializedContext);
 
 			if (_synced) {
 				_socket.send<network::TextMessage>(name + "|" + serializedContext);

@@ -90,7 +90,7 @@ engine::Scene::synchronizeWith(std::string const& hostname, Game& game)
 	if (std::string(res.text) != engine::network::version) {
 		throw std::runtime_error(std::string("server version ") + res.text + " does not match current version " + engine::network::version);
 	}
-	std::cout << "worms: network: successfuly connected to " << hostname << std::endl;
+	std::cerr << "worms: network: successfuly connected to " << hostname << std::endl;
 
 	game.registerSystem("network", new ClientNetworkSystem(_socket, _events));
 	_synced = true;

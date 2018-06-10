@@ -53,17 +53,17 @@ namespace engine {
 		void disableKeyEvent(KeyCode code);
 
 		template <typename PayloadType>
-		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, PayloadType const& payload, int config = 0) {
+		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, EntityId target, PayloadType const& payload, int config = 0) {
 			bool release = config & EventConfig::EVT_RELEASE;
 			bool sync = config & EventConfig::EVT_SYNCED;
 
-			_keyEvents[scene.id()].subscribe([this, &scene, evt, payload, key, sync, release](engine::KeyState const& k) -> int {
+			_keyEvents[scene.id()].subscribe([this, &scene, evt, target, payload, key, sync, release](engine::KeyState const& k) -> int {
 				if (k.Key == key && release ^ k.PressedDown && scene.hasEvent(evt) && _keyEventsState[key]) {
-					_bootstrapEvent<PayloadType>(scene, evt, payload, sync);
+					_bootstrapEvent<PayloadType>(scene, evt, payload, target, sync);
 				}
 
 				return 0;
-			});
+			}, target);
 
 			_keyEventsState[key] = true;
 		}
@@ -80,20 +80,20 @@ namespace engine {
 		using IsNotString = typename std::enable_if<!std::is_same<std::string, PayloadType>::value, PayloadType>::type;
 
 		template <typename PayloadType>
-		void _bootstrapEvent(Scene& scene, std::string const& evt, IsString<PayloadType> const& payload, bool synced) {
+		void _bootstrapEvent(Scene& scene, std::string const& evt, IsString<PayloadType> const& payload, EntityId target, bool synced) {
 			if (synced) {
-				scene.triggerSyncedEvent(evt, payload);
+				scene.triggerSyncedEvent(evt, target, payload);
 			} else {
-				scene.triggerEvent<PayloadType>(evt, payload);
+				scene.triggerEvent<PayloadType>(evt, target, payload);
 			}
 		}
 
 		template <typename PayloadType>
-		void _bootstrapEvent(Scene& scene, std::string const& evt, IsNotString<PayloadType> const& serializablePayload, bool synced) {
+		void _bootstrapEvent(Scene& scene, std::string const& evt, IsNotString<PayloadType> const& serializablePayload, EntityId target, bool synced) {
 			if (synced) {
-				scene.triggerSyncedEvent(evt, serializablePayload.serialize());
+				scene.triggerSyncedEvent(evt, target, serializablePayload.serialize());
 			} else {
-				scene.triggerEvent<PayloadType>(evt, serializablePayload);
+				scene.triggerEvent<PayloadType>(evt, target, serializablePayload);
 			}
 		}
 

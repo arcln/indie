@@ -10,7 +10,7 @@
 engine::ServerNetworkSystem::ServerNetworkSystem() : System()
 {
 	_selector.onData<network::TextMessage>([&](network::ClientSocket const& client, void* msg) {
-		std::cout << "worms-server: received event ["
+		std::cerr << "worms-server: received event ["
 				  << reinterpret_cast<network::TextMessage*>(msg)->text
 				  << "] from client #"
 				  << client.id
