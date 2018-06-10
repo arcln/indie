@@ -53,8 +53,11 @@ engine::Entities::findParent(engine::EntityId id)
 void
 engine::Entities::remove(engine::EntityId parentId, engine::EntityId id)
 {
-	if (!_remove(parentId, id, _entities) && !_remove(parentId, id, _disabledEntities));
-//		throw std::runtime_error("Unable to remove an entity, Entity not found.");
+	_remove(parentId, id, _entities);
+	_remove(parentId, id, _disabledEntities);
+
+	if (IrrlichtComponent::Constraint::Pool::instance().has(id))
+		IrrlichtComponent::Constraint::Pool::instance().get(id).node->setPosition(engine::Entities::_DisabledOffset);
 }
 
 engine::Entity
