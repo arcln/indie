@@ -32,14 +32,14 @@ namespace worms {
 		game.registerSystem("player", new PlayerSystem());
 		game.registerSystem("effects", new engine::Menu::MenuEngineSystem());
 
-		game.registerSceneModel("main", worms::scene::postMenu);
+		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
 		game.registerSceneModel("playMenu", worms::scene::playScene);
 		game.registerSceneModel("creditsMenu", worms::scene::creditsScene);
 		game.registerSceneModel("optionsMenu", worms::scene::optionsScene);
 		game.registerSceneModel("keyAssign", worms::scene::keyAssign);
 		game.registerSceneModel("waintingMenu", worms::scene::waitingScene);
-		game.registerSceneModel("loading", worms::scene::loading);
+		game.registerSceneModel("main", worms::scene::loading);
 		game.registerSceneModel("battle", worms::scene::battle);
 	};
 }

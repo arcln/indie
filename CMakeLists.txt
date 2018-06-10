@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(worms)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-W -Wall -Wextra -Wno-unused-parameter -Ofast -O2")
+set(CMAKE_CXX_FLAGS "-W -Wall -Wextra -Wno-unused-parameter -Ofast")
 
 find_package(Threads REQUIRED)
 
@@ -54,13 +54,13 @@ file(GLOB_RECURSE ENGINE_SRCS src/engine/*)
 
 add_library(engine STATIC ${ENGINE_SRCS})
 
-add_executable(worms src/main.cpp ${GAME_SRCS})
-set_target_properties(worms PROPERTIES COMPILE_FLAGS "-DWORMS_IS_SERVER=false")
+add_executable(bomberman src/main.cpp ${GAME_SRCS})
+set_target_properties(bomberman PROPERTIES COMPILE_FLAGS "-DWORMS_IS_SERVER=false")
 
 add_executable(worms-server src/main.cpp ${GAME_SRCS})
 set_target_properties(worms-server PROPERTIES COMPILE_FLAGS "-DWORMS_IS_SERVER=true")
 
-target_link_libraries(worms
+target_link_libraries(bomberman
 	${OPENGL_LIBRARIES}
 	${COCOA_LIBRARY}
 	${APPKIT_LIBRARY}
