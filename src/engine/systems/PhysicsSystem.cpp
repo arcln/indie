@@ -25,6 +25,10 @@ engine::PhysicsSystem::update(Scene& scene)
     _tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
     _prevUpdate = now;
 
+    if (_tick > 0.5) {
+        return;
+    }
+
     entities.each<PhysicsComponent, TransformComponent>([&](auto const& e, auto& p, auto& t) {
         engine::Vec2D pos2D(t.position.X, t.position.Y);
         engine::Vec2D newPos2D;

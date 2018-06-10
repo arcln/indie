@@ -20,12 +20,18 @@ namespace engine {
 	};
 
 	struct AnimationComponent {
-		AnimationComponent(std::string const& initalState, irr::f32 frameRate = 60) : currentState(initalState), frameRate(frameRate) {}
+		AnimationComponent(std::string const& initalState, irr::f32 frameRate = 60)
+			: currentState(initalState)
+			, nextState("")
+			, playOnce(false)
+			, frameRate(frameRate) {}
 
 		using Constraint = ComponentConstraint<AnimationComponent, false>;
 
 		std::unordered_map<std::string, AnimationBoundaries> states;
 		std::string currentState;
+		std::string nextState;
+		bool playOnce;
 		irr::f32 frameRate;
 	};
 }
