@@ -16,15 +16,12 @@
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/ButtonComponent.hpp"
 #include "engine/components/ImageComponent.hpp"
-#include "engine/components/TextComponent.hpp"
-#include "engine/components/CheckBoxComponent.hpp"
-#include "engine/components/EditBoxComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
 
-	static const auto creditsScene = [](engine::Game& game, engine::Scene& scene) {
+	static const auto mainMenu = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -34,12 +31,12 @@ namespace worms { namespace scene {
 														     0}
 			);
 
-			scene.registerEvent<engine::CameraComponent::Coords>("set camera position", [&](auto const& position) {
+			scene.registerEvent<engine::CameraComponent::Coords>("set camera position", 0, [&](auto const& position) {
 				cameraComponent.node->setPosition(position);
 				return 0;
 			});
 
-			scene.registerEvent<engine::CameraComponent::Coords>("set camera lookat", [&](auto const& position) {
+			scene.registerEvent<engine::CameraComponent::Coords>("set camera lookat", 0, [&](auto const& position) {
 				cameraComponent.node->setTarget(position);
 				return 0;
 			});
@@ -56,13 +53,13 @@ namespace worms { namespace scene {
 			);
 			buttonComponent.node->setUseAlphaChannel(true);
 
-			scene.registerEvent<engine::ButtonComponent::Coords>("move button", [&](auto const& pos) {
+			scene.registerEvent<engine::ButtonComponent::Coords>("move button", 0, [&](auto const& pos) {
 				buttonComponent.node->setRelativePosition(pos);
 				return 0;
 			});
 
-			scene.registerEvent<std::string>("set normal image", [&](auto const &image) {
-				irr::video::ITexture *texture = game.textureManager.get(image);
+			scene.registerEvent<std::string>("set normal image", 0, [&](auto const &image) {
+				irr::video::ITexture *texture = engine::ResourceManager<engine::Texture*>::instance().get(image);
 				buttonComponent.node->setImage(texture);
 				return 0;
 			});
@@ -71,7 +68,7 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("image", [&](engine::Entity const& entity) {
 			static irr::s32 id = 0;
 			auto& imageComponent = entity.set<engine::ImageComponent>(game.device(),
-										 game.textureManager.get("texture/placeholder1280x720.png"),
+																	  engine::ResourceManager<engine::Texture*>::instance().get("texture/placeholder1280x720.png"),
 										 irr::core::position2d<irr::s32>(0,0),
 										 true,
 										 nullptr,
@@ -84,7 +81,7 @@ namespace worms { namespace scene {
 			static irr::s32 id = 0;
 			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
 										      L"TEST TEXT",
-										      irr::core::rect<irr::s32>(10, 10, 2000, 2000),
+										      irr::core::rect<irr::s32>(10, 10, 200, 200),
 										      false,
 										      false,
 										      nullptr,
@@ -115,21 +112,39 @@ namespace worms { namespace scene {
 			checkBoxComponent.node->setChecked(false);
 		});
 
-		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
+		scene.registerEvent<engine::GenericEvent>("create button", 0, [&](engine::GenericEvent const&) {
 			scene.spawnEntity("button");
 			return 0;
 		});
 
-		scene.registerEvent<Vector2i>("go back", [&](Vector2i const&) {
-			game.replaceScene("mainMenu");
+		scene.registerEvent<engine::GenericEvent>("Options", 0, [&](engine::GenericEvent const&) {
+			game.replaceScene("optionsMenu");
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("Play", 0, [&](engine::GenericEvent const&) {
+			game.replaceScene("playMenu");
+			return 0;
+		});
+
+		scene.registerEvent<engine::GenericEvent>("Credits", 0, [&](engine::GenericEvent const&) {
+			game.replaceScene("creditsMenu");
+			return 0;
+		});
+
+		scene.registerEvent<bool>("Quit", 0, [&](bool const&) {
+			exit(0);
 			return 0;
 		});
 
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/creditsMenu", &scene, &game);
+		engine::Menu::MyScriptParser parser("scripts/mainMenu", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();
 
+		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F2, "Play", 0, Vector2i(0, 0), 0);
+		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F3, "Options", 0, Vector2i(0, 0), 0);
+		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F4, "Credits", 0, Vector2i(0, 0), 0);
 	};
 }}

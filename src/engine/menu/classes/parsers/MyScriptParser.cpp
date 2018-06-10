@@ -22,15 +22,7 @@ engine::Menu::MyScriptParser::MyScriptParser(std::string path, engine::Scene *sc
 
 void engine::Menu::MyScriptParser::parseFile()
 {
-	std::ifstream file(_path.c_str(), std::ios::in);
-	std::vector<std::string> tmp;
-	std::string buffer;
-
-	if (!file.is_open())
-		std::cerr << "Can't open " << _path << std::endl;
-	while (std::getline(file, buffer))
-		tmp.push_back(buffer);
-	_storage = tmp;
+	_storage = ResourceManager<std::vector<std::string>>::instance().get(_path);
 }
 
 int engine::Menu::MyScriptParser::checkStart(std::string line, std::string chars)

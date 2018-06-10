@@ -30,6 +30,18 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	ResourceManager<Texture*>::instance().loadFrom(cwd).onLoad([&](std::string const& asset) {
 		return this->device()->getVideoDriver()->getTexture(asset.c_str());
 	});
+
+	ResourceManager<std::vector<std::string>>::instance().loadFrom(cwd).onLoad([&](std::string const& asset) {
+		std::ifstream file(asset, std::ios::in);
+		std::vector<std::string> tmp;
+		std::string buffer;
+
+		if (!file.is_open())
+			std::cerr << "Can't open " << asset << std::endl;
+		while (std::getline(file, buffer))
+			tmp.push_back(buffer);
+		return tmp;
+	});
 }
 
 engine::Game::~Game()
