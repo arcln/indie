@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <engine/components/LightComponent.hpp>
-#include <engine/components/ComponentFilter.hpp>
 #include <engine/components/IrrlichtComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
@@ -121,11 +120,6 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		scene.registerEvent<Vector2i>("to mainMenu", [&](Vector2i const&) {
-			game.replaceScene("mainMenu");
-			return 0;
-		});
-
 		scene.registerEvent<Vector2i>("volume plus", [&](Vector2i const&) {
 			engine::Entities entities = scene.getEntities();
 			int i = 0;
@@ -144,6 +138,7 @@ namespace worms { namespace scene {
 					str = std::wstring(nbStr.begin(), nbStr.end());
 					const wchar_t *tmp = str.c_str();
 					text.node->setText(tmp);
+					(void) e;
 				}
 				return 0;
 			});
@@ -158,6 +153,7 @@ namespace worms { namespace scene {
 					upLeft.X += 105;
 					image.node->setRelativePosition(upLeft);
 					i += 1;
+					(void) e;
 				}
 			});
 			return 0;
@@ -181,6 +177,7 @@ namespace worms { namespace scene {
 					str = std::wstring(nbStr.begin(), nbStr.end());
 					const wchar_t *tmp = str.c_str();
 					text.node->setText(tmp);
+					(void) e;
 				}
 				return 0;
 			});
@@ -194,6 +191,7 @@ namespace worms { namespace scene {
 
 					upLeft.X -= 105;
 					image.node->setRelativePosition(upLeft);
+					(void) e;
 				}
 			});
 			return 0;
@@ -204,7 +202,7 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		scene.registerEvent<Vector2i>("to mainMenu", [&](Vector2i const&) {
+		scene.registerEvent<Vector2i>("go back", [&](Vector2i const&) {
 			game.replaceScene("mainMenu");
 			return 0;
 		});
@@ -214,9 +212,6 @@ namespace worms { namespace scene {
 
 		parser.parseFile();
 		parser.fillMap();
-
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_BACK, "to mainMenu", Vector2i(0, 0), 0);
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_RETURN, "to assignKey", Vector2i(0, 0), 0);
 
 	};
 }}

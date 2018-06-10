@@ -16,13 +16,15 @@
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/ButtonComponent.hpp"
 #include "engine/components/ImageComponent.hpp"
+#include "engine/components/TextComponent.hpp"
+#include "engine/components/CheckBoxComponent.hpp"
+#include "engine/components/EditBoxComponent.hpp"
 #include "engine/menu/classes/parsers/MyScriptParser.hpp"
-#include "engine/menu/classes/utils/KeyFinder.hpp"
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
 
-	static const auto keyAssign = [](engine::Game& game, engine::Scene& scene) {
+	static const auto playScene = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -82,7 +84,7 @@ namespace worms { namespace scene {
 			static irr::s32 id = 0;
 			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
 										      L"TEST TEXT",
-										      irr::core::rect<irr::s32>(10, 10, 200, 200),
+										      irr::core::rect<irr::s32>(10, 10, 2000, 2000),
 										      false,
 										      false,
 										      nullptr,
@@ -113,147 +115,94 @@ namespace worms { namespace scene {
 			checkBoxComponent.node->setChecked(false);
 		});
 
-		scene.registerEvent<engine::GenericEvent>("key left", [&](engine::GenericEvent const&) {
-			engine::Entities entities = scene.getEntities();
-			static int check = 0;
-
-			if (check == 0) {
-				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-					std::string name = button.node->getName();
-					if (name != "key left") {
-						button.node->setPressed(false);
-					}
-					(void) e;
-				});
-			}
-			check = (check + 1) % 10;
-			return 0;
-		});
-
-		scene.registerEvent<engine::GenericEvent>("key right", [&](engine::GenericEvent const&) {
-			engine::Entities entities = scene.getEntities();
-			static int check = 0;
-
-			if (check == 0) {
-				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-					std::string name = button.node->getName();
-					if (name != "key right") {
-						button.node->setPressed(false);
-					}
-					(void) e;
-				});
-			}
-			check = (check + 1) % 10;
-			return 0;
-		});
-
-		scene.registerEvent<engine::GenericEvent>("jump", [&](engine::GenericEvent const&) {
-			engine::Entities entities = scene.getEntities();
-			static int check = 0;
-
-			if (check == 0) {
-				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-					std::string name = button.node->getName();
-					if (name != "jump") {
-						button.node->setPressed(false);
-					}
-					(void) e;
-				});
-			}
-			check = (check + 1) % 10;
-			return 0;
-		});
-
-		scene.registerEvent<engine::GenericEvent>("shoot", [&](engine::GenericEvent const&) {
-			engine::Entities entities = scene.getEntities();
-			static int check = 0;
-
-			if (check == 0) {
-				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-					std::string name = button.node->getName();
-					if (name != "shoot") {
-						button.node->setPressed(false);
-					}
-					(void) e;
-				});
-			}
-			check = (check + 1) % 10;
-			return 0;
-		});
-
-		scene.registerEvent<engine::GenericEvent>("validate", [&](engine::GenericEvent const&) {
-			engine::Entities entities = scene.getEntities();
-			static int check = 0;
-
-			if (check == 0) {
-				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-					std::string name = button.node->getName();
-					if (name != "validate") {
-						button.node->setPressed(false);
-					}
-					(void) e;
-				});
-			}
-			check = (check + 1) % 10;
-			return 0;
-		});
-
-		scene.registerEvent<engine::GenericEvent>("grab", [&](engine::GenericEvent const&) {
-			engine::Entities entities = scene.getEntities();
-			static int check = 0;
-
-			if (check == 0) {
-				entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-					std::string name = button.node->getName();
-					if (name != "grab") {
-						button.node->setPressed(false);
-					}
-					(void) e;
-				});
-			}
-			check = (check + 1) % 10;
-			return 0;
-		});
-
-		scene.registerEvent<Vector2i>("assign key", [&](Vector2i const& key) {
-			std::cout << key.x << std::endl;
-			engine::Entities entities = scene.getEntities();
-			entities.each<engine::ButtonComponent>([&](auto const& e, auto& button) {
-				std::string name = button.node->getName();
-				if (button.node->isPressed() == true) {
-					engine::Menu::KeyFinder finder;
-					std::string str = finder.findKey((irr::EKEY_CODE)key.x);
-					std::wstring widestr = std::wstring(str.begin(), str.end());
-					const wchar_t *tmp = widestr.c_str();
-
-					button.node->setText(tmp);
-					button.node->setPressed(false);
-				}
-				(void) e;
-			});
-
-			return 0;
-		});
-
 		scene.registerEvent<engine::GenericEvent>("create button", [&](engine::GenericEvent const&) {
 			scene.spawnEntity("button");
 			return 0;
 		});
 
+		scene.registerEvent<Vector2i>("skin plus", [&](Vector2i const&) {
+			engine::Entities entities = scene.getEntities();
+			int i = 0;
+
+			entities.each<engine::TextComponent>([&](auto const& e, auto& text) {
+				std::string name = text.node->getName();
+				if (name == "skin number") {
+					std::wstring str = text.node->getText();
+					std::string nbStr = std::string(str.begin(), str.end());					
+					int nb = atoi(nbStr.c_str());
+					if (nb <= 1)
+						return 0;
+					nb -= 1;
+					i = nb;
+					nbStr = std::to_string(nb);
+					str = std::wstring(nbStr.begin(), nbStr.end());
+					const wchar_t *tmp = str.c_str();
+					text.node->setText(tmp);
+					(void) e;
+				}
+			});
+			if (i == 0)
+				return 1;
+			entities.each<engine::ImageComponent>([&](auto const& e, auto& image) {
+				std::string name = image.node->getName();
+				if (name == std::to_string(i)) {
+					image.node->setVisible(true);
+				} else if (atoi(name.c_str()) != 0) {
+					image.node->setVisible(false);
+				}
+			});
+			return 0;
+		});
+
+		scene.registerEvent<Vector2i>("skin minus", [&](Vector2i const&) {
+			engine::Entities entities = scene.getEntities();
+			int i = 0;
+
+			entities.each<engine::TextComponent>([&](auto const& e, auto& text) {
+				std::string name = text.node->getName();
+				if (name == "skin number") {
+					std::wstring str = text.node->getText();
+					std::string nbStr = std::string(str.begin(), str.end());					
+					int nb = atoi(nbStr.c_str());
+					if (nb >= 3)
+						return 0;
+					nb += 1;
+					i = nb;
+					nbStr = std::to_string(nb);
+					str = std::wstring(nbStr.begin(), nbStr.end());
+					const wchar_t *tmp = str.c_str();
+					text.node->setText(tmp);
+					(void) e;
+				}
+			});
+			if (i == 0)
+				return 1;
+			entities.each<engine::ImageComponent>([&](auto const& e, auto& image) {
+				std::string name = image.node->getName();
+				if (name == std::to_string(i)) {
+					image.node->setVisible(true);
+				} else if (atoi(name.c_str()) != 0) {
+					image.node->setVisible(false);
+				}
+			});
+			return 0;
+		});
+
+		scene.registerEvent<Vector2i>("find matchmaking", [&](Vector2i const&) {
+			game.replaceScene("matchmakingScene");
+			return 0;
+		});
+
 		scene.registerEvent<Vector2i>("go back", [&](Vector2i const&) {
-			game.replaceScene("optionsMenu");
+			game.replaceScene("mainMenu");
 			return 0;
 		});
 
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/keyAssignement", &scene, &game);
+		engine::Menu::MyScriptParser parser("engine/menu/script/playMenu", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();
 
-		//game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_KEY_O, "O", Vector2i(0, 0), 0);
-		for (int i = 0; i < 166; i = i + 1) {
-			game.eventsHandler.subscribe<Vector2i>(scene, (irr::EKEY_CODE)i, "assign key", Vector2i(i, 0), 0);	
-		}
 	};
 }}

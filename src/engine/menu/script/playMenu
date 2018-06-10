@@ -1,0 +1,81 @@
+image:
+	- name: background
+	- image: texture/gameBack.png
+	- pos: 0, 0
+
+image:
+	- name: background2
+	- image: texture/frontBack.png
+	- pos: 280, 0
+
+image:
+	- name: logo
+	- image: texture/wornite720PTsans.png
+	- pos: 390, 60
+
+text:
+	- name: CharName
+	- setText: Choose your character name
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- color: 255, 255, 255, 255
+	- pos: 383, 170
+
+text:
+	- name: Choose a Skin
+	- setText: Choose your character skin
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- color: 255, 255, 255, 255
+	- pos: 400, 300
+
+text:
+	- name: skin number
+	- setText: 1
+
+editBox:
+	- pos: 360, 240
+	- size: 565, 50
+	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- color: 255, 0, 0, 0
+
+image:
+	- name: 1
+	- image: texture/DeadpoolPrev.jpg
+	- pos: 570, 375
+
+image:
+	- name: 2
+	- image: texture/RedhoodPrev.jpg
+	- pos: 570, 375
+	- setVisible: false
+
+image:
+	- name: 3
+	- image: texture/DeathstrockPrev.jpg
+	- pos: 570, 375
+	- setVisible: false
+
+button:
+	- event: skin minus
+	- image: texture/left.png
+	- imagePressed: texture/left(1).png
+	- rect: 500, 458, 556, 508
+	- border: false
+
+button:
+	- event: skin plus
+	- image: texture/right.png
+	- imagePressed: texture/right(1).png
+	- rect: 730, 458, 796, 508
+	- border: false
+
+button:
+	- event: go back
+	- image: texture/button_back.png
+	- border: false
+	- rect: 380, 620, 520, 675
+
+button:
+	- event: matchmaking
+	- image: texture/button_find-a-game.png
+	- border: false
+	- rect: 720, 620, 950, 675

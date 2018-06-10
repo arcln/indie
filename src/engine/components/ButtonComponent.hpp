@@ -10,7 +10,7 @@
 #include <iostream>
 #include <irrlicht/IGUIButton.h>
 #include <irrlicht/IrrlichtDevice.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 #include "engine/core/Scene.hpp"
 
 namespace engine {

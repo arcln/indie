@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <engine/components/LightComponent.hpp>
-#include <engine/components/ComponentFilter.hpp>
 #include <engine/components/IrrlichtComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
@@ -130,6 +129,6 @@ namespace worms { namespace scene {
 		parser.parseFile();
 		parser.fillMap();
 
-		game.eventsHandler.subscribe<worms::Vector2i>(scene, irr::KEY_KEY_A, "to mainMenu", worms::Vector2i(0, 0), 0);
+		game.eventsHandler.subscribe<worms::Vector2i>(scene, irr::KEY_F1, "to mainMenu", worms::Vector2i(0, 0), 0);
 	};
 }}

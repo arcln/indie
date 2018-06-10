@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <engine/components/LightComponent.hpp>
-#include <engine/components/ComponentFilter.hpp>
 #include <engine/components/IrrlichtComponent.hpp>
 #include "engine/core/Scene.hpp"
 #include "engine/core/Event.hpp"
@@ -123,6 +122,11 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
+		scene.registerEvent<engine::GenericEvent>("Play", [&](engine::GenericEvent const&) {
+			game.replaceScene("playMenu");
+			return 0;
+		});
+
 		scene.registerEvent<bool>("Quit", [&](engine::GenericEvent const&) {
 			exit(0);
 			return 0;
@@ -134,6 +138,8 @@ namespace worms { namespace scene {
 		parser.parseFile();
 		parser.fillMap();
 
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_KEY_O, "Options", Vector2i(0, 0), 0);
+		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F2, "Play", Vector2i(0, 0), 0);
+		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F3, "Options", Vector2i(0, 0), 0);
+		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F4, "Credits", Vector2i(0, 0), 0);
 	};
 }}

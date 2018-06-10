@@ -13,6 +13,7 @@
 #include "scene/PostMenu.hh"
 #include "scene/MainMenu.hh"
 #include "scene/TestScene.hh"
+#include "scene/PlayMenu.hh"
 #include "scene/OptionsMenu.hh"
 #include "scene/KeyAssign.hh"
 
@@ -27,6 +28,7 @@ namespace worms {
 
 		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
+		game.registerSceneModel("playMenu", worms::scene::playScene);
 		game.registerSceneModel("testScene", worms::scene::testScene);
 		game.registerSceneModel("optionsMenu", worms::scene::optionsScene);
 		game.registerSceneModel("keyAssign", worms::scene::keyAssign);

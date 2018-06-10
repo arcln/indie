@@ -1,21 +1,21 @@
 image:
 	- name: background
-	- image: texture/gameBack.jpg
+	- image: texture/gameBack.png
 	- pos: 0, 0
 
 image:
 	- name: background2
-	- image: texture/woodSign.png
-	- pos: 200, 70
+	- image: texture/frontBack.png
+	- pos: 280, 0
 
 image:
 	- name: logo
-	- image: texture/Wornite2100.png
-	- pos: 460 , 100
+	- image: texture/wornite720PTsans.png
+	- pos: 390 , 60
 
 button:
 	- image: texture/firstButton.png
-	- rect: 343, 328, 937, 392
+	- rect: 335, 328, 945, 392
 	- border: false
 	- pos: 640, 300
 	- event: to mainMenu

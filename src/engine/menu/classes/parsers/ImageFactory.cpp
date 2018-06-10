@@ -14,6 +14,7 @@ engine::Menu::ImageFactory::ImageFactory(irr::gui::IGUIImage *node, engine::Game
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("image", [this](std::string param) {imageCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("pos", [this](std::string param) {posCommand(param);}));
 	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("name", [this](std::string param) {nameCommand(param);}));
+	_handledFunc.insert(std::pair<std::string, std::function<void(std::string)>>("setVisible", [this](std::string param) {setVisibleCommand(param);}));
 }
 
 int engine::Menu::ImageFactory::imageCommand(std::string param)
@@ -57,5 +58,19 @@ int engine::Menu::ImageFactory::nameCommand(std::string param)
 	const wchar_t *tmp = widestr.c_str();
 
 	_node->setName(tmp);
+	return 0;
+}
+
+int engine::Menu::ImageFactory::setVisibleCommand(std::string param)
+{
+	bool _bool = false;
+
+	if (param == "true")
+		_bool = true;
+	else if (param == "false")
+		_bool = false;
+	else
+		return 1;
+	_node->setVisible(_bool);
 	return 0;
 }

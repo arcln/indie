@@ -10,7 +10,7 @@
 #include <iostream>
 #include <irrlicht/IGUIEditBox.h>
 #include <irrlicht/IrrlichtDevice.h>
-#include "engine/components/ComponentConstraint.hpp"
+#include "engine/utils/ComponentConstraint.hpp"
 
 namespace engine {
 
