@@ -30,5 +30,7 @@ namespace engine {
 		Polygon hitboxW2D;
         bool hasDebugMode = false;
         bool isAABBOnly = false;
+        bool isStatic = false;
+        bool isComputed = false;
 	};
 }

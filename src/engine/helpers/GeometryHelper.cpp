@@ -190,6 +190,9 @@ engine::GeometryHelper::mergeSegmentsIntoVector(std::vector<engine::Segment> con
 void
 engine::GeometryHelper::transformHitbox(HitboxComponent& hitbox, TransformComponent const& transform)
 {
+    if (hitbox.isStatic && hitbox.isComputed)
+        return;
+
     Polygon out;
 
     boost::geometry::for_each_point(hitbox.hitbox2D, [&](Point const& p) -> void {
@@ -205,4 +208,5 @@ engine::GeometryHelper::transformHitbox(HitboxComponent& hitbox, TransformCompon
     hitbox.AABBWPosition.Y = (hitbox.AABBPosition.Y * transform.scale.Y) + transform.position.Y;
     hitbox.WSize.X = (hitbox.size.X * transform.scale.X);
     hitbox.WSize.Y = (hitbox.size.Y * transform.scale.Y);
+    hitbox.isComputed = true;
 }
