@@ -45,14 +45,15 @@ namespace engine { namespace network {
 			}
 
 			auto data = reinterpret_cast<MessageType*>(buffer);
-			if (recvSize != sizeof(MessageType)) {
-				throw std::runtime_error("corrupted packet");
+			if (data->size != sizeof(MessageType)) {
+				std::cerr << "warning: ignoring corrupted packet" << std::endl;
+				return MessageType();
 			}
 
 			return *data;
 		}
 
-//	private:
+	private:
 		SOCKET _socket;
 	};
 
