@@ -210,3 +210,33 @@ engine::GeometryHelper::transformHitbox(HitboxComponent& hitbox, TransformCompon
     hitbox.WSize.Y = (hitbox.size.Y * transform.scale.Y);
     hitbox.isComputed = true;
 }
+
+engine::Entity
+engine::GeometryHelper::createBlastPolygon(engine::Scene& scene, float x, float y, float radius)
+{
+	float n = 30.f;
+	irr::core::vector2df position;
+	engine::Entity blastEntity = scene.spawnEntity("hitboxBlast");
+	std::string hitbox("( ");
+
+	hitbox += std::to_string(float(x + (radius * cos(2.f * M_PI * 0.f / n)))) + " "
+		  + std::to_string(float(y + (radius * sin(2.f * M_PI * 0.f / n))));
+	for (float i = 1.f; i < n; i += 1.f) {
+
+		position.X = float(x + (radius * cos(2.f * M_PI * i / n)));
+		position.Y = float(y + (radius * sin(2.f * M_PI * i / n)));
+
+		hitbox += ", " + std::to_string(position.X) + " " + std::to_string(position.Y);
+	}
+	hitbox += ")";
+	auto& h = blastEntity.set<engine::HitboxComponent>(hitbox);
+	auto& t = blastEntity.get<engine::TransformComponent>();
+
+	h.hasDebugMode = true;
+	t.position = {0.f, 0.f, 0.f};
+	t.scale = {1.f, 1.f, 1.f};
+
+	return blastEntity;
+}
+
+

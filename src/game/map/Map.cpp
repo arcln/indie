@@ -13,14 +13,27 @@
 #include <algorithm>
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/TagComponent.hpp"
+#include "engine/core/Entities.hpp"
 #include "engine/helpers/GeometryHelper.hpp"
 
 void
-Wornite::Map::genMap(engine::Game *game, engine::Scene *scene)
+Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 {
 	float perlinScale;
 	mapSettings map;
 
+	scene.registerEntityModel("hitboxChunk", [&](engine::Entity const &entity) {
+		entity.set<engine::TransformComponent>();
+		entity.set<engine::TagComponent>(std::string("map"));
+	});
+	scene.registerEntityModel("hitboxBlast", [&](engine::Entity const &entity) {
+		entity.set<engine::IrrlichtComponent>(&game, "obj/pieceMap.obj", "");
+		entity.set<engine::TransformComponent>();
+	});
+	scene.registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
+		entity.set<engine::IrrlichtComponent>(&game, "obj/pieceMap.obj", "texture/map.png");
+		entity.set<engine::TransformComponent>();
+	});
 	std::srand(static_cast<unsigned>(std::time(0)));
 	perlinScale = std::rand() % 1000;
 	map.length = 70;
@@ -85,7 +98,7 @@ Wornite::Map::getChunk(Wornite::Map::mapSettings *map)
 	}
 }
 
-void Wornite::Map::fillBigChunks(engine::Game *game, engine::Scene *scene, chunk *chunk)
+void Wornite::Map::fillBigChunks(engine::Game& game, engine::Scene& scene, chunk *chunk)
 {
 	Bsq bsq;
 	Bsq::t_response res = {{0,0}, 99};
@@ -97,20 +110,19 @@ void Wornite::Map::fillBigChunks(engine::Game *game, engine::Scene *scene, chunk
 	mapBsq.col = (unsigned int) chunk->string.find_first_of('\n', 0);
 	chunk->length = mapBsq.row;
 	chunk->height = mapBsq.col;
-	spawnChunkHitbox(game, scene, chunk);
+	spawnChunkHitbox(scene, chunk);
 	bsq.find_bsq(&mapBsq, &res);
 	while (res.size > 0) {
-		spawnBigChunk(game, scene, &mapBsq, &res, chunk);
+		spawnBigChunk(scene, &mapBsq, &res, chunk);
 		bsq.find_bsq(&mapBsq, &res);
 	}
-
 	chunk->string = std::string(mapBsq.dots);
 	delete mapBsq.dots;
 }
 
 
 void
-Wornite::Map::spawnBigChunk(engine::Game *game, engine::Scene *scene,
+Wornite::Map::spawnBigChunk(engine::Scene& scene,
 			    Wornite::Bsq::t_map *map, Wornite::Bsq::t_response *res, chunk *chunk)
 {
 	irr::core::vector3df position;
@@ -123,7 +135,7 @@ Wornite::Map::spawnBigChunk(engine::Game *game, engine::Scene *scene,
 	scale.X = res->size / 2.f * _mapPrecision;
 	scale.Y = res->size / 2.f * _mapPrecision;
 	scale.Z = 1.f;
-	spawnPieceMap(game, scene, position, scale, chunk->chunkHitboxEntity);
+	Wornite::Map::spawnPieceMap(scene, position, scale, chunk->chunkHitboxEntity);
 	removeBigChunk(map, res);
 }
 
@@ -146,17 +158,10 @@ Wornite::Map::removeBigChunk(Wornite::Bsq::t_map *map, Wornite::Bsq::t_response 
 }
 
 void
-Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core::vector3df position, irr::core::vector3df scale,
+Wornite::Map::spawnPieceMap(engine::Scene &scene, irr::core::vector3df position, irr::core::vector3df scale,
 			    engine::Entity hitboxEntity)
 {
-	scene->registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
-		auto &irrlichtComponent = entity.set<engine::IrrlichtComponent>(game,
-										"obj/pieceMap.obj");
-		irrlichtComponent.node->setMaterialTexture(0, engine::ResourceManager<engine::Texture*>::instance().get("texture/map.png"));
-		entity.set<engine::TransformComponent>();
-	});
-
-	auto const& entity = scene->spawnEntity("pieceMap");
+	auto const& entity = scene.spawnEntity("pieceMap");
 	auto& transform = entity.get<engine::TransformComponent>();
 
 	transform.position = position;
@@ -170,7 +175,7 @@ Wornite::Map::spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core:
 
 
 void
-Wornite::Map::spawnChunkHitbox(engine::Game *game, engine::Scene *scene,
+Wornite::Map::spawnChunkHitbox(engine::Scene& scene,
 			       Wornite::Map::chunk *chunk)
 {
 	std::string hitbox("( ");
@@ -183,20 +188,14 @@ Wornite::Map::spawnChunkHitbox(engine::Game *game, engine::Scene *scene,
 		  std::to_string(- (chunk->height / 2.f * _mapPrecision)) + ", ";
 	hitbox += std::to_string( - (chunk->length * _mapPrecision / 2.f)) + " " +
 		     std::to_string(-(chunk->height / 2.f * _mapPrecision)) + ")";
-	spawnHitbox(game, scene, chunk, hitbox);
+	spawnHitbox(scene, chunk, hitbox);
 }
 
 
 void
-Wornite::Map::spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox)
+Wornite::Map::spawnHitbox(engine::Scene& scene, chunk *chunk, std::string hitbox)
 {
-	scene->registerEntityModel("hitboxChunk", [&](engine::Entity const &entity) {
-        entity.set<engine::IrrlichtComponent>(game, "obj/pieceMap.obj");
-        entity.set<engine::TransformComponent>();
-		entity.set<engine::TagComponent>(std::string("map"));
-	});
-
-	auto const& hitboxEntity = scene->spawnEntity("hitboxChunk");
+	auto const& hitboxEntity = scene.spawnEntity("hitboxChunk");
 	auto& transformComponent = hitboxEntity.get<engine::TransformComponent>();
 	transformComponent.position = {(chunk->length / 2.f * _mapPrecision) + ((chunk->id * chunk->length * _mapPrecision) - (chunk->mapLength / 2.f * _mapPrecision)),
 				       0.f,
@@ -277,4 +276,77 @@ Wornite::Map::getPerlin(float x, float y, float z)
 				   _perm[(int)g.Y + ((index >> 1) & 1) +
 					  _perm[(int)g.Z + (index & 1)]]] % 12;
 	return (getPerlin2(gi, r, f));
+}
+
+void
+Wornite::Map::divideBlock(engine::Scene& scene, engine::Entity entity)
+{
+	engine::Entity parent;
+	float entitySize;
+
+	parent = entity.getEntities()->getParentEntity(entity);
+	auto& t = entity.get<engine::TransformComponent>();
+	entitySize = t.scale.X * 2.f;
+	irr::core::vector3df position;
+	irr::core::vector3df scale;
+
+	position.X = t.position.X - entitySize;
+	position.Y = t.position.Y + entitySize;
+	position.Z = t.position.Z;
+	scale.X = t.scale.X / 2.f;
+	scale.Y = t.scale.Y / 2.f;
+	scale.Z = 1.f;
+	Wornite::Map::spawnPieceMap(scene, position, scale, parent);
+	position.X = t.position.X + entitySize;
+	position.Y = t.position.Y + entitySize;
+	Wornite::Map::spawnPieceMap(scene, position, scale, parent);
+	position.X = t.position.X + entitySize;
+	position.Y = t.position.Y - entitySize;
+	Wornite::Map::spawnPieceMap(scene, position, scale, parent);
+	position.X = t.position.X - entitySize;
+	position.Y = t.position.Y - entitySize;
+	Wornite::Map::spawnPieceMap(scene, position, scale, parent);
+}
+
+std::vector<engine::Entity>
+Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blastHitbox)
+{
+	std::vector<engine::Entity> blastCollision;
+
+//	std::cout << "xx" << std::endl;
+	entities.withTag("map", [&](engine::Entity const& chunk) {
+//		std::cout << "aa" << std::endl;
+		engine::GeometryHelper::transformHitbox(chunk.get<engine::HitboxComponent>(), chunk.get<engine::TransformComponent>());
+		engine::GeometryHelper::transformHitbox(blastHitbox.get<engine::HitboxComponent>(), blastHitbox.get<engine::TransformComponent>());
+		if (engine::GeometryHelper::simplePolygonCollide(chunk, blastHitbox)) {
+//			std::cout << "cc" << std::endl;
+			entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
+				if (engine::GeometryHelper::simplePolygonCollide(child, blastHitbox)) {
+					auto &t = child.get<engine::TransformComponent>();
+
+					if (t.scale.X == 0.1f) {
+						child.kill();
+					} else {
+						blastCollision.push_back(child);
+					}
+				}
+			});
+		}
+	});
+
+	return blastCollision;
+}
+
+void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius)
+{
+	engine::Entity blast = engine::GeometryHelper::createBlastPolygon(scene, x, y, radius);
+	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
+	while (!blockToDivide.empty()) {
+//		std::cout << "yes" << std::endl;
+		blockToDivide = getBlastCollision(scene.getEntities(), blast);
+		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
+			divideBlock(scene, blockToDivide[idx]);
+		}
+	}
+//	blast.kill();
 }

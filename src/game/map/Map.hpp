@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <engine/components/HitboxComponent.hpp>
 #include "engine/core/Game.hpp"
 #include "engine/core/Scene.hpp"
 #include "engine/core/Entity.hpp"
@@ -27,7 +28,7 @@ public:
 		float 	Density;
 	};
 
-	typedef struct 		chunk
+	struct 		chunk
 	{
 		std::string 	string;
 		int 		length;
@@ -36,18 +37,29 @@ public:
 		int 		id;
 		int 		nbChunks;
 		engine::Entity chunkHitboxEntity;
-	}			chunk;
+	};
 
-	typedef struct 		mapSettings
+	struct 		mapSettings
 	{
 		std::string 		string;
 		int 			length;
 		int 			height;
 		std::vector<Wornite::Map::chunk> chunks;
 		int 			nbChunks;
-	}			mapSettings;
+	};
 
-	void genMap(engine::Game* game, engine::Scene* scene);
+	void genMap(engine::Game& game, engine::Scene& scene);
+
+	static void tryDestroyMap(engine::Scene& scene, float x, float y, float radius);
+
+	static void divideBlock(engine::Scene& scene, engine::Entity entity);
+
+	static void spawnPieceMap(engine::Scene &scene, irr::core::vector3df position, irr::core::vector3df scale,
+				  engine::Entity entity);
+
+	static std::vector<engine::Entity> getBlastCollision(engine::Entities& , engine::Entity);
+
+
 
 private:
 	int _blockDisplayed = 0;
@@ -101,22 +113,20 @@ private:
 	float __attribute__ ((const))	fade(float n);
 	float __attribute__((pure))	getPerlin2(unsigned int gi[8], irr::core::vector3df r, irr::core::vector3df f);
 	float __attribute__((pure)) getPerlin(float x, float y, float z);
-	void fillBigChunks(engine::Game* game, engine::Scene* scene,
+	void fillBigChunks(engine::Game& game, engine::Scene& scene,
 			   chunk *map);
 
-	void spawnBigChunk(engine::Game* game, engine::Scene* scene,
+	void spawnBigChunk(engine::Scene& scene,
 			   Bsq::t_map *map, Bsq::t_response *res, chunk *chunk);
-
-	void spawnPieceMap(engine::Game *game, engine::Scene *scene, irr::core::vector3df position, irr::core::vector3df scale,
-				   engine::Entity entity);
 
 	void removeBigChunk(Bsq::t_map *map, Bsq::t_response *res);
 
 	void getChunk(mapSettings *map);
 
-	void spawnChunkHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk);
+	void spawnChunkHitbox(engine::Scene& scene, chunk *chunk);
 
-	void spawnHitbox(engine::Game *game, engine::Scene *scene, chunk *chunk, std::string hitbox);
+	void spawnHitbox(engine::Scene& scene, chunk *chunk, std::string hitbox);
+
 };
 
 }
