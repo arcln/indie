@@ -177,6 +177,24 @@ namespace worms { namespace scene {
 			hitboxComponent.hasDebugMode = true;
 		});
 
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+                std::cout << "use item" << std::endl;
+            });
+
+            ic.offset = {1.f, 2.f, 0.f};
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {-10.f, 10.f, 0.f};
+            transformComponent.scale = {0.5f, 0.5f, 0.5f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitboxComponent.rebound = 0.8;
+			hitboxComponent.hasDebugMode = true;
+		});
+
 		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(
 				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
