@@ -94,7 +94,13 @@ namespace worms { namespace scene {
 //				animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 79));
 
 				scene.registerEvent<std::string>("player.move", entity.getId(), [&](std::string const& move) {
-					physicsComponent.move = (Vector2f) move;
+                    auto _move = (Vector2f)move;
+					physicsComponent.move = _move;
+
+                    if (_move.x > 0)
+                        transformComponent.direction = true;
+                    else if (_move.x < 0)
+                        transformComponent.direction = false;
 
 					if (physicsComponent.move.X < 0) {
 						transformComponent.rotation.Y = 180;
@@ -257,6 +263,66 @@ namespace worms { namespace scene {
 			hitboxComponent.hasDebugMode = true;
 		});
 
+        scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj", "obj/sword.mtl");
+            entity.set<engine::PhysicsComponent>();
+
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {10.f, 10.f, 0.f};
+            transformComponent.scale = {0.25f, 0.25f, 0.25f};
+            transformComponent.offset = {0.f, -5.8f, 0.f};
+            transformComponent.offsetRotation = {0.f, -90.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-6 -1.5, -6 1.5, 6 1.5, 6 -1.5)");
+			hitboxComponent.rebound = 0.2;
+			hitboxComponent.hasDebugMode = true;
+
+            auto& ic = entity.set<engine::ItemComponent>();
+            ic.use = [&]() {
+                std::cout << "use item" << std::endl;
+                auto bullet = scene.spawnEntity("sword.bullet");
+                auto& bt = bullet.get<engine::TransformComponent>();
+                auto& bp = bullet.get<engine::PhysicsComponent>();
+                bt.position = transformComponent.position;
+                bp.velocity.X = 300.f;
+                if (!ic.direction)
+                    bp.velocity.X *= -1;
+            };
+            ic.offset = {1.5f, 1.f, 0.f};
+		});
+
+        scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.scale = {0.25f, 0.25f, 0.25f};
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+            hitboxComponent.onCollide = [entity](engine::Entity const& collideWith) -> void {
+                entity.disable(); // TODO: kill
+            };
+            hitboxComponent.hasDebugMode = true;
+		});
+
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+                std::cout << "use item" << std::endl;
+            });
+
+            ic.offset = {1.f, 2.f, 0.f};
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {-10.f, 10.f, 0.f};
+            transformComponent.scale = {0.5f, 0.5f, 0.5f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitboxComponent.rebound = 0.8;
+			hitboxComponent.hasDebugMode = true;
+		});
+
 		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(
 				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
@@ -290,10 +356,10 @@ namespace worms { namespace scene {
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, std::to_string(1));
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_O, "master.changePlayer", 0, std::to_string(0));
 
-		scene.spawnEntity("camera");
-		scene.spawnEntity("player");
-		scene.spawnEntity("block");
-        scene.spawnEntity("light");
-		scene.spawnEntity("item");
-	};
-}}
+			scene.spawnEntity("camera");
+			scene.spawnEntity("player");
+			scene.spawnEntity("light");
+            scene.spawnEntity("item");
+            scene.spawnEntity("sword");
+		};
+	}}

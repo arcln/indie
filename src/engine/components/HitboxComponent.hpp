@@ -8,13 +8,17 @@
 
 #include <irrlicht/irrlicht.h>
 #include <vector>
+#include <functional>
 #include "engine/utils/ComponentConstraint.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
 namespace engine {
 
+    class Entity;
+
 	struct HitboxComponent {
 		using Constraint = ComponentConstraint<HitboxComponent, false>;
+        using OnCollideFunction = std::function<void(Entity const&)>;
 
 		HitboxComponent();
 		HitboxComponent(std::string const& polygon);
@@ -32,5 +36,6 @@ namespace engine {
         bool isAABBOnly = false;
         bool isStatic = false;
         bool isComputed = false;
+        OnCollideFunction onCollide;
 	};
 }
