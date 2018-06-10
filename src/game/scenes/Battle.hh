@@ -86,6 +86,13 @@ namespace worms { namespace scene {
 				hitboxComponent.hasDebugMode = true;
 				hitboxComponent.rebound = 0.1f;
 
+				auto& physicsComponent = entity.set<engine::PhysicsComponent>();
+
+
+//				auto& animationComponent = entity.set<engine::AnimationComponent>("idle");
+//				animationComponent.states.emplace("run", engine::AnimationBoundaries(0, 40));
+//				animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 79));
+
 				scene.registerEvent<std::string>("player.move", entity.getId(), [&](std::string const& move) {
 					physicsComponent.move = (Vector2f) move;
 
@@ -177,37 +184,38 @@ namespace worms { namespace scene {
                 std::cout << "use item" << std::endl;
             });
 
-            scene.registerEvent<std::string>("player.pick", [entity, &hc](std::string const& s) {
-                if (hc.hasReachableEntity) {
-                    if (hc.items.size() < hc.capacity) {
-                        auto item = entity.attach(hc.reachableEntity);
-                        hc.items.push_back(item);
-                        hc.current += 1;
-                    }
-                }
-                return 0;
-            });
+				scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
+					if (hc.hasReachableEntity) {
+						if (hc.items.size() < hc.capacity) {
+							auto item = entity.attach(hc.reachableEntity);
+							hc.items.push_back(item);
+							hc.current += 1;
+						}
+					}
+					return 0;
+				});
 
-            scene.registerEvent<std::string>("player.use", [entity, &hc](std::string const& s) {
-                if (hc.current >= 0) {
-                    engine::Entity& item = hc.items[hc.current];
-                    if (item.has<engine::ItemComponent>()) {
-                        item.get<engine::ItemComponent>().use();
-                    }
-                }
-                return 0;
-            });
+				scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const& s) {
+					if (hc.current >= 0) {
+						engine::Entity& item = hc.items[hc.current];
+						if (item.has<engine::ItemComponent>()) {
+							item.get<engine::ItemComponent>().use();
+						}
+					}
+					return 0;
+				});
 
-            scene.registerEvent<std::string>("player.throw", [entity, &hc](std::string const& s) {
-                if (hc.current >= 0) {
-                    engine::Entity& item = hc.items[hc.current];
-                    item.detach();
-                    hc.items.erase(hc.items.begin() + hc.current);
-                    hc.current -= 1;
-                }
-                return 0;
-            });
-		});
+				scene.registerEvent<std::string>("player.throw", entity.getId(), [entity, &hc](std::string const& s) {
+					if (hc.current >= 0) {
+						engine::Entity& item = hc.items[hc.current];
+						item.detach();
+						hc.items.erase(hc.items.begin() + hc.current);
+						hc.current -= 1;
+					}
+					return 0;
+				});
+			});
+
 
 			Wornite::Map map;
             ic.offset = {1.f, 2.f, 0.f};
@@ -251,17 +259,13 @@ namespace worms { namespace scene {
 			);
 		});
 
-			scene.registerEvent<std::string>("player.spawn", [&](std::string const&) {
-				scene.spawnEntity("player");
-				return 0;
-			});
 
-		scene.registerEvent<std::string>("player.spawn", [&](std::string const&) {
+		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
             scene.spawnEntity("item");
 			scene.spawnEntity("player");
 			return 0;
 		});
-			scene.registerEvent<std::string>("master.changePlayer", [&](std::string const& player) {
+			scene.registerEvent<std::string>("master.changePlayer", 0, [&](std::string const& player) {
 				scene.getEntities().each<MasterComponent>([&](engine::Entity const& e, auto& m) {
 					m.currentPlayer = std::stoi(player);
 					if (m.currentPlayer != 0) { //TODO: Replace by player id
@@ -278,9 +282,6 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_E, "player.spawn", 0, Vector2f(0.f, 0.f), engine::EVT_SYNCED);
-			game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, std::to_string(1));
-			game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_O, "master.changePlayer", 0, std::to_string(0));
 
 		scene.spawnEntity("camera");
 		scene.spawnEntity("player");

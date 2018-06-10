@@ -18,7 +18,7 @@ engine::ItemSystem::update(Scene& scene)
     int64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() % 1000000;
     Entities& entities = scene.getEntities();
 
-    entities.each<TransformComponent>([&](Entity const& e, auto& t) {
+    entities.each<TransformComponent, ItemComponent>([&](Entity const& e, auto& t, auto& i) {
         auto parentID = e.getParentId();
 
         if (e.has<ItemComponent>() && parentID == Entity::nullId) {
