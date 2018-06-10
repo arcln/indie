@@ -57,14 +57,14 @@ int engine::Menu::ButtonFactory::rectCommand(std::string param)
 
 int engine::Menu::ButtonFactory::imageCommand(std::string param)
 {
-	irr::video::ITexture *image = _game->textureManager.get(param);
+	irr::video::ITexture *image = ResourceManager<Texture*>::instance().get(param);
 	_node->setImage(image);
 	return 0;
 }
 
 int engine::Menu::ButtonFactory::imagePressedCommand(std::string param)
 {
-	irr::video::ITexture *image = _game->textureManager.get(param);
+	irr::video::ITexture *image = ResourceManager<Texture*>::instance().get(param);
 	_node->setPressedImage(image);
 	return 0;
 }
