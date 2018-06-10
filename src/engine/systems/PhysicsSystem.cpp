@@ -27,21 +27,13 @@ engine::PhysicsSystem::update(Scene& scene)
     _tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
     _prevUpdate = now;
 
-    if (_tick > 0.5f) {
-        std::cout << _tick << std::endl;
-        return;
-    }
-
     entities.each<PhysicsComponent, TransformComponent>([&](Entity const& e, auto& p, auto& t) {
-
-        if (PhysicsSystem::isGrounded(entities, e) && e.has<ItemComponent>())
-            return;
-
-        if (e.has<HoldComponent>())
-            e.get<HoldComponent>().hasReachableEntity = false;
-
         engine::Vec2D pos2D(t.position.X, t.position.Y);
         engine::Vec2D newPos2D;
+
+        if (e.has<HoldComponent>()) {
+            e.get<HoldComponent>().hasReachableEntity = false;
+        }
 
         p.velocity += engine::PhysicsSystem::gravity * _tick;
         newPos2D = pos2D + p.velocity * _tick;
@@ -51,7 +43,7 @@ engine::PhysicsSystem::update(Scene& scene)
 
         this->applyCollision(entities, e);
         this->applyDeplacement(entities, e);
-    }, false);
+    });
 }
 
 void
@@ -82,8 +74,8 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                 if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
                         auto& hc = entity.get<HoldComponent>();
-                        hc.reachableEntity = e2;
                         hc.hasReachableEntity = true;
+                        hc.reachableEntity = e2;
                     }
                 } else {
                     mf.isCollide = true;
@@ -91,12 +83,12 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                     rebound *= h2.rebound;
                 }
             }
-        }, false);
+        });
         if (mf.isCollide) {
             p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
             p.velocity *= h.rebound * rebound;
+            PhysicsSystem::patchCollision(entities, entity);
         }
-        PhysicsSystem::patchCollision(entities, entity);
     });
 }
 
@@ -130,15 +122,12 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
                 GeometryHelper::transformHitbox(h2, t2);
 
                 Manifold mf = GeometryHelper::polygonCollide(entity, e2);
-                if (mf.isCollide) {
-                    if (mf.hasError) {
-                        return;
-                    }
+                if (mf.isCollide && !mf.hasError) {
                     t.prevPosition = tSave.prevPosition;
                     p.velocity *= 0.f;
                     PhysicsSystem::patchCollisionFrac(entity, e2);
                 }
-            }, false);
+            });
         }
     });
 }
@@ -219,15 +208,15 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
                 if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
                         auto& hc = entity.get<HoldComponent>();
-                        hc.reachableEntity = e2;
                         hc.hasReachableEntity = true;
+                        hc.reachableEntity = e2;
                     }
                 } else {
                     gmf.isCollide = true;
                     gmf.normal += mf.normal;
                 }
             }
-        }, false);
+        });
 
         if (gmf.isCollide) {
             auto dist = p.move.getLength() * _tick;
@@ -239,10 +228,10 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             t.position.Y += moveVec.Y * std::fabs(dist);
             if (moveVec.dotProduct(p.move) < 0 || PhysicsSystem::simpleCollideEntities(entities, entity)) {
                 t.position = t.prevPosition;
-                p.velocity.Y += 25.f;
+                p.velocity.Y += 20.f;
             }
-            PhysicsSystem::patchDeplacement(entities, entity, origin);
         }
+        PhysicsSystem::patchDeplacement(entities, entity, origin);
     });
 }
 
@@ -294,7 +283,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
 
             if (GeometryHelper::simplePolygonCollide(entity, e2))
                 isCollide = true;
-        }, false);
+        });
     });
 
     return isCollide;
@@ -313,17 +302,11 @@ engine::PhysicsSystem::isGrounded(Entities& entities, Entity const& entity)
         auto& h = entity.get<HitboxComponent>();
 
         t.prevPosition = t.position;
-        t.position.Y -= 0.5f;
+        t.position.Y -= 0.25f;
         GeometryHelper::transformHitbox(h, t);
         t.position = t.prevPosition;
         isGrounded = GeometryHelper::simplePolygonCollide(entity, entMap);
     });
 
     return isGrounded;
-}
-
-bool
-engine::PhysicsSystem::isImmobile(PhysicsComponent const& p)
-{
-    return (p.velocity.X < 1.f && p.velocity.Y < 1.f && p.move.X == 0.f && p.move.Y == 0.f);
 }

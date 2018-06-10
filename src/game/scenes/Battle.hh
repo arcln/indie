@@ -190,17 +190,16 @@ namespace worms { namespace scene {
 				scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
 					if (hc.hasReachableEntity) {
 						if (hc.items.size() == hc.count) {
-                            std::cout << "drop" << std::endl;
                             engine::Entity& item = hc.items[hc.current];
     						item.detach();
 
-                            std::cout << "get" << std::endl;
 
                             auto item2 = entity.attach(hc.reachableEntity);
 							hc.items[hc.current] = item2;
 						} else {
-                            std::cout << "get 2" << std::endl;
-
+                            if (hc.current >= 0) {
+                                hc.items[hc.current].disable();
+                            }
                             auto item = entity.attach(hc.reachableEntity);
 							hc.items[++hc.current] = item;
                             hc.count += 1;
