@@ -10,6 +10,7 @@
 #include <irrlicht/Keycodes.h>
 #include <iostream>
 #include <unordered_map>
+#include "../../../core/EventsHandler.hpp"
 
 namespace engine { namespace Menu {
 
@@ -21,6 +22,6 @@ namespace engine { namespace Menu {
 			std::string findKey(irr::EKEY_CODE key);
 
 		protected:
-			std::unordered_map<irr::EKEY_CODE, std::string> _keys;
+			std::unordered_map<irr::EKEY_CODE, std::string, EnumClassHash> _keys;
 	};
 }}

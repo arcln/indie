@@ -17,5 +17,6 @@ namespace engine {
         using Constraint = ComponentConstraint<PhysicsComponent, false>;
         Vec2D velocity{0.f, 0.f};
         Vec2D move{0.f, 0.f};
+        bool isGrounded = false;
 	};
 }

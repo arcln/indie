@@ -5,6 +5,7 @@
 ** Thomas Arbona
 */
 #include <cmath>
+#include "../Engine.hpp"
 #include "../components/HitboxComponent.hpp"
 #include "../components/PhysicsComponent.hpp"
 #include "../components/TransformComponent.hpp"
@@ -150,14 +151,19 @@ engine::GeometryHelper::polygonCollideChilds(Entity const& entity, Entity const&
 {
     Manifold mf;
     Entities* entities = entity.getEntities();
+    std::size_t count = 0;
 
     if (!entities)
         return mf;
 
     entities->eachChilds(entity2.getId(), [&](Entity const& child) {
+        if (count >= PhysicsCollideMaxObj)
+            return;
+
         Manifold mf2 = GeometryHelper::polygonCollide(entity, child);
 
         if (mf2.isCollide && !mf2.hasError) {
+            count += 1;
             mf.isCollide = true;
             mf.normal += mf2.normal;
         }
@@ -238,5 +244,3 @@ engine::GeometryHelper::createBlastPolygon(engine::Scene& scene, float x, float 
 
 	return blastEntity;
 }
-
-
