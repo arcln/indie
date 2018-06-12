@@ -10,6 +10,7 @@
 #include <boost/geometry.hpp>
 #include "engine/core/Game.hpp"
 #include "PhysicsSystem.hpp"
+#include "../Engine.hpp"
 #include "../components/TransformComponent.hpp"
 #include "../components/HitboxComponent.hpp"
 #include "../components/PhysicsComponent.hpp"
@@ -27,6 +28,10 @@ engine::PhysicsSystem::update(Scene& scene)
     _tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
     _prevUpdate = now;
 
+    if (_tick > 0.5f) {
+        return;
+    }
+
     entities.each<PhysicsComponent, TransformComponent>([&](Entity const& e, auto& p, auto& t) {
         engine::Vec2D pos2D(t.position.X, t.position.Y);
         engine::Vec2D newPos2D;
@@ -35,7 +40,7 @@ engine::PhysicsSystem::update(Scene& scene)
             e.get<HoldComponent>().hasReachableEntity = false;
         }
 
-        if (e.has<ItemComponent>() && PhysicsSystem::isGrounded(entities, e))
+        if (e.has<ItemComponent>() && p.isGrounded)
             return;
 
         p.velocity += engine::PhysicsSystem::gravity * _tick;
@@ -44,8 +49,18 @@ engine::PhysicsSystem::update(Scene& scene)
         t.position.X = newPos2D.X;
         t.position.Y = newPos2D.Y;
 
+        if (t.position.Y > t.prevPosition.Y) {
+            p.isGrounded = false;
+        }
+
         this->applyCollision(entities, e);
         this->applyDeplacement(entities, e);
+
+        if (t.position.Y < -50.f) {
+            e.kill();
+        }
+
+        p.isGrounded = PhysicsSystem::isGrounded(entities, e);
     }, false);
 }
 
@@ -59,6 +74,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
         Manifold mf;
         float rebound = 1.f;
         float dist = std::sqrt(std::pow(t.position.X - t.prevPosition.X, 2) + std::pow(t.position.Y - t.prevPosition.Y, 2));
+        std::size_t count = 0;
 
         if (dist > 2.f) {
             return this->applyCollisionFrac(entities, entity, dist);
@@ -67,7 +83,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
         GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
-            if (e2.getId() == entity.getId())
+            if (e2.getId() == entity.getId() || count >= PhysicsCollideMaxObj)
                 return;
 
             GeometryHelper::transformHitbox(h2, t2);
@@ -75,7 +91,6 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
             Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
             if (mf2.isCollide && !mf2.hasError) {
                 if (h.onCollide) {
-                    std::cout << "cc" << std::endl;
                     h.onCollide(e2);
                 } else if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
@@ -84,6 +99,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                         hc.reachableEntity = e2;
                     }
                 } else {
+                    count += 1;
                     mf.isCollide = true;
                     mf.normal += mf2.normal;
                     rebound *= h2.rebound;
@@ -91,6 +107,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
             }
         }, false);
         if (mf.isCollide) {
+            mf.normal.normalize();
             p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
             p.velocity *= h.rebound * rebound;
             PhysicsSystem::patchCollision(entities, entity);
@@ -123,7 +140,7 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 
             entities.each<HitboxComponent, TransformComponent>([&](auto const& e2, auto& h2, auto& t2) {
                 if (e2.getId() == entity.getId())
-                return;
+                    return;
 
                 GeometryHelper::transformHitbox(h2, t2);
 
@@ -202,6 +219,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             return;
 
         Manifold gmf;
+        std::size_t count = 0;
         auto origin = t.position;
         t.prevPosition = t.position;
         t.position.X += p.move.X * _tick;
@@ -209,7 +227,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
         GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
-            if (e2.getId() == entity.getId())
+            if (e2.getId() == entity.getId() || count >= PhysicsCollideMaxObj)
                 return;
 
             Manifold mf = GeometryHelper::polygonCollide(entity, e2);
@@ -228,15 +246,8 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
         }, false);
 
         if (gmf.isCollide) {
-            auto dist = p.move.getLength() * _tick;
-            auto moveVec = p.move * _tick;
-            moveVec -= 2 * (moveVec.dotProduct(gmf.normal)) * gmf.normal;
-            moveVec.normalize();
             t.position = t.prevPosition;
-            t.position.X += moveVec.X * std::fabs(dist);
-            t.position.Y += moveVec.Y * std::fabs(dist);
-            if (moveVec.dotProduct(p.move) < 0 || PhysicsSystem::simpleCollideEntities(entities, entity)) {
-                t.position = t.prevPosition;
+            if (p.isGrounded) {
                 p.velocity.Y += 30.f;
             }
         }
@@ -287,7 +298,7 @@ engine::PhysicsSystem::simpleCollideEntities(Entities& entities, Entity const& e
         GeometryHelper::transformHitbox(h, t);
 
         entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
-            if (e2.getId() == entity.getId() || e2.has<ItemComponent>())
+            if (e2.getId() == entity.getId() || e2.has<ItemComponent>() || isCollide)
                 return;
 
             if (GeometryHelper::simplePolygonCollide(entity, e2))
@@ -311,7 +322,7 @@ engine::PhysicsSystem::isGrounded(Entities& entities, Entity const& entity)
         auto& h = entity.get<HitboxComponent>();
 
         t.prevPosition = t.position;
-        t.position.Y -= 0.25f;
+        t.position.Y -= 0.5f;
         GeometryHelper::transformHitbox(h, t);
         t.position = t.prevPosition;
         isGrounded = GeometryHelper::simplePolygonCollide(entity, entMap);

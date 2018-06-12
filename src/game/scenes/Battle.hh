@@ -108,8 +108,8 @@ namespace worms { namespace scene {
 					return 0;
 				});
 
-				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent](std::string const& jump) {
-					if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
+				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &physicsComponent, &animationComponent](std::string const& jump) {
+					if (physicsComponent.isGrounded) {
 						std::cout << "jump" << std::endl;
 						physicsComponent.velocity += (Vector2f) jump;
 						animationComponent.currentState = "jump";
@@ -187,20 +187,6 @@ namespace worms { namespace scene {
 		});
 
 
-
-        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
-            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
-            entity.set<engine::PhysicsComponent>();
-			auto& ic = entity.set<engine::ItemComponent>([]() {
-                std::cout << "use item" << std::endl;
-            });
-
-            ic.offset = {1.f, 2.f, 0.f};
-            auto& transformComponent = entity.set<engine::TransformComponent>();
-            transformComponent.position = {-10.f, 10.f, 0.f};
-            transformComponent.scale = {0.5f, 0.5f, 0.5f};
-		});
-
 		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
 			entity.set<engine::LightComponent>(
 				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
@@ -262,8 +248,9 @@ namespace worms { namespace scene {
             transformComponent.scale = {0.25f, 0.25f, 0.25f};
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
             hitboxComponent.onCollide = [entity, &scene, &transformComponent](engine::Entity const& collideWith) -> void {
-                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
-                entity.disable(); // TODO: kill
+                std::cout << "fire" << std::endl;
+                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 1.f);
+                entity.kill();
             };
             hitboxComponent.hasDebugMode = true;
 		});

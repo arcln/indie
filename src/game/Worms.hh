@@ -30,15 +30,15 @@ namespace worms {
         game.registerSystem("physics", new engine::PhysicsSystem());
         game.registerSystem("display", new engine::DisplaySystem(game));
 		game.registerSystem("player", new PlayerSystem());
-		game.registerSystem("effects", new engine::Menu::MenuEngineSystem());
+		// game.registerSystem("effects", new engine::Menu::MenuEngineSystem());
 
-		game.registerSceneModel("postMenu", worms::scene::postMenu);
-		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
-		game.registerSceneModel("playMenu", worms::scene::playScene);
-		game.registerSceneModel("creditsMenu", worms::scene::creditsScene);
-		game.registerSceneModel("optionsMenu", worms::scene::optionsScene);
-		game.registerSceneModel("keyAssign", worms::scene::keyAssign);
-		game.registerSceneModel("waintingMenu", worms::scene::waitingScene);
+		// game.registerSceneModel("postMenu", worms::scene::postMenu);
+		// game.registerSceneModel("mainMenu", worms::scene::mainMenu);
+		// game.registerSceneModel("playMenu", worms::scene::playScene);
+		// game.registerSceneModel("creditsMenu", worms::scene::creditsScene);
+		// game.registerSceneModel("optionsMenu", worms::scene::optionsScene);
+		// game.registerSceneModel("keyAssign", worms::scene::keyAssign);
+		// game.registerSceneModel("waintingMenu", worms::scene::waitingScene);
 		game.registerSceneModel("main", worms::scene::loading);
 		game.registerSceneModel("battle", worms::scene::battle);
 	};

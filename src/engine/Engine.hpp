@@ -13,6 +13,7 @@
 namespace engine {
 
 	static const std::string DefaultAssetsRoot = "./assets/";
+    static const std::size_t PhysicsCollideMaxObj = 3;
 
 	class Engine {
 	public:
