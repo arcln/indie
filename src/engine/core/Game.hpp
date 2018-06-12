@@ -44,7 +44,8 @@ namespace engine {
         std::list<Scene>& getScenes() { return _scenes; }
 
 	private:
-		 Events _keyEvents;
+		KeyEvents _keyEvents;
+		MouseMovedEvent _mouseMovedEvent;
 
 	public:
 		EventsHandler eventsHandler;

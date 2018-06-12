@@ -10,8 +10,8 @@
 #include "Game.hpp"
 
 engine::Game::Game(bool enableVideo, std::string const& cwd)
-	: eventsHandler(_keyEvents)
-	, _eventReceiver(_keyEvents)
+	: eventsHandler(_keyEvents, _mouseMovedEvent)
+	, _eventReceiver(_keyEvents, _mouseMovedEvent)
 	, _cwd(cwd)
 {
 	_device = irr::createDevice(enableVideo ? irr::video::EDT_OPENGL : irr::video::EDT_NULL,
