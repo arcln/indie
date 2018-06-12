@@ -127,9 +127,14 @@ engine::Game::getcwd() const
 
 void engine::Game::_updateScenes()
 {
+    this->device()->run();
+    this->device()->getVideoDriver()->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
+
 	for (auto& scene : _scenes) {
 		for (auto& system : _systems) {
 			system.second->update(scene);
 		}
 	}
+
+    this->device()->getVideoDriver()->endScene();
 }

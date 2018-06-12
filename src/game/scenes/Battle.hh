@@ -25,6 +25,7 @@
 #include "engine/components/HoldComponent.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
+#include "game/components/WeaponComponent.hpp"
 #include "game/events/Vector.hpp"
 
 namespace worms { namespace scene {
@@ -57,17 +58,20 @@ namespace worms { namespace scene {
 					return 0;
 				});
 
-				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_RIGHT, "camera.move", entity.getId(), Vector3f(-1.f, 0.f, 0.f));
-				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_LEFT,  "camera.move", entity.getId(), Vector3f(1.f, 0.f, 0.f));
-				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_UP,    "camera.move", entity.getId(), Vector3f(0.f, 1.f, 0.f));
-				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_DOWN,  "camera.move", entity.getId(), Vector3f(0.f, -1.f, 0.f));
-				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_R, "camera.move", entity.getId(), Vector3f(0.f, 0.f, 1.f));
-				game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_F, "camera.move", entity.getId(), Vector3f(0.f, 0.f, -1.f));
+				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_RIGHT, "camera.move", entity.getId(), Vector3f(-1.f, 0.f, 0.f));
+				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_LEFT,  "camera.move", entity.getId(), Vector3f(1.f, 0.f, 0.f));
+				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_UP,    "camera.move", entity.getId(), Vector3f(0.f, 1.f, 0.f));
+				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_DOWN,  "camera.move", entity.getId(), Vector3f(0.f, -1.f, 0.f));
+				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_R, "camera.move", entity.getId(), Vector3f(0.f, 0.f, 1.f));
+				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_F, "camera.move", entity.getId(), Vector3f(0.f, 0.f, -1.f));
 			});
 
 			scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 				entity.set<PlayerComponent>(0);
 				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
+                entity.set<engine::TagComponent>(std::string("player"));
+                std::cout << "player " << entity.getId() << std::endl;
+
 
 				auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 				auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -98,18 +102,11 @@ namespace worms { namespace scene {
                         transformComponent.direction = true;
                     else if (_move.x < 0)
                         transformComponent.direction = false;
-
-					if (physicsComponent.move.X < 0) {
-						transformComponent.rotation.Y = 180;
-					} else if (physicsComponent.move.X > 0) {
-						transformComponent.rotation.Y = 0;
-					}
-
 					return 0;
 				});
 
-				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &physicsComponent, &animationComponent](std::string const& jump) {
-					if (physicsComponent.isGrounded) {
+				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent](std::string const& jump) {
+					if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
 						std::cout << "jump" << std::endl;
 						physicsComponent.velocity += (Vector2f) jump;
 						animationComponent.currentState = "jump";
@@ -152,6 +149,18 @@ namespace worms { namespace scene {
 					return 0;
 				});
 
+                scene.registerEvent<std::string>("player.aim", entity.getId(), [entity, &hc](std::string const& move) {
+					if (hc.current >= 0) {
+						engine::Entity& item = hc.items[hc.current];
+						if (item.has<engine::ItemComponent>() && item.has<WeaponComponent>()) {
+                            auto& weapon = item.get<WeaponComponent>();
+                            if (weapon.hasAim)
+                                weapon.aimPosition += (Vector2f)move;
+						}
+					}
+					return 0;
+				});
+
 				// scene.registerEvent<std::string>("player.explode", entity.getId(), [&](std::string const& move) {
 				//     for (int i = 0; i < 4; i++)
 				//     Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
@@ -180,20 +189,23 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 100.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_U, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
+                game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_X, "player.explode", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
+                game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_UP, "player.aim", entity.getId(), Vector2f(0.f, 1.f), engine::EVT_SYNCED);
+                game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_RIGHT, "player.aim", entity.getId(), Vector2f(1.f, 0.f), engine::EVT_SYNCED);
+                game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_DOWN, "player.aim", entity.getId(), Vector2f(0.f, -1.f), engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_LEFT, "player.aim", entity.getId(), Vector2f(-1.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 
 				return 0;
 		});
 
 
-		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
-			entity.set<engine::LightComponent>(
-				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
-			);
-		});
 
         scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::TagComponent>(std::string("item"));
+            std::cout << "item " << entity.getId() << std::endl;
+
+
             entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
             entity.set<engine::PhysicsComponent>();
 			auto& ic = entity.set<engine::ItemComponent>([]() {
@@ -201,17 +213,25 @@ namespace worms { namespace scene {
             });
 
             ic.offset = {1.f, 2.f, 0.f};
-
-			auto& transformComponent = entity.set<engine::TransformComponent>();
-			transformComponent.position = {-10.f, 10.f, 0.f};
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.position = {-10.f, 10.f, 0.f};
             transformComponent.scale = {0.5f, 0.5f, 0.5f};
+		});
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-			hitboxComponent.rebound = 0.2;
-			hitboxComponent.hasDebugMode = true;
+		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
+			entity.set<engine::LightComponent>(
+				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
+			);
 		});
 
         scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
+            entity.set<engine::TagComponent>(std::string("sword"));
+            std::cout << "sword " << entity.getId() << std::endl;
+
+            auto& wc = entity.set<WeaponComponent>();
+            wc.hasAim = true;
+
+
             entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj", "obj/sword.mtl");
             entity.set<engine::PhysicsComponent>();
 
@@ -233,14 +253,16 @@ namespace worms { namespace scene {
                 auto& bt = bullet.get<engine::TransformComponent>();
                 auto& bp = bullet.get<engine::PhysicsComponent>();
                 bt.position = transformComponent.position;
-                bp.velocity.X = 300.f;
-                if (!ic.direction)
-                    bp.velocity.X *= -1;
+                bp.velocity.X = wc.aimPosition.X;
+                bp.velocity.Y = wc.aimPosition.Y;
+                bp.velocity = bp.velocity.normalize() * 300.f;
             };
             ic.offset = {1.5f, 1.f, 0.f};
 		});
 
         scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
+            entity.set<engine::TagComponent>(std::string("sword.bullet"));
+
             entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
             entity.set<engine::PhysicsComponent>();
 
@@ -248,14 +270,18 @@ namespace worms { namespace scene {
             transformComponent.scale = {0.25f, 0.25f, 0.25f};
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
             hitboxComponent.onCollide = [entity, &scene, &transformComponent](engine::Entity const& collideWith) -> void {
-                std::cout << "fire" << std::endl;
-                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 1.f);
-                entity.kill();
+                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+                entity.disable(); // TODO: kill
             };
             hitboxComponent.hasDebugMode = true;
 		});
 
+
         scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::TagComponent>(std::string("item"));
+            std::cout << "item " << entity.getId() << std::endl;
+
+
             entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
             entity.set<engine::PhysicsComponent>();
 			auto& ic = entity.set<engine::ItemComponent>([]() {
@@ -269,11 +295,12 @@ namespace worms { namespace scene {
             transformComponent.scale = {0.5f, 0.5f, 0.5f};
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-			hitboxComponent.rebound = 0.8;
+			hitboxComponent.rebound = 0.2;
 			hitboxComponent.hasDebugMode = true;
 		});
 
 		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
+
 			entity.set<engine::LightComponent>(
 				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
 			);

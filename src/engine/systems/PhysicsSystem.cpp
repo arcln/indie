@@ -16,6 +16,7 @@
 #include "../components/PhysicsComponent.hpp"
 #include "../components/HoldComponent.hpp"
 #include "../components/ItemComponent.hpp"
+#include "../components/TagComponent.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
 const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
@@ -82,6 +83,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
         GeometryHelper::transformHitbox(h, t);
 
+        std::cout << std::endl;
         entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId() || count >= PhysicsCollideMaxObj)
                 return;
@@ -92,7 +94,10 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
             if (mf2.isCollide && !mf2.hasError) {
                 if (h.onCollide) {
                     h.onCollide(e2);
-                } else if (e2.has<ItemComponent>()) {
+                } else if (h2.onCollide) {
+                    h2.onCollide(entity);
+                }
+                if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
                         auto& hc = entity.get<HoldComponent>();
                         hc.hasReachableEntity = true;
@@ -106,6 +111,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                 }
             }
         }, false);
+
         if (mf.isCollide) {
             mf.normal.normalize();
             p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
@@ -148,6 +154,8 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
                 if (mf.isCollide && !mf.hasError) {
                     if (h.onCollide) {
                         h.onCollide(e2);
+                    } else if (h2.onCollide) {
+                        h2.onCollide(entity);
                     }
                     t.prevPosition = tSave.prevPosition;
                     p.velocity *= 0.f;
