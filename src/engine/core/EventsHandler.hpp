@@ -29,28 +29,36 @@ namespace engine {
 	};
 
 	using KeyCode = irr::EKEY_CODE;
+
 	using KeyState = irr::SEvent::SKeyInput;
-	using Events = std::unordered_map<std::size_t, Event<KeyState>>;
+	using MousePosition = irr::core::vector2d<irr::s32>;
+
+	using KeyEvents = std::unordered_map<std::size_t, Event<KeyState>>;
+	using MouseMovedEvent = Event<MousePosition>;
 
 	class EventsReceiver : public irr::IEventReceiver {
 	public:
-		explicit EventsReceiver(Events& keyEvents);
+		EventsReceiver(KeyEvents& keyEvents, MouseMovedEvent& mouseMovedEvent);
 
 		bool OnEvent(irr::SEvent const& event) override;
 
 	private:
-		Events& _keyEvents;
+		KeyEvents& _keyEvents;
+		MouseMovedEvent& _mouseMovedEvent;
 	};
 
 	class EventsHandler {
 	public:
-		explicit EventsHandler(Events& keyEvents);
+		EventsHandler(KeyEvents& keyEvents, MouseMovedEvent& _mouseMovedEvent);
 
 		KeyState const& getKeyState(KeyCode keyCode);
+		MousePosition const& getMousePosition() const;
 
 		void unregisterEventTarget(Scene const& target);
 		void enableKeyEvent(KeyCode code);
 		void disableKeyEvent(KeyCode code);
+
+		bool isKeyPressed(KeyCode code) const;
 
 		template <typename PayloadType>
 		void subscribe(engine::Scene& scene, engine::KeyCode key, std::string const& evt, EntityId target, PayloadType const& payload, int config = 0) {
@@ -70,8 +78,11 @@ namespace engine {
 
 	private:
 		std::unordered_map<KeyCode, KeyState, EnumClassHash> _keyStates;
-		Events& _keyEvents;
+		KeyEvents& _keyEvents;
 		std::unordered_map<KeyCode, bool, EnumClassHash> _keyEventsState;
+
+		MouseMovedEvent& _mouseMovedEvent;
+		MousePosition _mousePosition;
 
 		template <typename PayloadType>
 		using IsString = typename std::enable_if<std::is_same<std::string, PayloadType>::value, PayloadType>::type;

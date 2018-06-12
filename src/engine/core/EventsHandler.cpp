@@ -7,7 +7,7 @@
 
 #include "EventsHandler.hpp"
 
-engine::EventsHandler::EventsHandler(Events& keyEvents) : _keyEvents(keyEvents)
+engine::EventsHandler::EventsHandler(KeyEvents& keyEvents, MouseMovedEvent& mouseMovedEvent) : _keyEvents(keyEvents), _mouseMovedEvent(mouseMovedEvent)
 {
 	_registerEventTarget(Scene());
 }
@@ -31,6 +31,11 @@ engine::EventsHandler::_registerEventTarget(Scene const& target)
 		_keyStates[keyState.Key] = keyState;
 		return 0;
 	});
+
+	_mouseMovedEvent.subscribe([&](MousePosition const& mousePosition) -> int {
+		_mousePosition = mousePosition;
+		return 0;
+	});
 }
 
 void
@@ -45,16 +50,37 @@ engine::EventsHandler::disableKeyEvent(KeyCode code)
 	_keyEventsState[code] = false;
 }
 
-engine::EventsReceiver::EventsReceiver(Events& keyEvents) : _keyEvents(keyEvents)
+bool
+engine::EventsHandler::isKeyPressed(KeyCode code) const
+{
+	auto const& it = _keyEventsState.find(code);
+	return it->second && it->first;
+}
+
+engine::MousePosition const&
+engine::EventsHandler::getMousePosition() const
+{
+	return _mousePosition;
+}
+
+engine::EventsReceiver::EventsReceiver(KeyEvents& keyEvents, MouseMovedEvent& mouseMovedEvent)
+	: _keyEvents(keyEvents)
+	, _mouseMovedEvent(mouseMovedEvent)
 {}
 
 bool
 engine::EventsReceiver::OnEvent(irr::SEvent const& event)
 {
-	if (event.EventType == irr::EET_KEY_INPUT_EVENT) {
-		for (auto& target : _keyEvents) {
-			target.second.emit(engine::KeyState(event.KeyInput));
-		}
+	switch (event.EventType) {
+		case irr::EET_KEY_INPUT_EVENT:
+			for (auto& target : _keyEvents) {
+				target.second.emit(engine::KeyState(event.KeyInput));
+			}
+			break;
+		case irr::EET_MOUSE_INPUT_EVENT:
+			_mouseMovedEvent.emit(engine::MousePosition(event.MouseInput.X, event.MouseInput.Y));
+			break;
+		default: break;
 	}
 
 	return false;
