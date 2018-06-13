@@ -122,6 +122,7 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
     entity.get<PhysicsComponent, HitboxComponent, TransformComponent>([&](auto& p, auto& h, auto& t) {
         float traveled = 0.f;
         irr::core::vector3df pPrevPosition;
+        bool isCollide = false;
 
         auto tSave = t;
         auto _p = p;
@@ -129,7 +130,7 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
         _p.velocity.normalize();
         t.position = t.prevPosition;
 
-        while (std::fabs(traveled) <= std::fabs(dist)) {
+        while (std::fabs(traveled) <= std::fabs(dist) && !isCollide) {
 
             pPrevPosition = t.prevPosition;
             t.prevPosition = t.position;
@@ -147,6 +148,8 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 
                 Manifold mf = GeometryHelper::polygonCollide(entity, e2, 0);
                 if (mf.isCollide && !mf.hasError) {
+                    isCollide = mf.isCollide;
+
                     if (h.onCollide) {
                         h.onCollide(e2);
                     } else if (h2.onCollide) {
