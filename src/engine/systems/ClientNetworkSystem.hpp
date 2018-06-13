@@ -19,7 +19,7 @@ namespace engine {
 		explicit ClientNetworkSystem(network::ClientSocket const& socket, Scene::Events& events);
 		~ClientNetworkSystem();
 
-		void update(Scene& scene) override;
+		void update(Scene& scene, float tick) override;
 
 	private:
 		std::thread _netThread;

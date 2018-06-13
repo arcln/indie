@@ -17,6 +17,6 @@ namespace engine {
 		ItemSystem() = default;
 		~ItemSystem() = default;
 
-		void update(Scene& scene) override;
+		void update(Scene& scene, float tick) override;
 	};
 }

@@ -7,7 +7,6 @@
 #pragma once
 
 #include <vector>
-#include <chrono>
 #include <irrlicht/irrlicht.h>
 #include "engine/core/System.hpp"
 #include "engine/components/HitboxComponent.hpp"
@@ -19,12 +18,10 @@ namespace engine {
 
 	class PhysicsSystem : public System {
 	public:
-		using Clock = std::chrono::time_point<std::chrono::system_clock>;
-
 		PhysicsSystem() = default;
 		~PhysicsSystem() = default;
 
-		void update(Scene& scene) override;
+		void update(Scene& scene, float tick) override;
 
 		void applyCollision(Entities& entities, Entity const& entity);
         void applyCollisionFrac(Entities& entities, Entity const& entity, float dist);
@@ -37,7 +34,6 @@ namespace engine {
         static bool isImmobile(PhysicsComponent const& p);
 
 	private:
-		Clock _prevUpdate = std::chrono::system_clock::now();
 		float _tick;
 		static const Vec2D gravity;
 	};

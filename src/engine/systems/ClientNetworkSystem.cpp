@@ -30,5 +30,5 @@ engine::ClientNetworkSystem::~ClientNetworkSystem()
 }
 
 void
-engine::ClientNetworkSystem::update(Scene&)
+engine::ClientNetworkSystem::update(Scene&, float)
 {}

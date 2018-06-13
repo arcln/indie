@@ -20,7 +20,7 @@ sqrt( (A.x - C.x) ** 2 + (A.y - (C.x * 2 + 1)) ** 2 ) =  dist
 */
 
 void
-engine::ItemSystem::update(Scene& scene)
+engine::ItemSystem::update(Scene& scene, float)
 {
     int64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() % 1000000;
     Entities& entities = scene.getEntities();

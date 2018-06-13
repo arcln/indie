@@ -18,7 +18,7 @@ engine::Menu::MenuEngineSystem::~MenuEngineSystem()
 {
 }
 
-void engine::Menu::MenuEngineSystem::update(Scene &scene)
+void engine::Menu::MenuEngineSystem::update(Scene &scene, float)
 {
 	Entities entities = scene.getEntities();
 	entities.each<ButtonComponent>([&](auto const& e, auto& button) {

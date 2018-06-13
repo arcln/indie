@@ -13,6 +13,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <iostream>
+#include <vector>
 
 /**
  * @brief Engine namespace, used for everything that touch to low-level graphics

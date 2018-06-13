@@ -27,6 +27,7 @@ namespace engine {
 
 		using SceneModel = std::function<void (Game&, Scene&)>;
 		using SceneModels = std::unordered_map<std::string, SceneModel>;
+		using Clock = std::chrono::time_point<std::chrono::system_clock>;
 
 		void play(std::string const& name);
 		void replaceScene(std::string const& name);
@@ -57,6 +58,7 @@ namespace engine {
 		std::list<Scene> _scenes;
 		SceneModels _sceneModels;
 		std::string _cwd;
+		Clock _prevUpdate;
 
 		void _updateScenes();
 	};
