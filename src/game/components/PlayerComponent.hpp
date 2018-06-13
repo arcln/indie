@@ -14,9 +14,6 @@ namespace worms {
 	struct PlayerComponent {
 		using Constraint = engine::ComponentConstraint<PlayerComponent, false>;
 
-		explicit PlayerComponent(int id) : id(id) {}
-
-		int id;
 		int hp = 100;
 	};
 }

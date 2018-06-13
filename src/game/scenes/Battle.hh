@@ -81,7 +81,7 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("player", [&game, &scene, master](engine::Entity const& entity) {
-			entity.set<PlayerComponent>(0);
+			entity.set<PlayerComponent>();
 			entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d", "texture/silinoid.png");
 			entity.set<engine::TagComponent>(std::string("player"));
 			master.get<MasterComponent>().players.push_back(entity.getId());
@@ -233,7 +233,6 @@ namespace worms { namespace scene {
 
 		scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
 			entity.set<engine::TagComponent>(std::string("projectile"));
-
 			entity.set<engine::IrrlichtComponent>(&game, "obj/missile.obj", "texture/missile.png");
 			entity.set<engine::PhysicsComponent>();
 
@@ -321,8 +320,8 @@ namespace worms { namespace scene {
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
 
-		for (auto i = 0; i < 4; ++i) {
-			scene.triggerEvent<Vector3f>("player.spawn", 0, Vector3f(-20.f + 10.f * i, 25.f, 0.f));
+		for (auto i = 0; i < 2; ++i) {
+			scene.triggerEvent<Vector3f>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f));
 		}
 
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, "");
