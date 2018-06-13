@@ -70,7 +70,7 @@ namespace engine {
 		}
 
 		template <typename ContextType>
-		void triggerEvent(std::string const& name, EntityId target, ContextType const& context = ContextType()) {
+		void triggerEvent(std::string const& name, EntityId target = 0, ContextType const& context = ContextType()) {
 			if (_events.find(name) == std::end(_events)) {
 				throw std::runtime_error("event '" + name + "' does not exists");
 			}
@@ -78,7 +78,7 @@ namespace engine {
 			reinterpret_cast<Event<ContextType>*>(_events[name])->emit(context, target);
 		}
 
-		void triggerSyncedEvent(std::string const& name, EntityId target, std::string const& serializedContext) {
+		void triggerSyncedEvent(std::string const& name, EntityId target = 0, std::string const& serializedContext = "") {
 			this->triggerEvent<std::string>(name, target, serializedContext);
 
 			if (_synced) {
