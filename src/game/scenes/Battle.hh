@@ -75,11 +75,24 @@ namespace worms { namespace scene {
 
 				auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 				auto& transformComponent = entity.set<engine::TransformComponent>();
-				auto& animationComponent = entity.set<engine::AnimationComponent>("idle");
-				animationComponent.states.emplace("run", engine::AnimationBoundaries(0, 40));
-				animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 80));
-				animationComponent.states.emplace("jump", engine::AnimationBoundaries(230, 19));
-				animationComponent.states.emplace("inAir", engine::AnimationBoundaries(240, 9)); // TODO
+				auto& animationComponent = entity.set<engine::AnimationComponent>("idle", 60);
+
+				engine::AnimationBoundaries idle(0, 80);
+				engine::AnimationBoundaries run(80, 40);
+				engine::AnimationBoundaries jump(120, 35);
+				engine::AnimationBoundaries inAir(155, 25);
+
+				animationComponent.states.emplace("idle", idle);
+				animationComponent.states.emplace("run", run);
+				animationComponent.states.emplace("jump", jump);
+				animationComponent.states.emplace("inAir", inAir);
+
+				irr::s32 holdHeavyOffset = 290;
+				animationComponent.states.emplace("idleHoldHeavy", idle + holdHeavyOffset);
+				animationComponent.states.emplace("runHoldHeavy", run + holdHeavyOffset);
+				animationComponent.states.emplace("jumpHoldHeavy", jump + holdHeavyOffset);
+				animationComponent.states.emplace("inAirHoldHeavy", inAir + holdHeavyOffset);
+
 
 				transformComponent.scale = {0.5f, 0.5f, 0.5f};
 				transformComponent.position = {0.f, 25.f, 0.f};
@@ -89,10 +102,6 @@ namespace worms { namespace scene {
 				hitboxComponent.rebound = 0.1f;
 
 				auto& hc = entity.set<engine::HoldComponent>();
-
-//				auto& animationComponent = entity.set<engine::AnimationComponent>("idle");
-//				animationComponent.states.emplace("run", engine::AnimationBoundaries(0, 40));
-//				animationComponent.states.emplace("idle", engine::AnimationBoundaries(40, 79));
 
 				scene.registerEvent<std::string>("player.move", entity.getId(), [&](std::string const& move) {
                     auto _move = (Vector2f)move;
@@ -105,13 +114,13 @@ namespace worms { namespace scene {
 					return 0;
 				});
 
-				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent](std::string const& jump) {
+				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent, &hc](std::string const& jump) {
 					if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
 						std::cout << "jump" << std::endl;
 						physicsComponent.velocity += (Vector2f) jump;
-						animationComponent.currentState = "jump";
+						animationComponent.currentState = PlayerSystem::getState("jump", hc);
 						animationComponent.playOnce = true;
-						animationComponent.nextState = "inAir";
+						animationComponent.nextState = PlayerSystem::getState("inAir", hc);
 					}
 
 					return 0;
@@ -122,7 +131,6 @@ namespace worms { namespace scene {
 						if (hc.items.size() == hc.count) {
 							engine::Entity& item = hc.items[hc.current];
 							item.detach();
-
 
 							auto item2 = entity.attach(hc.reachableEntity);
 							hc.items[hc.current] = item2;

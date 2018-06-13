@@ -21,6 +21,7 @@ namespace worms { namespace scene {
 
 		scene.registerEvent<engine::GenericEvent>("loadMeshes", 0, [&](engine::GenericEvent const&) {
 			engine::ResourceManager<engine::MeshNode*>::instance().asyncLoad({"obj/worm.obj"}).wait();
+			engine::ResourceManager<engine::MeshNode*>::instance().asyncLoad({"obj/silinoid.ms3d"}).wait();
 			return 0;
 		});
 

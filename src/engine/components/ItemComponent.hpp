@@ -23,5 +23,6 @@ namespace engine {
         UseFunction use;
         irr::core::vector3df offset{0.f, 0.f, 0.f};
         bool direction = true;
+		bool heavy = false;
 	};
 }
