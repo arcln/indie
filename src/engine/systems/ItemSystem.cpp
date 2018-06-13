@@ -13,6 +13,12 @@
 #include "../components/ItemComponent.hpp"
 #include "../components/HitboxComponent.hpp"
 
+/*
+
+sqrt( (A.x - C.x) ** 2 + (A.y - (C.x * 2 + 1)) ** 2 ) =  dist
+
+*/
+
 void
 engine::ItemSystem::update(Scene& scene)
 {

@@ -93,7 +93,7 @@ engine::GeometryHelper::AABBCollide(HitboxComponent const& h1, HitboxComponent c
 }
 
 engine::Manifold
-engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entity2, int call)
+engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entity2, float rebound, int call)
 {
     std::deque<Polygon> inter;
     Manifold mf;
@@ -110,13 +110,13 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entit
         return mf;
 
     if (h2.isAABBOnly) {
-        return GeometryHelper::polygonCollideChilds(entity, entity2);
+        return GeometryHelper::polygonCollideChilds(entity, entity2, rebound);
     }
 
     boost::geometry::intersection(h1.hitboxW2D, h2.hitboxW2D, inter);
     mf.isCollide = !inter.empty();
 
-    if (mf.isCollide) {
+    if (mf.isCollide && rebound) {
         auto segments = GeometryHelper::getCombinedSegments(inter[0], h2.hitboxW2D);
         auto& t1 = entity.get<TransformComponent>();
 
@@ -129,7 +129,7 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entit
             t1.position.X += h1.patch.X;
             t1.position.Y += h1.patch.Y;
             GeometryHelper::transformHitbox(h1, t1);
-            return GeometryHelper::polygonCollide(entity, entity2, call + 1);
+            return GeometryHelper::polygonCollide(entity, entity2, rebound, call + 1);
         }
 
         Point lineVec = GeometryHelper::mergeSegmentsIntoVector(segments);
@@ -147,7 +147,7 @@ engine::GeometryHelper::polygonCollide(Entity const& entity, Entity const& entit
 }
 
 engine::Manifold
-engine::GeometryHelper::polygonCollideChilds(Entity const& entity, Entity const& entity2)
+engine::GeometryHelper::polygonCollideChilds(Entity const& entity, Entity const& entity2, float rebound)
 {
     Manifold mf;
     Entities* entities = entity.getEntities();
@@ -160,7 +160,7 @@ engine::GeometryHelper::polygonCollideChilds(Entity const& entity, Entity const&
         if (count >= PhysicsCollideMaxObj)
             return;
 
-        Manifold mf2 = GeometryHelper::polygonCollide(entity, child);
+        Manifold mf2 = GeometryHelper::polygonCollide(entity, child, rebound);
 
         if (mf2.isCollide && !mf2.hasError) {
             count += 1;

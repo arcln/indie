@@ -16,6 +16,7 @@
 #include "../components/PhysicsComponent.hpp"
 #include "../components/HoldComponent.hpp"
 #include "../components/ItemComponent.hpp"
+#include "../components/TagComponent.hpp"
 #include "../helpers/GeometryHelper.hpp"
 
 const engine::Vec2D engine::PhysicsSystem::gravity{0., -400.};
@@ -88,11 +89,14 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
             GeometryHelper::transformHitbox(h2, t2);
 
-            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
+            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2, rebound * h2.rebound);
             if (mf2.isCollide && !mf2.hasError) {
                 if (h.onCollide) {
                     h.onCollide(e2);
-                } else if (e2.has<ItemComponent>()) {
+                } else if (h2.onCollide) {
+                    h2.onCollide(entity);
+                }
+                if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
                         auto& hc = entity.get<HoldComponent>();
                         hc.hasReachableEntity = true;
@@ -106,6 +110,7 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
                 }
             }
         }, false);
+
         if (mf.isCollide) {
             mf.normal.normalize();
             p.velocity -= 2 * (p.velocity.dotProduct(mf.normal)) * mf.normal;
@@ -144,10 +149,12 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 
                 GeometryHelper::transformHitbox(h2, t2);
 
-                Manifold mf = GeometryHelper::polygonCollide(entity, e2);
+                Manifold mf = GeometryHelper::polygonCollide(entity, e2, 0);
                 if (mf.isCollide && !mf.hasError) {
                     if (h.onCollide) {
                         h.onCollide(e2);
+                    } else if (h2.onCollide) {
+                        h2.onCollide(entity);
                     }
                     t.prevPosition = tSave.prevPosition;
                     p.velocity *= 0.f;
@@ -230,7 +237,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             if (e2.getId() == entity.getId() || count >= PhysicsCollideMaxObj)
                 return;
 
-            Manifold mf = GeometryHelper::polygonCollide(entity, e2);
+            Manifold mf = GeometryHelper::polygonCollide(entity, e2, 0);
             if (mf.isCollide && !mf.hasError) {
                 if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
@@ -240,7 +247,6 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
                     }
                 } else {
                     gmf.isCollide = true;
-                    gmf.normal += mf.normal;
                 }
             }
         }, false);
