@@ -242,5 +242,10 @@ engine::GeometryHelper::createBlastPolygon(engine::Scene& scene, float x, float 
 	t.position = {0.f, 0.f, 0.f};
 	t.scale = {1.f, 1.f, 1.f};
 
+    GeometryHelper::transformHitbox(
+        blastEntity.get<engine::HitboxComponent>(),
+        blastEntity.get<engine::TransformComponent>()
+    );
+
 	return blastEntity;
 }

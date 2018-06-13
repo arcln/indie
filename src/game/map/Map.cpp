@@ -13,6 +13,7 @@
 #include <algorithm>
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/TagComponent.hpp"
+#include "engine/components/PhysicsComponent.hpp"
 #include "engine/core/Entities.hpp"
 #include "engine/helpers/GeometryHelper.hpp"
 
@@ -332,21 +333,14 @@ std::vector<engine::Entity>
 Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blastHitbox)
 {
 	std::vector<engine::Entity> blastCollision;
-	int x = 0;
 
 	entities.withTag("map", [&](engine::Entity const& chunk) {
-		engine::GeometryHelper::transformHitbox(chunk.get<engine::HitboxComponent>(), chunk.get<engine::TransformComponent>());
-		engine::GeometryHelper::transformHitbox(blastHitbox.get<engine::HitboxComponent>(), blastHitbox.get<engine::TransformComponent>());
-		if (engine::GeometryHelper::simplePolygonCollide(chunk, blastHitbox)) {
+		if (engine::GeometryHelper::AABBCollide(chunk.get<engine::HitboxComponent>(), blastHitbox.get<engine::HitboxComponent>())) {
+
 			entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
 				if (engine::GeometryHelper::simplePolygonCollide(child, blastHitbox)) {
-
-//					std::cout << "childId: " << child.getId() << " parentId: " << child.getParentId() << std::endl;
-//					child.kill();
-
 					auto &t = child.get<engine::TransformComponent>();
 
-//					std::cout << "scale : " << ceil(t.scale.X * 10.f) / 10.f << std::endl;
 					if (ceil(t.scale.X * 10.f) / 10.f <= 0.1f) {
 						child.kill();
 					} else {
@@ -363,10 +357,21 @@ Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blast
 void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius)
 {
 	engine::Entity blast = engine::GeometryHelper::createBlastPolygon(scene, x, y, radius);
+    auto& bt = blast.get<engine::TransformComponent>();
 	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
 
+    scene.getEntities().each<engine::PhysicsComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& p, auto& t) {
+        if (!engine::GeometryHelper::simplePolygonCollide(e, blast))
+            return;
+        engine::Vec2D vec;
+        vec.X = t.position.X - bt.position.X;
+        vec.Y = t.position.Y - bt.position.Y + 100.f;
+        vec.normalize();
+        vec *= radius * 50.f;
+        p.velocity += vec;
+    });
+
 	while (!blockToDivide.empty()) {
-//		std::cout << "nb block to divide : " << blockToDivide.size() << std::endl;
 		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
 			divideBlock(scene, blockToDivide[idx]);
 		}
