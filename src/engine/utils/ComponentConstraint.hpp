@@ -19,7 +19,7 @@ namespace engine {
 	template<typename ComponentType>
 	struct ComponentConstraint<ComponentType, true> {
 		using Pool = ComponentPool<ComponentType>;
-		using ReturnType = const typename Pool::Container::mapped_type&;
+		using ReturnType = typename Pool::Container::mapped_type&;
 	};
 
 	template<typename ComponentType>

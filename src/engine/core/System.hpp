@@ -19,6 +19,6 @@ namespace engine {
 	public:
 		virtual ~System() = default;
 
-		virtual void update(Scene& scene) = 0;
+		virtual void update(Scene& scene, float tick) = 0;
 	};
 }

@@ -11,7 +11,7 @@
 #include "game/systems/WeaponSystem.hpp"
 
 void
-worms::WeaponSystem::update(engine::Scene& scene)
+worms::WeaponSystem::update(engine::Scene& scene, float)
 {
 	engine::Entities& entities = scene.getEntities();
 

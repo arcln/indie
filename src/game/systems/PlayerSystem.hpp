@@ -14,7 +14,7 @@ namespace worms {
 
 	class PlayerSystem : public engine::System {
 	public:
-		void update(engine::Scene& scene) override;
+		void update(engine::Scene& scene, float tick) override;
 
 		static std::string getState(std::string const& state, engine::HoldComponent const& hc);
 	};

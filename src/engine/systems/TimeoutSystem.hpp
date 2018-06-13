@@ -1,22 +1,18 @@
 /*
 ** EPITECH PROJECT, 2017
-** ECS Engine
+** worms
 ** File description:
-** Thomas Arbona
+** A file for worms - Paul Laffitte
 */
+
 #pragma once
 
-#include <irrlicht/irrlicht.h>
-#include "engine/core/Game.hpp"
 #include "engine/core/System.hpp"
 
 namespace engine {
 
-	class ItemSystem : public System {
+	class TimeoutSystem : public System {
 	public:
-		ItemSystem() = default;
-		~ItemSystem() = default;
-
 		void update(Scene& scene, float tick) override;
 	};
 }

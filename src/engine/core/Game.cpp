@@ -12,7 +12,7 @@
 engine::Game::Game(bool enableVideo, std::string const& cwd)
 	: eventsHandler(_keyEvents, _mouseMovedEvent)
 	, _eventReceiver(_keyEvents, _mouseMovedEvent)
-	, _cwd(cwd)
+	, _cwd(cwd), _prevUpdate(std::chrono::system_clock::now())
 {
 	_device = irr::createDevice(enableVideo ? irr::video::EDT_OPENGL : irr::video::EDT_NULL,
 								irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false,
@@ -127,12 +127,21 @@ engine::Game::getcwd() const
 
 void engine::Game::_updateScenes()
 {
+	auto now = std::chrono::system_clock::now();
+	float tick = std::chrono::duration_cast<std::chrono::milliseconds>(now - _prevUpdate).count() / 1000.f;
+
+	_prevUpdate = now;
+
+	if (tick > 0.5f) {
+		return;
+	}
+
     this->device()->run();
     this->device()->getVideoDriver()->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
 	for (auto& scene : _scenes) {
 		for (auto& system : _systems) {
-			system.second->update(scene);
+			system.second->update(scene, tick);
 		}
 	}
 

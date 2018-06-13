@@ -19,7 +19,7 @@ namespace engine {
 		DisplaySystem(Game& game);
 		~DisplaySystem();
 
-		void update(Scene& scene) override;
+		void update(Scene& scene, float tick) override;
 
 	private:
 		Game& _game;

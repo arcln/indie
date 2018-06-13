@@ -18,7 +18,7 @@ namespace worms {
 	public:
         WeaponSystem(engine::Game& game) : _game(game) {}
 
-		void update(engine::Scene& scene) override;
+		void update(engine::Scene& scene, float tick) override;
 
     private:
         engine::Game& _game;

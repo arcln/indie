@@ -14,7 +14,7 @@
 #include "PlayerSystem.hpp"
 
 void
-worms::PlayerSystem::update(engine::Scene& scene)
+worms::PlayerSystem::update(engine::Scene& scene, float)
 {
 	engine::Entities& entities = scene.getEntities();
 

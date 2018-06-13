@@ -57,7 +57,7 @@ namespace engine {
 		ComponentType&
 		set(EntityId entityId, CtorArgsTypes... ctorArgs)
 		{
-			_components[entityId].push_back(std::forward<CtorArgsTypes>(ctorArgs)...);
+			_components[entityId].emplace_back(std::forward<CtorArgsTypes>(ctorArgs)...);
 			return _components[entityId].back();
 		}
 
@@ -66,14 +66,14 @@ namespace engine {
 		 * @param entityId Entity's id
 		 * @return Entity's components
 		 */
-		typename Container::mapped_type
+		typename Container::mapped_type&
 		get(EntityId entityId)
 		{
-			typename Container::iterator componentIt = _components.find(entityId);
-
-			if (componentIt == std::end(_components))
-				throw internal::ComponentPoolException("components not found");
-			return componentIt->second;
+			try {
+				return _components.at(entityId);
+			} catch (std::out_of_range const& e) {
+				throw internal::ComponentPoolException(std::string("components not found, ") + e.what());
+			}
 		}
 
 		/**

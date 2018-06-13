@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "engine/systems/TimeoutSystem.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/systems/ItemSystem.hpp"
 #include "engine/systems/DisplaySystem.hpp"
@@ -29,8 +30,9 @@ namespace worms {
 	static const auto worms = [](engine::Game& game) {
         game.registerSystem("item", new engine::ItemSystem());
         game.registerSystem("physics", new engine::PhysicsSystem());
-        game.registerSystem("display", new engine::DisplaySystem(game));
-        game.registerSystem("player", new PlayerSystem());
+		game.registerSystem("display", new engine::DisplaySystem(game));
+		game.registerSystem("timeout", new engine::TimeoutSystem());
+		game.registerSystem("player", new PlayerSystem());
         game.registerSystem("weapon", new WeaponSystem(game));
 		game.registerSystem("effects", new engine::Menu::MenuEngineSystem());
 
