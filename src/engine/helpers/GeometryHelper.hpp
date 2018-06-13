@@ -43,8 +43,8 @@ namespace engine {
         static std::vector<Segment> getCombinedSegments(Polygon const& p1, Polygon const& p2);
         static bool segmentsAreCollinear(Segment const& s1, Segment const& s2);
         static void transformHitbox(HitboxComponent& hitbox, TransformComponent const& transform);
-        static Manifold polygonCollide(Entity const& entity, Entity const& entity2, int call = 0);
-        static Manifold polygonCollideChilds(Entity const& entity, Entity const& entity2);
+        static Manifold polygonCollide(Entity const& entity, Entity const& entity2, float rebound, int call = 0);
+        static Manifold polygonCollideChilds(Entity const& entity, Entity const& entity2, float rebound);
         static bool simplePolygonCollide(Entity const& entity, Entity const& entity2);
         static Point mergeSegmentsIntoVector(std::vector<Segment> const& segments);
         static bool AABBCollide(HitboxComponent const& h1, HitboxComponent const& h2);

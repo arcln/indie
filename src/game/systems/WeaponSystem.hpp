@@ -16,11 +16,11 @@ namespace worms {
 
 	class WeaponSystem : public engine::System {
 	public:
-        WeaponSystem(engine::Game& game) : _videoDriver(game.device()->getVideoDriver()) {}
+        WeaponSystem(engine::Game& game) : _game(game) {}
 
 		void update(engine::Scene& scene) override;
 
     private:
-        irr::video::IVideoDriver* _videoDriver;
+        engine::Game& _game;
 	};
 }

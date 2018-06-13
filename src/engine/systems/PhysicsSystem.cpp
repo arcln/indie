@@ -83,14 +83,13 @@ engine::PhysicsSystem::applyCollision(Entities& entities, Entity const& entity)
 
         GeometryHelper::transformHitbox(h, t);
 
-        std::cout << std::endl;
         entities.each<HitboxComponent, TransformComponent>([&](Entity const& e2, auto& h2, auto& t2) {
             if (e2.getId() == entity.getId() || count >= PhysicsCollideMaxObj)
                 return;
 
             GeometryHelper::transformHitbox(h2, t2);
 
-            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2);
+            Manifold mf2 = GeometryHelper::polygonCollide(entity, e2, rebound * h2.rebound);
             if (mf2.isCollide && !mf2.hasError) {
                 if (h.onCollide) {
                     h.onCollide(e2);
@@ -150,7 +149,7 @@ engine::PhysicsSystem::applyCollisionFrac(Entities& entities, Entity const& enti
 
                 GeometryHelper::transformHitbox(h2, t2);
 
-                Manifold mf = GeometryHelper::polygonCollide(entity, e2);
+                Manifold mf = GeometryHelper::polygonCollide(entity, e2, 0);
                 if (mf.isCollide && !mf.hasError) {
                     if (h.onCollide) {
                         h.onCollide(e2);
@@ -238,7 +237,7 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
             if (e2.getId() == entity.getId() || count >= PhysicsCollideMaxObj)
                 return;
 
-            Manifold mf = GeometryHelper::polygonCollide(entity, e2);
+            Manifold mf = GeometryHelper::polygonCollide(entity, e2, 0);
             if (mf.isCollide && !mf.hasError) {
                 if (e2.has<ItemComponent>()) {
                     if (entity.has<HoldComponent>()) {
@@ -248,7 +247,6 @@ engine::PhysicsSystem::applyDeplacement(Entities& entities, Entity const& entity
                     }
                 } else {
                     gmf.isCollide = true;
-                    gmf.normal += mf.normal;
                 }
             }
         }, false);
