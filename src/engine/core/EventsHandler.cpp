@@ -74,7 +74,7 @@ engine::EventsReceiver::OnEvent(irr::SEvent const& event)
 	switch (event.EventType) {
 		case irr::EET_KEY_INPUT_EVENT:
 			for (auto& target : _keyEvents) {
-				target.second.emit(engine::KeyState(event.KeyInput));
+				target.second.emit(engine::KeyState(event.KeyInput), event.KeyInput.Key);
 			}
 			break;
 		case irr::EET_MOUSE_INPUT_EVENT:
