@@ -11,6 +11,7 @@
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/TransformComponent.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
+#include "engine/components/ParticlesComponent.hpp"
 #include "engine/components/LightComponent.hpp"
 
 engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
@@ -34,6 +35,11 @@ engine::DisplaySystem::update(Scene& scene, float)
 
 	entities.each<TransformComponent, IrrlichtComponent>(transformNode);
 	entities.each<TransformComponent, LightComponent>(transformNode);
+	entities.each<TransformComponent, ParticlesComponent>([&transformNode](auto const& e, auto& t, auto& particles) {
+		for (auto& particle : particles) {
+			transformNode(e, t, particle);
+		}
+	});
 
     entities.each<TransformComponent, AnimationComponent>([](auto const& e, auto& t, auto& a) {
         t.rotation.Y = t.direction ? 0 : 180;
