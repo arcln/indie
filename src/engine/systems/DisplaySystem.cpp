@@ -11,6 +11,7 @@
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/TransformComponent.hpp"
 #include "engine/components/IrrlichtComponent.hpp"
+#include "engine/components/PhysicsComponent.hpp"
 
 engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 {
@@ -25,14 +26,15 @@ engine::DisplaySystem::update(Scene& scene)
 {
 	Entities& entities = scene.getEntities();
 
-	_game.device()->run();
-	_videoDriver->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
-
 	entities.each<TransformComponent, IrrlichtComponent>([](auto const& e, auto& t, auto& i) {
 		i.node->setPosition(t.position + t.magicPosition + (t.offset * t.scale));
 		i.node->setRotation(t.rotation + t.offsetRotation);
 		i.node->setScale(t.scale);
 	});
+
+    entities.each<TransformComponent, AnimationComponent>([](auto const& e, auto& t, auto& a) {
+        t.rotation.Y = t.direction ? 0 : 180;
+    });
 
 	entities.each<AnimationComponent, IrrlichtComponent>([](auto const& e, auto& a, auto& i) {
 		AnimationBoundaries const& boundaries = a.states.at(a.currentState);
@@ -68,8 +70,8 @@ engine::DisplaySystem::update(Scene& scene)
             return;
         }
         for (auto& segment : h.segments3D) {
-		segment.p1.Z = -1.f;
-		segment.p2.Z = -1.f;
+    		segment.p1.Z = -1.f;
+    		segment.p2.Z = -1.f;
             auto wSegment = engine::Segment3D{
                 (segment.p1* t.scale + t.position),
                 (segment.p2 * t.scale + t.position)
@@ -83,8 +85,6 @@ engine::DisplaySystem::update(Scene& scene)
 //    _videoDriver->draw3DLine({-100, 0, 0}, {100, 0, 0}, irr::video::SColor(255, 255, 0, 0));
 //    _videoDriver->draw3DLine({0, -100, 0}, {0, 100, 0}, irr::video::SColor(255, 0, 255, 0));
 //    _videoDriver->draw3DLine({0, 0, -100}, {0, 0, 100}, irr::video::SColor(255, 0, 0, 255));
-
-	_videoDriver->endScene();
 }
 
 engine::DisplaySystem::~DisplaySystem()
