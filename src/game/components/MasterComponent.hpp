@@ -15,5 +15,6 @@ namespace worms {
 		using Constraint = engine::ComponentConstraint<MasterComponent, false>;
 
 		int currentPlayer;
+		std::vector<engine::EntityId> players;
 	};
 }

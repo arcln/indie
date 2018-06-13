@@ -36,9 +36,12 @@ namespace worms { namespace scene {
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		std::vector<engine::EntityId> players;
 >>>>>>> rules: select player that receives events
+=======
+>>>>>>> rules: manual turn by turn
 		engine::Entity master(engine::Entity::nullId, engine::Entity::nullId, &scene.getEntities());
 		master.set<MasterComponent>().currentPlayer = 0;
 
@@ -466,11 +469,11 @@ namespace worms { namespace scene {
 			particlesComponent.node->getEmitter()->setMaxStartColor(irr::video::SColor(0, 255, 255, 255));
 		});
 
-		scene.registerEntityModel("player", [&](engine::Entity const& entity) {
+		scene.registerEntityModel("player", [&game, &scene, master](engine::Entity const& entity) {
 			entity.set<PlayerComponent>(0);
 			entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d", "texture/silinoid.png");
 			entity.set<engine::TagComponent>(std::string("player"));
-			std::cout << "player " << entity.getId() << std::endl;
+			master.get<MasterComponent>().players.push_back(entity.getId());
 
 			auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 			auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -602,6 +605,7 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
+<<<<<<< HEAD
 			scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
 				entity.set<engine::TagComponent>(std::string("sword"));
 				std::cout << "sword " << entity.getId() << std::endl;
@@ -645,14 +649,25 @@ namespace worms { namespace scene {
 				};
 				ic.offset = {1.5f, 1.f, 0.f};
 			});
+=======
+			return 0;
+		});
+>>>>>>> rules: manual turn by turn
 
-			scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
-				entity.set<engine::TagComponent>(std::string("projectile"));
+		scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
+			entity.set<engine::TagComponent>(std::string("sword"));
+			std::cout << "sword " << entity.getId() << std::endl;
 
+<<<<<<< HEAD
 				entity.set<engine::IrrlichtComponent>(&game, "obj/missile.obj", "texture/missile.png");
 				entity.set<engine::PhysicsComponent>();
 >>>>>>> rules: select player that receives events
+=======
+			auto& wc = entity.set<WeaponComponent>();
+			wc.hasAim = true;
+>>>>>>> rules: manual turn by turn
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 			auto& transformComponent = entity.set<engine::TransformComponent>();
 			transformComponent.scale = {0.25f, 0.25f, 0.25f};
@@ -682,7 +697,12 @@ namespace worms { namespace scene {
 				hitboxComponent.hasDebugMode = true;
 			});
 >>>>>>> rules: select player that receives events
+=======
+			entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj", "obj/sword.mtl");
+			entity.set<engine::PhysicsComponent>();
+>>>>>>> rules: manual turn by turn
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
 			entity.set<engine::TagComponent>(std::string("rpg"));
@@ -699,15 +719,31 @@ namespace worms { namespace scene {
 =======
 			scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
 				entity.set<engine::TagComponent>(std::string("rpg"));
+=======
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {10.f, 10.f, 0.f};
+			transformComponent.scale = {0.25f, 0.25f, 0.25f};
+			transformComponent.offset = {0.f, -5.8f, 0.f};
+			transformComponent.offsetRotation = {0.f, -90.f, 0.f};
+>>>>>>> rules: manual turn by turn
 
-				entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
-				entity.set<engine::PhysicsComponent>();
-				auto& ic = entity.set<engine::ItemComponent>([]() {
-					std::cout << "use item" << std::endl;
-				});
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-6 -1.5, -6 1.5, 6 1.5, 6 -1.5)");
+			hitboxComponent.rebound = 0.2;
+			hitboxComponent.hasDebugMode = true;
 
-				ic.offset = {1.f, 2.f, 0.f};
+			auto& ic = entity.set<engine::ItemComponent>();
+			ic.use = [&]() {
+				auto bullet = scene.spawnEntity("sword.bullet");
+				auto& bt = bullet.get<engine::TransformComponent>();
+				auto& bp = bullet.get<engine::PhysicsComponent>();
+				bt.position = transformComponent.position;
+				bp.velocity = wc.aimPosition;
+				bp.velocity = bp.velocity.normalize() * 100.f;
+			};
+			ic.offset = {1.5f, 1.f, 0.f};
+		});
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 			auto& transformComponent = entity.set<engine::TransformComponent>();
 			transformComponent.position = {-10.f, 10.f, 0.f};
@@ -743,7 +779,11 @@ namespace worms { namespace scene {
 				hitboxComponent.hasDebugMode = true;
 			});
 >>>>>>> rules: select player that receives events
+=======
+		scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
+			entity.set<engine::TagComponent>(std::string("projectile"));
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
 			scene.spawnEntity("rpg");
@@ -755,21 +795,48 @@ namespace worms { namespace scene {
 				scene.spawnEntity("rpg");
 				scene.spawnEntity("player");
 				return 0;
+=======
+			entity.set<engine::IrrlichtComponent>(&game, "obj/missile.obj", "texture/missile.png");
+			entity.set<engine::PhysicsComponent>();
+>>>>>>> rules: manual turn by turn
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.scale = {0.25f, 0.25f, 0.25f};
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitboxComponent.onCollide = [entity, &scene, &transformComponent](engine::Entity const& collideWith) -> void {
+				entity.set<engine::TimeoutComponent>(0.0001f, [entity, &scene, &transformComponent]() -> void {
+					Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+					entity.kill();
+				});
+				auto& explosionTransform = scene.spawnEntity("explosion").get<engine::TransformComponent>();
+				explosionTransform.position = transformComponent.position;
+			};
+			hitboxComponent.hasDebugMode = true;
+		});
+
+		scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
+			entity.set<engine::TagComponent>(std::string("rpg"));
+
+			entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
+			entity.set<engine::PhysicsComponent>();
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+				std::cout << "use item" << std::endl;
+>>>>>>> rules: manual turn by turn
 			});
 >>>>>>> rules: select player that receives events
 
-			scene.registerEvent<std::string>("master.changePlayer", 0, [&scene, master](std::string const& player) {
-				auto& m = master.get<MasterComponent>();
+			ic.offset = {1.f, 2.f, 0.f};
 
-				try {
-					m.currentPlayer = std::stoi(player);
-				} catch (std::exception& e) {
-					++m.currentPlayer;
-				}
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {-10.f, 10.f, 0.f};
+			transformComponent.scale = {0.5f, 0.5f, 0.5f};
 
-				std::cout <<m.currentPlayer<<std::endl;
-				scene.triggerSyncedEvent("player.play", m.currentPlayer, "");
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitboxComponent.rebound = 0.2;
+			hitboxComponent.hasDebugMode = true;
+		});
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 		scene.registerEntityModel("background", [&](engine::Entity const& entity) {
 			auto& i = entity.set<engine::IrrlichtComponent>(&game, "obj/spaceBackground.obj");
@@ -803,17 +870,24 @@ namespace worms { namespace scene {
 				return 0;
 			});
 >>>>>>> rules: select player that receives events
+=======
+		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
+			scene.spawnEntity("rpg");
+			scene.spawnEntity("player");
+			return 0;
+		});
+>>>>>>> rules: manual turn by turn
 
-			scene.registerEntityModel("map", [&](engine::Entity const& entity) {
-				Wornite::Map().genMap(game, scene).getSeed();
+		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene, master](std::string const& player) {
+			auto& m = master.get<MasterComponent>();
 
-				scene.registerEvent<std::string>("map.hitbox.display", 0, [&](std::string const& move) {
-					static bool DebugMode = true;
-					engine::Entities entities = scene.getEntities();
-					entities.withTag("map", [&](engine::Entity const& chunk) {
-						entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
-							auto& h = child.get<engine::HitboxComponent>();
+			try {
+				m.currentPlayer = std::stoi(player);
+			} catch (std::exception& e) {
+				++m.currentPlayer;
+			}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 							h.hasDebugMode = DebugMode;
@@ -827,10 +901,37 @@ namespace worms { namespace scene {
 <<<<<<< HEAD
 			return 0;
 =======
+=======
+			std::cout <<m.currentPlayer<<std::endl;
+			scene.triggerSyncedEvent("player.play", m.currentPlayer, "");
 
+			return 0;
+		});
+
+		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
+			Wornite::Map().genMap(game, scene).getSeed();
+>>>>>>> rules: manual turn by turn
+
+			scene.registerEvent<std::string>("map.hitbox.display", 0, [&](std::string const& move) {
+				static bool DebugMode = true;
+				engine::Entities entities = scene.getEntities();
+				entities.withTag("map", [&](engine::Entity const& chunk) {
+					entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
+						auto& h = child.get<engine::HitboxComponent>();
+
+						h.hasDebugMode = DebugMode;
+					});
+				});
+				DebugMode = !DebugMode;
 				return 0;
 			});
+<<<<<<< HEAD
 >>>>>>> rules: select player that receives events
+=======
+
+
+			return 0;
+>>>>>>> rules: manual turn by turn
 		});
 
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "map.hitbox.display", 0, Vector2f(0.f, 0.f), engine::EVT_SYNCED);
@@ -848,7 +949,15 @@ namespace worms { namespace scene {
 		scene.spawnEntity("background");
 =======
 
+<<<<<<< HEAD
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, std::to_string(players[0]));
 >>>>>>> rules: select player that receives events
+=======
+		for (auto i = 0; i < 4; ++i) {
+			scene.triggerEvent<Vector3f>("player.spawn", 0, Vector3f(-20.f + 10.f * i, 25.f, 0.f));
+		}
+
+		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, "");
+>>>>>>> rules: manual turn by turn
 	};
 }}
