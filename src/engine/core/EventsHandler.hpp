@@ -16,8 +16,9 @@
 namespace engine {
 
 	enum EventConfig {
-		EVT_RELEASE = 1 << 0,
-		EVT_SYNCED = 1 << 1
+		EVT_RELEASE		= 1 << 0,
+		EVT_SYNCED 		= 1 << 1,
+		EVT_OVERRIDE 	= 1 << 2
 	};
 
 	struct EnumClassHash {
@@ -65,13 +66,19 @@ namespace engine {
 			bool release = config & EventConfig::EVT_RELEASE;
 			bool sync = config & EventConfig::EVT_SYNCED;
 
+			if (config & EventConfig::EVT_OVERRIDE) {
+				try {
+					_keyEvents[scene.id()].unsubscribe(key);
+				} catch (std::exception&) {}
+			}
+
 			_keyEvents[scene.id()].subscribe([this, &scene, evt, target, payload, key, sync, release](engine::KeyState const& k) -> int {
-				if (k.Key == key && release ^ k.PressedDown && scene.hasEvent(evt) && _keyEventsState[key]) {
+				if (release ^ k.PressedDown && scene.hasEvent(evt) && _keyEventsState[key]) {
 					_bootstrapEvent<PayloadType>(scene, evt, payload, target, sync);
 				}
 
 				return 0;
-			});
+			}, key);
 
 			_keyEventsState[key] = true;
 		}
