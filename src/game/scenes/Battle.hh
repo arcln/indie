@@ -23,6 +23,8 @@
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/ItemComponent.hpp"
 #include "engine/components/HoldComponent.hpp"
+#include "engine/components/ParticlesComponent.hpp"
+#include "engine/components/TimeoutComponent.hpp"
 #include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "game/components/WeaponComponent.hpp"
@@ -66,12 +68,36 @@ namespace worms { namespace scene {
 				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_F, "camera.move", entity.getId(), Vector3f(0.f, 0.f, -1.f));
 			});
 
+			scene.registerEntityModel("explosion", [&](engine::Entity const& entity) {
+				auto& transformComponent = entity.set<engine::TransformComponent>();
+				auto& particlesComponent = entity.set<engine::ParticlesComponent>(game.device(), 1, 2);
+
+				entity.set<engine::TimeoutComponent>(.1f, [&particlesComponent]() -> void {
+					std::cout << "stop emiting" << std::endl;
+					particlesComponent.node->setEmitter(nullptr);
+				});
+
+				entity.set<engine::TimeoutComponent>(1.f, [entity]() -> void {
+					entity.kill();
+					std::cout << "kill" << std::endl;
+				});
+
+				particlesComponent.node->setMaterialTexture(0, engine::ResourceManager<engine::Texture*>::instance().get("texture/explosion_particle.jpg"));
+				particlesComponent.node->getEmitter()->setMinStartSize(irr::core::dimension2df(1.f, 1.f));
+				particlesComponent.node->getEmitter()->setMaxStartSize(irr::core::dimension2df(3.f, 3.f));
+				particlesComponent.node->getEmitter()->setMinStartColor(irr::video::SColor(0, 255, 200, 190));
+				particlesComponent.node->getEmitter()->setMaxStartColor(irr::video::SColor(0, 255, 255, 255));
+			});
+
 			scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 				entity.set<PlayerComponent>(0);
 				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
                 entity.set<engine::TagComponent>(std::string("player"));
                 std::cout << "player " << entity.getId() << std::endl;
 
+				entity.set<engine::TimeoutComponent>(1.f, []() -> void {
+					std::cout << "callback after timeout" << std::endl;
+				});
 
 				auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 				auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -92,7 +118,6 @@ namespace worms { namespace scene {
 				animationComponent.states.emplace("runHoldHeavy", run + holdHeavyOffset);
 				animationComponent.states.emplace("jumpHoldHeavy", jump + holdHeavyOffset);
 				animationComponent.states.emplace("inAirHoldHeavy", inAir + holdHeavyOffset);
-
 
 				transformComponent.scale = {0.5f, 0.5f, 0.5f};
 				transformComponent.position = {0.f, 25.f, 0.f};
@@ -278,12 +303,15 @@ namespace worms { namespace scene {
             transformComponent.scale = {0.25f, 0.25f, 0.25f};
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
             hitboxComponent.onCollide = [entity, &scene, &transformComponent](engine::Entity const& collideWith) -> void {
-                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
-                entity.disable(); // TODO: kill
+				entity.set<engine::TimeoutComponent>(0.0001f, [entity, &scene, &transformComponent]() -> void {
+					Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+					entity.kill();
+				});
+				auto& explosionTransform = scene.spawnEntity("explosion").get<engine::TransformComponent>();
+				explosionTransform.position = transformComponent.position;
             };
             hitboxComponent.hasDebugMode = true;
 		});
-
 
         scene.registerEntityModel("item", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("item"));
