@@ -73,10 +73,16 @@ namespace engine {
 			}
 
 			_keyEvents[scene.id()].subscribe([this, &scene, evt, target, payload, key, sync, release](engine::KeyState const& k) -> int {
+				if (k.PressedDown && _keyStates[key].PressedDown) {
+					_keyStates[key] = k;
+					return 0;
+				}
+
 				if (release ^ k.PressedDown && scene.hasEvent(evt) && _keyEventsState[key]) {
 					_bootstrapEvent<PayloadType>(scene, evt, payload, target, sync);
 				}
 
+				_keyStates[key] = k;
 				return 0;
 			}, key);
 

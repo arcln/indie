@@ -27,11 +27,6 @@ engine::EventsHandler::unregisterEventTarget(Scene const& target)
 void
 engine::EventsHandler::_registerEventTarget(Scene const& target)
 {
-	_keyEvents[target.id()].subscribe([&](KeyState const& keyState) -> int {
-		_keyStates[keyState.Key] = keyState;
-		return 0;
-	});
-
 	_mouseMovedEvent.subscribe([&](MousePosition const& mousePosition) -> int {
 		_mousePosition = mousePosition;
 		return 0;
