@@ -41,8 +41,10 @@ engine::PhysicsSystem::update(Scene& scene)
             e.get<HoldComponent>().hasReachableEntity = false;
         }
 
-        if (e.has<ItemComponent>() && p.isGrounded)
+        if (e.has<ItemComponent>() && p.isGrounded) {
+            p.isGrounded = PhysicsSystem::isGrounded(entities, e);
             return;
+        }
 
         p.velocity += engine::PhysicsSystem::gravity * _tick;
         newPos2D = pos2D + p.velocity * _tick;
