@@ -59,7 +59,11 @@ namespace engine {
 		SceneModels _sceneModels;
 		std::string _cwd;
 		Clock _prevUpdate;
+		unsigned int _scenesToPop;
+		std::string _replacementScene;
 
 		void _updateScenes();
+		void _popScenes();
+		void _replaceScene();
 	};
 }
