@@ -16,7 +16,7 @@ image:
 text:
 	- name: CharName
 	- setText: Waiting
-	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
 	- color: 255, 255, 255, 255
 	- pos: 575, 225
 

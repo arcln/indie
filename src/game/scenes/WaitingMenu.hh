@@ -115,11 +115,10 @@ namespace worms { namespace scene {
 			checkBoxComponent.node->setChecked(false);
 		});
 
-	scene.registerEvent<bool>("spin", 0, [&](bool const& spinning) {
+		scene.registerEvent<bool>("spin", 0, [&](bool const&) {
 			engine::Entities entities = scene.getEntities();
 			static int check = 0;
-			if (spinning == false)
-				return 1;
+	
 			entities.each<engine::ImageComponent>([&](auto const& e, auto& image) {
 				std::string name = image.node->getName();
 				int j = check / 10;

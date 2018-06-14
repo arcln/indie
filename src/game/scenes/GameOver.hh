@@ -24,7 +24,7 @@
 
 namespace worms { namespace scene {
 
-	static const auto optionsScene = [](engine::Game& game, engine::Scene& scene) {
+	static const auto gameOver = [](engine::Game& game, engine::Scene& scene) {
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			auto& cameraComponent = entity.set<engine::CameraComponent>(game.device(),
 										    engine::CameraComponent::Coords {
@@ -115,100 +115,34 @@ namespace worms { namespace scene {
 			checkBoxComponent.node->setChecked(false);
 		});
 
-		scene.registerEvent<engine::GenericEvent>("create button", 0, [&](engine::GenericEvent const&) {
-			scene.spawnEntity("button");
-			return 0;
-		});
-
-		scene.registerEvent<Vector2i>("volume plus", 0, [&](Vector2i const&) {
+		scene.registerEvent<std::string>("set Winner", 0, [&](std::string const &name) {
 			engine::Entities entities = scene.getEntities();
-			int i = 0;
 
 			entities.each<engine::TextComponent>([&](auto const& e, auto& text) {
-				std::string name = text.node->getName();
-				if (name == "VolumeLvl") {
-					std::wstring str = text.node->getText();
-					std::string nbStr = std::string(str.begin(), str.end());					
-					int nb = atoi(nbStr.c_str());
-					if (nb >= 4)
-						return 0;
-					i = 1;
-					nb += 1;
-					nbStr = std::to_string(nb);
-					str = std::wstring(nbStr.begin(), nbStr.end());
+				std::string nodeName = text.node->getName();
+				if (nodeName == "Winner") {
+					std::string nbStr = name;
+					std::wstring str = std::wstring(nbStr.begin(), nbStr.end());
 					const wchar_t *tmp = str.c_str();
 					text.node->setText(tmp);
 					(void) e;
 				}
-				return 0;
-			});
-			if (i == 0)
-				return 0;
-			entities.each<engine::ImageComponent>([&](auto const& e, auto& image) {
-				std::string name = image.node->getName();
-				if (name == "volume button") {
-					irr::core::rect<irr::s32> position = image.node->getRelativePosition();
-					irr::core::vector2di upLeft = position.UpperLeftCorner;
-
-					upLeft.X += 105;
-					image.node->setRelativePosition(upLeft);
-					i += 1;
-					(void) e;
-				}
 			});
 			return 0;
 		});
 
-		scene.registerEvent<Vector2i>("volume minus", 0, [&](Vector2i const&) {
-			engine::Entities entities = scene.getEntities();
-			int i = 0;
-
-			entities.each<engine::TextComponent>([&](auto const& e, auto& text) {
-				std::string name = text.node->getName();
-				if (name == "VolumeLvl") {
-					std::wstring str = text.node->getText();
-					std::string nbStr = std::string(str.begin(), str.end());
-					int nb = atoi(nbStr.c_str());
-					if (nb <= 0)
-						return 0;
-					i = 1;
-					nb -= 1;
-					nbStr = std::to_string(nb);
-					str = std::wstring(nbStr.begin(), nbStr.end());
-					const wchar_t *tmp = str.c_str();
-					text.node->setText(tmp);
-					(void) e;
-				}
-				return 0;
-			});
-			if (i == 0)
-				return 0;
-			entities.each<engine::ImageComponent>([&](auto const& e, auto& image) {
-				std::string name = image.node->getName();
-				if (name == "volume button") {
-					irr::core::rect<irr::s32> position = image.node->getRelativePosition();
-					irr::core::vector2di upLeft = position.UpperLeftCorner;
-
-					upLeft.X -= 105;
-					image.node->setRelativePosition(upLeft);
-					(void) e;
-				}
-			});
-			return 0;
-		});
-
-		scene.registerEvent<Vector2i>("to assignKey", 0, [&](Vector2i const&) {
-			game.replaceScene("keyAssign");
-			return 0;
-		});
-
-		scene.registerEvent<Vector2i>("go back", 0, [&](Vector2i const&) {
+		scene.registerEvent<engine::GenericEvent>("Main Menu", 0, [&](engine::GenericEvent const&) {
 			game.replaceScene("mainMenu");
 			return 0;
 		});
 
+		scene.registerEvent<bool>("Quit", 0, [&](bool const&) {
+			exit(0);
+			return 0;
+		});
+
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("scripts/optionsMenu", &scene, &game);
+		engine::Menu::MyScriptParser parser("scripts/gameOver", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();
