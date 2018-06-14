@@ -28,7 +28,8 @@ namespace worms { namespace scene {
 
 		scene.registerEvent<engine::GenericEvent>("loadTextures", 0, [&](engine::GenericEvent const&) {
 			engine::ResourceManager<engine::Texture*>::instance().syncLoad({"texture/worm.png",
-																			"texture/explosion_particle.jpg"
+																			"texture/explosion_particle.jpg",
+																			"texture/silinoid.png"
 																		   });
 			return 0;
 		});

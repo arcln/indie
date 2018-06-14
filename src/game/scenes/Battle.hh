@@ -73,13 +73,11 @@ namespace worms { namespace scene {
 				auto& particlesComponent = entity.set<engine::ParticlesComponent>(game.device(), 1, 2);
 
 				entity.set<engine::TimeoutComponent>(.1f, [&particlesComponent]() -> void {
-					std::cout << "stop emiting" << std::endl;
 					particlesComponent.node->setEmitter(nullptr);
 				});
 
 				entity.set<engine::TimeoutComponent>(1.f, [entity]() -> void {
 					entity.kill();
-					std::cout << "kill" << std::endl;
 				});
 
 				particlesComponent.node->setMaterialTexture(0, engine::ResourceManager<engine::Texture*>::instance().get("texture/explosion_particle.jpg"));
@@ -91,7 +89,7 @@ namespace worms { namespace scene {
 
 			scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 				entity.set<PlayerComponent>(0);
-				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d");
+				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d", "texture/silinoid.png");
                 entity.set<engine::TagComponent>(std::string("player"));
                 std::cout << "player " << entity.getId() << std::endl;
 
