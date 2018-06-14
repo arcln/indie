@@ -13,6 +13,7 @@ engine::Game::Game(bool enableVideo, std::string const& cwd)
 	: eventsHandler(_keyEvents, _mouseMovedEvent)
 	, _eventReceiver(_keyEvents, _mouseMovedEvent)
 	, _cwd(cwd), _prevUpdate(std::chrono::system_clock::now())
+	, _scenesToPop(0), _replacementScene("")
 {
 	_device = irr::createDevice(enableVideo ? irr::video::EDT_OPENGL : irr::video::EDT_NULL,
 								irr::core::dimension2d<irr::u32>(1280, 720), 16, false, false, false,
@@ -66,11 +67,22 @@ engine::Game::play(std::string const& name)
 void
 engine::Game::replaceScene(std::string const& name)
 {
+	if (_replacementScene == "")
+		_replacementScene = name;
+}
+
+void
+engine::Game::_replaceScene()
+{
+	if (_replacementScene == "")
+		return;
+
 	if (!_scenes.empty()) {
 		_scenes.clear();
 	}
 	engine::internal::componentPoolReset.emit(true);
-	this->pushScene(name);
+	this->pushScene(_replacementScene);
+	_replacementScene = "";
 }
 
 void
@@ -87,8 +99,17 @@ engine::Game::pushScene(std::string const& name)
 void
 engine::Game::popScene()
 {
-	this->eventsHandler.unregisterEventTarget(_scenes.back());
-	_scenes.pop_back();
+	++_scenesToPop;
+}
+
+void
+engine::Game::_popScenes()
+{
+	while (_scenesToPop != 0) {
+		this->eventsHandler.unregisterEventTarget(_scenes.back());
+		_scenes.pop_back();
+		--_scenesToPop;
+	}
 }
 
 void
@@ -136,7 +157,6 @@ void engine::Game::_updateScenes()
 		return;
 	}
 
-    this->device()->run();
     this->device()->getVideoDriver()->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
 	for (auto& scene : _scenes) {
@@ -146,4 +166,6 @@ void engine::Game::_updateScenes()
 	}
 
     this->device()->getVideoDriver()->endScene();
+	_popScenes();
+	_replaceScene();
 }
