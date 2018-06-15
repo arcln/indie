@@ -21,7 +21,8 @@ namespace worms { namespace scene {
 
 		scene.registerEvent<engine::GenericEvent>("loadMeshes", 0, [&](engine::GenericEvent const&) {
 			engine::ResourceManager<engine::MeshNode*>::instance().asyncLoad({"obj/worm.obj",
-																			  "obj/silinoid.ms3d"
+																			  "obj/silinoid.ms3d",
+																			  "obj/missile.obj"
 																			 }).wait();
 			return 0;
 		});
@@ -29,7 +30,8 @@ namespace worms { namespace scene {
 		scene.registerEvent<engine::GenericEvent>("loadTextures", 0, [&](engine::GenericEvent const&) {
 			engine::ResourceManager<engine::Texture*>::instance().syncLoad({"texture/worm.png",
 																			"texture/explosion_particle.jpg",
-																			"texture/silinoid.png"
+																			"texture/silinoid.png",
+																			"texture/missile.png"
 																		   });
 			return 0;
 		});

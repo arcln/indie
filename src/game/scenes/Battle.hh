@@ -219,22 +219,20 @@ namespace worms { namespace scene {
 
             auto& ic = entity.set<engine::ItemComponent>();
             ic.use = [&]() {
-                std::cout << "use item" << std::endl;
                 auto bullet = scene.spawnEntity("sword.bullet");
                 auto& bt = bullet.get<engine::TransformComponent>();
                 auto& bp = bullet.get<engine::PhysicsComponent>();
                 bt.position = transformComponent.position;
-                bp.velocity.X = wc.aimPosition.X;
-                bp.velocity.Y = wc.aimPosition.Y;
-                bp.velocity = bp.velocity.normalize() * 300.f;
+                bp.velocity = wc.aimPosition;
+                bp.velocity = bp.velocity.normalize() * 100.f;
             };
             ic.offset = {1.5f, 1.f, 0.f};
 		});
 
         scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
-            entity.set<engine::TagComponent>(std::string("sword.bullet"));
+            entity.set<engine::TagComponent>(std::string("projectile"));
 
-            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::IrrlichtComponent>(&game, "obj/missile.obj", "texture/missile.png");
             entity.set<engine::PhysicsComponent>();
 
 			auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -252,8 +250,7 @@ namespace worms { namespace scene {
 		});
 
         scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
-            entity.set<engine::TagComponent>(std::string("item"));
-            std::cout << "item " << entity.getId() << std::endl;
+            entity.set<engine::TagComponent>(std::string("rpg"));
 
 			entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
             entity.set<engine::PhysicsComponent>();
