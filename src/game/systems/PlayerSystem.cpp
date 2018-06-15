@@ -32,10 +32,12 @@ worms::PlayerSystem::update(engine::Scene& scene, float tick)
 		entities.each<engine::CameraComponent>([e, tick](engine::Entity const& eCamera, auto& tCamera) {
 			irr::core::vector3df const& oldPosition = tCamera.node->getPosition();
 			irr::core::vector3df const& newPosition = e.get<engine::TransformComponent>().position + _CameraOffset;
+			irr::core::vector3df const& oldTarget = tCamera.node->getTarget();
+			irr::core::vector3df const& newTarget = e.get<engine::TransformComponent>().position;
 			float ratio = tick * _CameraSpeed;
 
 			tCamera.node->setPosition((oldPosition * (1 - ratio) + newPosition * ratio));
-			tCamera.node->setTarget(e.get<engine::TransformComponent>().position);
+			tCamera.node->setTarget((oldTarget * (1 - ratio) + newTarget * ratio));
 		});
 	});
 }
