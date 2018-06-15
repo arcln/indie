@@ -127,7 +127,7 @@ void Wornite::Map::fillBigChunks(engine::Game& game, engine::Scene& scene, chunk
 
 void
 Wornite::Map::spawnBigChunk(engine::Scene& scene,
-			    Wornite::Bsq::t_map *map, Wornite::Bsq::t_response *res, chunk *chunk)
+			Wornite::Bsq::t_map *map, Wornite::Bsq::t_response *res, chunk *chunk)
 {
 	irr::core::vector3df position;
 	irr::core::vector3df scale;
@@ -325,15 +325,7 @@ Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blast
 
 			entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
 				if (engine::GeometryHelper::simplePolygonCollide(child, blastHitbox)) {
-
-					auto &t = child.get<engine::TransformComponent>();
-
-//					if (float(ceil(t.scale.X * 10.f)) / 10.f <= 0.12f) {
-					if (float(t.scale.X) <= 0.12f) {
-						child.kill();
-					} else {
-						blastCollision.push_back(child);
-					}
+					blastCollision.push_back(child);
 				}
 			});
 		}
@@ -342,27 +334,35 @@ Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blast
 	return blastCollision;
 }
 
-void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius, int power)
+void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius)
 {
 	engine::Entity blast = engine::GeometryHelper::createBlastPolygon(scene, x, y, radius);
-    auto& bt = blast.get<engine::TransformComponent>();
-	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
+	auto& bt = blast.get<engine::TransformComponent>();
 
-    scene.getEntities().each<engine::PhysicsComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& p, auto& t) {
-        if (!engine::GeometryHelper::simplePolygonCollide(e, blast))
-            return;
-        engine::Vec2D vec;
-        vec.X = t.position.X - bt.position.X;
-        vec.Y = t.position.Y - bt.position.Y + 100.f;
-        vec.normalize();
-        vec *= radius * 50.f;
-        p.velocity += vec;
-    });
+	scene.getEntities().each<engine::PhysicsComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& p, auto& t) {
+		if (!engine::GeometryHelper::simplePolygonCollide(e, blast))
+			return;
+		engine::Vec2D vec;
+		vec.X = t.position.X - bt.position.X;
+		vec.Y = t.position.Y - bt.position.Y + 100.f;
+		vec.normalize();
+		vec *= radius * 50.f;
+		p.velocity += vec;
+	});
+
+	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
 
 	while (!blockToDivide.empty()) {
 		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
-			divideBlock(scene, blockToDivide[idx]);
+			auto &t = blockToDivide[idx].get<engine::TransformComponent>();
+
+			if (float(ceil(t.scale.X * 10.f)) / 10.f <= 0.2f) {
+				blockToDivide[idx].kill();
+			} else {
+				divideBlock(scene, blockToDivide[idx]);
+			}
 		}
+		blockToDivide = getBlastCollision(scene.getEntities(), blast);
 	}
 	blast.kill();
 }

@@ -53,7 +53,7 @@ public:
 
 	Wornite::Map& genMap(engine::Game& game, engine::Scene& scene);
 
-	static void tryDestroyMap(engine::Scene& scene, float x, float y, float radius, int pow);
+	static void tryDestroyMap(engine::Scene& scene, float x, float y, float radius);
 
 	static void divideBlock(engine::Scene& scene, engine::Entity entity);
 
