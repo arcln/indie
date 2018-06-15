@@ -40,9 +40,8 @@ namespace worms { namespace scene {
 			scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 				entity.set<engine::TransformComponent>();
 
-				auto& cameraComponent = entity.set<engine::CameraComponent>(
-					game.device(), engine::CameraComponent::Coords {0.f, 0.f, -30.f}, engine::CameraComponent::Coords {0, 0, 0}
-				);
+
+				auto& cameraComponent = entity.set<engine::CameraComponent>(game.device());
 
 				scene.registerEvent<Vector3f>("camera.goto", entity.getId(), [&](auto const& position) {
 					cameraComponent.node->setPosition(position);
@@ -59,13 +58,6 @@ namespace worms { namespace scene {
 					cameraComponent.node->setTarget(cameraComponent.node->getTarget() + offset);
 					return 0;
 				});
-
-				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_RIGHT, "camera.move", entity.getId(), Vector3f(-1.f, 0.f, 0.f));
-				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_LEFT,  "camera.move", entity.getId(), Vector3f(1.f, 0.f, 0.f));
-				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_UP,    "camera.move", entity.getId(), Vector3f(0.f, 1.f, 0.f));
-				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_DOWN,  "camera.move", entity.getId(), Vector3f(0.f, -1.f, 0.f));
-				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_R, "camera.move", entity.getId(), Vector3f(0.f, 0.f, 1.f));
-				// game.eventsHandler.subscribe<Vector3f>(scene, engine::KeyCode::KEY_KEY_F, "camera.move", entity.getId(), Vector3f(0.f, 0.f, -1.f));
 			});
 
 			scene.registerEntityModel("explosion", [&](engine::Entity const& entity) {

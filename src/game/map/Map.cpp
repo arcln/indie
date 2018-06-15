@@ -30,8 +30,10 @@ Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 		entity.set<engine::TransformComponent>();
 	});
 	scene.registerEntityModel("pieceMap", [&](engine::Entity const &entity) {
-		entity.set<engine::IrrlichtComponent>(&game, "obj/pieceMap.obj", "texture/map.png");
+		auto &irrlichtComponent = entity.set<engine::IrrlichtComponent>(&game, "obj/cube.obj", "texture/cube.png");
 		entity.set<engine::TransformComponent>();
+
+		irrlichtComponent.node->setMaterialFlag(irr::video::EMF_TEXTURE_WRAP, false);
 	});
 	if (_perlinScale == -1.f) {
 		std::srand(static_cast<unsigned>(std::time(0)));
