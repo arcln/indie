@@ -197,30 +197,6 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_LEFT, "player.aim", entity.getId(), Vector2f(-1.f, 0.f), engine::EVT_SYNCED);
 			});
 
-
-        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
-            entity.set<engine::TagComponent>(std::string("item"));
-            std::cout << "item " << entity.getId() << std::endl;
-
-
-            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
-            entity.set<engine::PhysicsComponent>();
-			auto& ic = entity.set<engine::ItemComponent>([]() {
-                std::cout << "use item" << std::endl;
-            });
-
-            ic.offset = {1.f, 2.f, 0.f};
-            auto& transformComponent = entity.set<engine::TransformComponent>();
-            transformComponent.position = {-10.f, 10.f, 0.f};
-            transformComponent.scale = {0.5f, 0.5f, 0.5f};
-		});
-
-		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
-			entity.set<engine::LightComponent>(
-				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
-			);
-		});
-
         scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("sword"));
             std::cout << "sword " << entity.getId() << std::endl;
@@ -228,10 +204,8 @@ namespace worms { namespace scene {
             auto& wc = entity.set<WeaponComponent>();
             wc.hasAim = true;
 
-
             entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj", "obj/sword.mtl");
             entity.set<engine::PhysicsComponent>();
-
 
 			auto& transformComponent = entity.set<engine::TransformComponent>();
 			transformComponent.position = {10.f, 10.f, 0.f};
@@ -277,12 +251,11 @@ namespace worms { namespace scene {
             hitboxComponent.hasDebugMode = true;
 		});
 
-        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+        scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("item"));
             std::cout << "item " << entity.getId() << std::endl;
 
-
-            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+			entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
             entity.set<engine::PhysicsComponent>();
 			auto& ic = entity.set<engine::ItemComponent>([]() {
                 std::cout << "use item" << std::endl;
@@ -299,15 +272,8 @@ namespace worms { namespace scene {
 			hitboxComponent.hasDebugMode = true;
 		});
 
-		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
-
-			entity.set<engine::LightComponent>(
-				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
-			);
-		});
-
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
-            scene.spawnEntity("item");
+            scene.spawnEntity("rpg");
 			scene.spawnEntity("player");
 			return 0;
 		});
@@ -359,8 +325,7 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
 		scene.spawnEntity("map");
 		scene.spawnEntity("player");
-		scene.spawnEntity("light");
-		scene.spawnEntity("item");
+		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
 	};
 }}
