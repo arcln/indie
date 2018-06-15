@@ -20,6 +20,9 @@ namespace Wornite {
 class Map {
 public:
 	Map() = default;
+	Map(float seed) {
+		_perlinScale = seed;
+	};
 	~Map() = default;
 
 	struct 	Settings
@@ -48,7 +51,7 @@ public:
 		int 			nbChunks;
 	};
 
-	void genMap(engine::Game& game, engine::Scene& scene);
+	Wornite::Map& genMap(engine::Game& game, engine::Scene& scene);
 
 	static void tryDestroyMap(engine::Scene& scene, float x, float y, float radius);
 
@@ -59,10 +62,18 @@ public:
 
 	static std::vector<engine::Entity> getBlastCollision(engine::Entities& , engine::Entity);
 
+	float getSeed() {
+		return _perlinScale;
+	};
+
+
+
 private:
 	int _blockDisplayed = 0;
 
-	const float _mapPrecision = .5f;
+	const float _mapPrecision = .2f;
+
+	float _perlinScale = -1.f;
 
 	const char _grad3[12][3] = {
 		{1, 1, 0}, {-1, 1, 0}, {1, -1, 0}, {-1, -1, 0},
