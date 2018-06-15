@@ -17,6 +17,10 @@ namespace worms {
 		void update(engine::Scene& scene, float tick) override;
 
 		static std::string getState(std::string const& state, engine::HoldComponent const& hc);
+
+	private:
+		static float const _CameraSpeed;
+		static irr::core::vector3df const _CameraOffset;
 	};
 }
 

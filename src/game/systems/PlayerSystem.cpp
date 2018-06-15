@@ -14,20 +14,27 @@
 #include "game/components/PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
 
+float const worms::PlayerSystem::_CameraSpeed = 5;
+irr::core::vector3df const worms::PlayerSystem::_CameraOffset = engine::CameraComponent::Coords(0.f, 5.f, -15.f);
+
 void
-worms::PlayerSystem::update(engine::Scene& scene, float)
+worms::PlayerSystem::update(engine::Scene& scene, float tick)
 {
 	engine::Entities& entities = scene.getEntities();
 
-	entities.each<PlayerComponent, engine::PhysicsComponent, engine::AnimationComponent, engine::HoldComponent>([&entities](engine::Entity const& e, auto& pl, auto& ph, auto& a, auto& hc) {
+	entities.each<PlayerComponent, engine::PhysicsComponent, engine::AnimationComponent, engine::HoldComponent>([&entities, tick](engine::Entity const& e, auto& pl, auto& ph, auto& a, auto& hc) {
 		if (engine::PhysicsSystem::isGrounded(entities, e)) {
 			if (!a.playOnce)
 				a.currentState = (ph.move.X == 0 ? getState("idle", hc) : getState("run", hc));
 			a.playOnce = false;
 		}
 
-		entities.each<engine::CameraComponent>([e](engine::Entity const& eCamera, auto& tCamera) {
-			tCamera.node->setPosition(e.get<engine::TransformComponent>().position + engine::CameraComponent::Coords(0.f, 5.f, -15.f));
+		entities.each<engine::CameraComponent>([e, tick](engine::Entity const& eCamera, auto& tCamera) {
+			irr::core::vector3df const& oldPosition = tCamera.node->getPosition();
+			irr::core::vector3df const& newPosition = e.get<engine::TransformComponent>().position + _CameraOffset;
+			float ratio = tick * _CameraSpeed;
+
+			tCamera.node->setPosition((oldPosition * (1 - ratio) + newPosition * ratio));
 			tCamera.node->setTarget(e.get<engine::TransformComponent>().position);
 		});
 	});
