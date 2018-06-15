@@ -169,10 +169,14 @@ namespace worms { namespace scene {
 					}
 					return 0;
 				});
+//
+//				scene.registerEvent<std::string>("player.explode", entity.getId(), [&scene, &transformComponent](std::string const& move) {
+//					Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f, 3);
+//				});
 
 				scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const& s) {
-					if (hc.current >= 0) {
 						engine::Entity& item = hc.items[hc.current];
+					if (hc.current >= 0) {
 						if (item.has<engine::ItemComponent>()) {
 							item.get<engine::ItemComponent>().use();
 						}
@@ -227,9 +231,23 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_LEFT, "player.aim", entity.getId(), Vector2f(-1.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "player.hitbox", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 
-				return 0;
-		});
+			});
 
+			scene.registerEvent<std::string>("hitbox.display", 0, [&](std::string const& move) {
+				static bool DebugMode = true;
+				engine::Entities entities = scene.getEntities();
+				entities.withTag("map", [&](engine::Entity const& chunk) {
+					entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
+						auto& h = child.get<engine::HitboxComponent>();
+
+						h.hasDebugMode = DebugMode;
+					});
+				});
+				DebugMode = !DebugMode;
+				return 0;
+			});
+
+			game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "hitbox.display", 0, Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 
 
         scene.registerEntityModel("item", [&](engine::Entity const& entity) {
@@ -302,7 +320,7 @@ namespace worms { namespace scene {
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
             hitboxComponent.onCollide = [entity, &scene, &transformComponent](engine::Entity const& collideWith) -> void {
 				entity.set<engine::TimeoutComponent>(0.0001f, [entity, &scene, &transformComponent]() -> void {
-					Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+					Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f, 1);
 					entity.kill();
 				});
 				auto& explosionTransform = scene.spawnEntity("explosion").get<engine::TransformComponent>();
@@ -363,13 +381,19 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		Wornite::Map().genMap(game, scene);
+
+		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
+			Wornite::Map().genMap(game, scene).getSeed();
+
+			return 0;
+		});
 
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_E, "player.spawn", 0, std::to_string(1));
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, std::to_string(1));
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_O, "master.changePlayer", 0, std::to_string(0));
 
 		scene.spawnEntity("camera");
+		scene.spawnEntity("map");
 		scene.spawnEntity("player");
 		scene.spawnEntity("light");
 		scene.spawnEntity("item");

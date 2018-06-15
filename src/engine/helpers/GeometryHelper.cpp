@@ -227,7 +227,7 @@ engine::GeometryHelper::createBlastPolygon(engine::Scene& scene, float x, float 
 
 	hitbox += std::to_string(float(x + (radius * cos(2.f * M_PI * 0.f / n)))) + " "
 		  + std::to_string(float(y + (radius * sin(2.f * M_PI * 0.f / n))));
-	for (float i = 1.f; i < n; i += 1.f) {
+	for (float i = 1; i < n; i += 1) {
 
 		position.X = float(x + (radius * cos(2.f * M_PI * i / n)));
 		position.Y = float(y + (radius * sin(2.f * M_PI * i / n)));

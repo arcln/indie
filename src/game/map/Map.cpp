@@ -17,10 +17,9 @@
 #include "engine/core/Entities.hpp"
 #include "engine/helpers/GeometryHelper.hpp"
 
-void
+Wornite::Map&
 Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 {
-	float perlinScale;
 	mapSettings map;
 
 	scene.registerEntityModel("hitboxChunk", [&](engine::Entity const &entity) {
@@ -34,20 +33,23 @@ Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 		entity.set<engine::IrrlichtComponent>(&game, "obj/pieceMap.obj", "texture/map.png");
 		entity.set<engine::TransformComponent>();
 	});
-	std::srand(static_cast<unsigned>(std::time(0)));
-	perlinScale = std::rand() % 1000;
+	if (_perlinScale == -1.f) {
+		std::srand(static_cast<unsigned>(std::time(0)));
+		_perlinScale = std::rand() % 100000;
+	}
 	map.length = 70;
 	map.height = 25;
 	for (float y = 0.f; y < map.length; y += _mapPrecision) {
 		float perlinY = ((y > map.length * 0.8f ? map.length * 0.8f : y) / (map.length * 0.8f));
 		for (float x = 0.f; x < map.length; x += _mapPrecision) {
 			float perlin;
+			float perlinX = (x > map.length / 2.f ? map.length - x : x) / map.length / 2.f;
 
-			perlin = (((getPerlin((x + perlinScale) / 6.f,
-					   (y + perlinScale) / 6.f,
+			perlin = (((getPerlin((x + _perlinScale) / 6.f,
+					   (y + _perlinScale) / 6.f,
 					   0) + 1.f) / 6.7f));
-			perlin = perlin + perlinY;
-			if (perlin > 0.7f && y < map.length - map.height * 1.2)
+			perlin = perlin + perlinY + perlinX;
+			if (perlin > 0.8f && y < map.length - map.height * 1.2)
 				map.string.push_back('.');
 			else
 				map.string.push_back('o');
@@ -58,6 +60,8 @@ Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 	for (int i = 0; i < map.nbChunks; i++) {
 		fillBigChunks(game, scene, &map.chunks[i]);
 	}
+//	std::cout << "Block displayed: " << _blockDisplayed << std::endl;
+	return *this;
 }
 
 void
@@ -137,6 +141,7 @@ Wornite::Map::spawnBigChunk(engine::Scene& scene,
 	scale.Z = 1.f;
 	Wornite::Map::spawnPieceMap(scene, position, scale, chunk->chunkHitboxEntity);
 	removeBigChunk(map, res);
+	_blockDisplayed++;
 }
 
 void
@@ -166,10 +171,11 @@ Wornite::Map::spawnPieceMap(engine::Scene &scene, irr::core::vector3df position,
 
 	transform.position = position;
 	transform.scale = scale;
-    auto& h = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-	h.hasDebugMode = true;
+    	auto& h = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+
+	h.hasDebugMode = false;
 	h.isStatic = true;
-    engine::GeometryHelper::transformHitbox(h, transform);
+    	engine::GeometryHelper::transformHitbox(h, transform);
 	hitboxEntity.attach(entity);
 }
 
@@ -293,26 +299,6 @@ Wornite::Map::divideBlock(engine::Scene& scene, engine::Entity entity)
 	scale.X = entitySize;
 	scale.Y = entitySize;
 	scale.Z = 1.f;
-
-//	std::cout << "x: " << t.position.X << " y: " << t.position.Y << " size : " << t.scale.X << std::endl;
-
-//	std::cout << "scale : " << t.scale.X << std::endl;
-//	entitySize = t.scale.X / 0.1f;
-//	scale.X = 0.1f;
-//	scale.Y = 0.1f;
-//	scale.Z = 1.f;
-//	for (float y = 0.f; y < entitySize; y += scale.Y) {
-//		for (float x = 0.f; x < entitySize; x += scale.X) {
-//			position.X = t.position.X + x - (entitySize * 0.1f / 2.f);
-//			position.Y = t.position.Y - y - (entitySize * 0.1f / 2.f);
-//			position.Z = t.position.Z;
-//
-//			Wornite::Map::spawnPieceMap(scene, position, scale, parent);
-//		}
-//	}
-//
-//	entity.kill();
-
 	position.X = t.position.X - entitySize;
 	position.Y = t.position.Y + entitySize;
 	position.Z = t.position.Z;
@@ -339,9 +325,11 @@ Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blast
 
 			entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
 				if (engine::GeometryHelper::simplePolygonCollide(child, blastHitbox)) {
+
 					auto &t = child.get<engine::TransformComponent>();
 
-					if (ceil(t.scale.X * 10.f) / 10.f <= 0.1f) {
+//					if (float(ceil(t.scale.X * 10.f)) / 10.f <= 0.12f) {
+					if (float(t.scale.X) <= 0.12f) {
 						child.kill();
 					} else {
 						blastCollision.push_back(child);
@@ -354,7 +342,7 @@ Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blast
 	return blastCollision;
 }
 
-void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius)
+void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius, int power)
 {
 	engine::Entity blast = engine::GeometryHelper::createBlastPolygon(scene, x, y, radius);
     auto& bt = blast.get<engine::TransformComponent>();
@@ -375,12 +363,6 @@ void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float r
 		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
 			divideBlock(scene, blockToDivide[idx]);
 		}
-		blockToDivide = getBlastCollision(scene.getEntities(), blast);
 	}
-	blockToDivide = getBlastCollision(scene.getEntities(), blast);
-	for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
-		blockToDivide[idx].kill();
-	}
-
 	blast.kill();
 }
