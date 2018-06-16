@@ -139,7 +139,7 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
+			scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const&) {
 				if (hc.hasReachableEntity) {
 					if (hc.items.size() == hc.count) {
 						engine::Entity& item = hc.items[hc.current];
@@ -159,7 +159,7 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const& s) {
+			scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const&) {
 				engine::Entity& item = hc.items[hc.current];
 				if (hc.current >= 0) {
 					if (item.has<engine::ItemComponent>()) {
@@ -350,7 +350,6 @@ namespace worms { namespace scene {
 			scene.triggerEvent<std::string>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f).serialize());
 		}
 
-//		scene.triggerEvent<std::string>("timer.change", 0, "42");
 		scene.triggerEvent("master.changePlayer", 0, "0");
 	};
 }}
