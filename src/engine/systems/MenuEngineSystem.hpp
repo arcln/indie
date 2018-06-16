@@ -20,8 +20,6 @@ namespace engine { namespace Menu {
 			~MenuEngineSystem();
 
 			void update(Scene &scene, float tick) override;
-
-		protected:
 	};
 }}
 

@@ -91,7 +91,7 @@ namespace engine {
 		 * @param callback Callback taking one argument by ComponentsTypes. Arguments can be component or list of component, depending on the component's ComponentConstraint
 		 */
 		template<typename ComponentType>
-		ComponentType&
+		typename ComponentType::Constraint::ReturnType&
 		get() const
 		{
 			return ComponentType::Constraint::Pool::instance().get(_id);

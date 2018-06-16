@@ -16,6 +16,7 @@
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/core/Entities.hpp"
 #include "engine/helpers/GeometryHelper.hpp"
+#include "game/components/PlayerComponent.hpp"
 
 Wornite::Map&
 Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
@@ -353,6 +354,26 @@ void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float r
 	});
 
 	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
+    scene.getEntities().each<engine::PhysicsComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& p, auto& t) {
+        if (!engine::GeometryHelper::simplePolygonCollide(e, blast))
+            return;
+
+        engine::Vec2D vec;
+        vec.X = t.position.X - bt.position.X;
+        vec.Y = t.position.Y - bt.position.Y + 100.f;
+        vec.normalize();
+        vec *= radius * 50.f;
+        p.velocity += vec;
+
+		if (e.has<worms::PlayerComponent>()) {
+			e.get<worms::PlayerComponent>().hp -= 20;
+
+			if (e.get<worms::PlayerComponent>().hp <= 0) {
+				e.kill();
+				std::cout << "gameover" << std::endl;
+			}
+		}
+    });
 
 	while (!blockToDivide.empty()) {
 		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {

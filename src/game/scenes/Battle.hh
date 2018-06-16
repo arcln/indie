@@ -10,7 +10,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <game/map/Map.hpp>
 #include "engine/core/Game.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
 #include "engine/components/LightComponent.hpp"
@@ -18,6 +17,7 @@
 #include "engine/components/HitboxComponent.hpp"
 #include "engine/components/TransformComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
+#include "engine/components/TextComponent.hpp"
 #include "engine/components/TagComponent.hpp"
 #include "engine/components/CameraComponent.hpp"
 #include "engine/components/PhysicsComponent.hpp"
@@ -29,6 +29,7 @@
 #include "game/components/PlayerComponent.hpp"
 #include "game/components/WeaponComponent.hpp"
 #include "game/events/Vector.hpp"
+#include "game/map/Map.hpp"
 
 namespace worms { namespace scene {
 
@@ -62,7 +63,7 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("explosion", [&](engine::Entity const& entity) {
-			auto& transformComponent = entity.set<engine::TransformComponent>();
+			entity.set<engine::TransformComponent>();
 			auto& particlesComponent = entity.set<engine::ParticlesComponent>(game.device(), 1, 2);
 
 			entity.set<engine::TimeoutComponent>(.1f, [&particlesComponent]() -> void {
@@ -270,10 +271,33 @@ namespace worms { namespace scene {
 			hitboxComponent.hasDebugMode = true;
 		});
 
+
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
 			scene.spawnEntity("rpg");
 			scene.spawnEntity("player");
+
 			return 0;
+		});
+
+		scene.registerEntityModel("timer", [&](engine::Entity const& entity) {
+			entity.set<engine::TagComponent>("timer");
+			static irr::s32 id = 0;
+			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
+																		  L"30",
+																		  irr::core::rect<irr::s32>(10, 10, 300, 300),
+																		  false,
+																		  false,
+																		  nullptr,
+																		  id,
+																		  false);
+			staticTextComponent.node->setWordWrap(false);
+			staticTextComponent.node->setOverrideFont(game.device()->getGUIEnvironment()->getFont(L"../assets/font/PTSans48/PTSans48.xml"));
+
+			scene.registerEvent<std::string>("timer.change", 0, [&staticTextComponent](std::string const& time) {
+				std::wstring wtime(time.begin(), time.end());
+				staticTextComponent.node->setText(wtime.c_str());
+				return 0;
+			});
 		});
 
 		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene, master](std::string const& player) {
@@ -285,8 +309,10 @@ namespace worms { namespace scene {
 				++m.currentPlayer;
 			}
 
-			std::cout <<m.currentPlayer<<std::endl;
-			scene.triggerSyncedEvent("player.play", m.currentPlayer, "");
+			scene.triggerSyncedEvent("player.play", m.players[m.currentPlayer], "");
+			master.set<engine::TimeoutComponent>(3.f, [&scene]() {
+				scene.triggerEvent<std::string>("master.changePlayer");
+			});
 
 			return 0;
 		});
@@ -299,9 +325,7 @@ namespace worms { namespace scene {
 				engine::Entities entities = scene.getEntities();
 				entities.withTag("map", [&](engine::Entity const& chunk) {
 					entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
-						auto& h = child.get<engine::HitboxComponent>();
-
-						h.hasDebugMode = DebugMode;
+						child.get<engine::HitboxComponent>().hasDebugMode = DebugMode;
 					});
 				});
 				DebugMode = !DebugMode;
@@ -319,11 +343,13 @@ namespace worms { namespace scene {
 		scene.spawnEntity("player");
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
+		scene.spawnEntity("timer");
 
 		for (auto i = 0; i < 2; ++i) {
 			scene.triggerEvent<Vector3f>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f));
 		}
 
-		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, "");
+//		scene.triggerEvent<std::string>("timer.change", 0, "42");
+		scene.triggerEvent("master.changePlayer", 0, "0");
 	};
 }}

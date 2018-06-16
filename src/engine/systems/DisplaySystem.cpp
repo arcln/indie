@@ -13,6 +13,7 @@
 #include "engine/components/IrrlichtComponent.hpp"
 #include "engine/components/ParticlesComponent.hpp"
 #include "engine/components/LightComponent.hpp"
+#include "engine/components/ProgressBarComponent.hpp"
 
 engine::DisplaySystem::DisplaySystem(engine::Game& game) : _game(game)
 {
@@ -44,6 +45,14 @@ engine::DisplaySystem::update(Scene& scene, float)
     entities.each<TransformComponent, AnimationComponent>([](auto const& e, auto& t, auto& a) {
         t.rotation.Y = t.direction ? 0 : 180;
     });
+
+	entities.each<TransformComponent, IrrlichtComponent, ProgressBarComponent>([&transformNode](auto const& e, auto& t, auto& i, auto& p) {
+		auto const& t2 = engine::TransformComponent::Constraint::Pool::instance().get(e.getParentId());
+
+		t.position = t2.position;
+		t.position.Y += 10;
+		transformNode(e, t, i);
+	});
 
 	entities.each<AnimationComponent, IrrlichtComponent>([](auto const& e, auto& a, auto& i) {
 		AnimationBoundaries const& boundaries = a.states.at(a.currentState);
