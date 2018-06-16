@@ -61,7 +61,7 @@ worms::WeaponSystem::update(engine::Scene& scene, float)
 constexpr float
 worms::WeaponSystem::_Pi()
 {
-	return static_cast<float>(std::atan(1) * 4);
+	return M_PI;
 }
 
 constexpr float

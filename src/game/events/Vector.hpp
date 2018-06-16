@@ -15,13 +15,12 @@ namespace worms {
 	template <typename DataType>
 	struct Vector2 : public EventPayload {
 		explicit Vector2(DataType x = 0, DataType y = 0) : x(x), y(y) {}
+		explicit Vector2(std::string const& data) {
+			this->unserialize(data);
+		}
 
 		operator irr::core::vector2d<DataType>() const {
 			return irr::core::vector2d<DataType> {x, y};
-		}
-
-		Vector2(std::string const& data) {
-			this->unserialize(data);
 		}
 
 		std::string serialize() const override {
@@ -46,6 +45,9 @@ namespace worms {
 	template <typename DataType>
 	struct Vector3 : public EventPayload {
 		explicit Vector3(DataType x = 0, DataType y = 0, DataType z = 0) : x(x), y(y), z(z) {}
+		explicit Vector3(std::string const& data) {
+			this->unserialize(data);
+		}
 
 		operator irr::core::vector3d<DataType>() const {
 			return irr::core::vector3d<DataType> {x, y, z};

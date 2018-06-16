@@ -857,6 +857,7 @@ namespace worms { namespace scene {
 			t.position.Z = 200;
 		});
 
+<<<<<<< HEAD
 		Wornite::Map().genMap(game, scene);
 <<<<<<< HEAD
 
@@ -884,8 +885,13 @@ namespace worms { namespace scene {
 
 >>>>>>> rules: timer until next turn
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
+=======
+		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const& pos) {
+>>>>>>> fix rebase errors
 			scene.spawnEntity("rpg");
-			scene.spawnEntity("player");
+			scene.spawnEntity("player", [&](engine::Entity const& entity) {
+				entity.get<engine::TransformComponent>().position = (Vector3f) pos;
+			});
 
 			return 0;
 		});
@@ -977,11 +983,14 @@ namespace worms { namespace scene {
 
 		scene.spawnEntity("camera");
 		scene.spawnEntity("map");
+<<<<<<< HEAD
 		scene.spawnEntity("player");
 		scene.spawnEntity("light");
 		scene.spawnEntity("item");
 		scene.spawnEntity("sword");
 		scene.spawnEntity("pickaxe");
+=======
+>>>>>>> fix rebase errors
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
 <<<<<<< HEAD
@@ -1002,8 +1011,12 @@ namespace worms { namespace scene {
 >>>>>>> rules: timer until next turn
 
 		for (auto i = 0; i < 2; ++i) {
+<<<<<<< HEAD
 			scene.triggerEvent<Vector3f>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f));
 >>>>>>> events: fix key repeat
+=======
+			scene.triggerEvent<std::string>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f).serialize());
+>>>>>>> fix rebase errors
 		}
 
 <<<<<<< HEAD
