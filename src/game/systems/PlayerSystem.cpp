@@ -11,6 +11,9 @@
 #include "engine/systems/PhysicsSystem.hpp"
 #include "engine/components/PhysicsComponent.hpp"
 #include "engine/components/AnimationComponent.hpp"
+#include "engine/components/TextComponent.hpp"
+#include "engine/components/TimeoutComponent.hpp"
+#include "game/components/MasterComponent.hpp"
 #include "game/components/PlayerComponent.hpp"
 #include "PlayerSystem.hpp"
 
@@ -29,6 +32,12 @@ worms::PlayerSystem::update(engine::Scene& scene, float tick)
 			a.playOnce = false;
 		}
 
+		auto& m = MasterComponent::Constraint::Pool::instance().get(0);
+
+		if (m.players[m.currentPlayer] != e.getId()) {
+			return;
+		}
+
 		entities.each<engine::CameraComponent>([e, tick](engine::Entity const& eCamera, auto& tCamera) {
 			irr::core::vector3df const& oldPosition = tCamera.node->getPosition();
 			irr::core::vector3df const& newPosition = e.get<engine::TransformComponent>().position + _CameraOffset;
@@ -39,6 +48,11 @@ worms::PlayerSystem::update(engine::Scene& scene, float tick)
 			tCamera.node->setPosition((oldPosition * (1 - ratio) + newPosition * ratio));
 			tCamera.node->setTarget((oldTarget * (1 - ratio) + newTarget * ratio));
 		});
+	});
+
+	entities.withTag("timer", [](engine::Entity const& timer) {
+		auto newtime = std::to_wstring(engine::TimeoutComponent::Constraint::Pool::instance().get(0).back().remaining);
+		timer.get<engine::TextComponent>().node->setText(newtime.substr(0, newtime.find('.')).c_str());
 	});
 }
 
