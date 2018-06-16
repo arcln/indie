@@ -309,7 +309,7 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const& s) {
+			scene.registerEvent<std::string>("player.use", entity.getId(), [entity, &hc](std::string const&) {
 				engine::Entity& item = hc.items[hc.current];
 				if (hc.current >= 0) {
 					if (item.has<engine::ItemComponent>()) {
@@ -552,7 +552,7 @@ namespace worms { namespace scene {
 				return 0;
 			});
 
-			scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const& s) {
+			scene.registerEvent<std::string>("player.pick", entity.getId(), [entity, &hc](std::string const&) {
 				if (hc.hasReachableEntity) {
 					if (hc.items.size() == hc.count) {
 						engine::Entity& item = hc.items[hc.current];
@@ -1020,10 +1020,13 @@ namespace worms { namespace scene {
 		}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, "");
 >>>>>>> rules: manual turn by turn
 =======
 //		scene.triggerEvent<std::string>("timer.change", 0, "42");
+=======
+>>>>>>> git: remove usunsed code
 		scene.triggerEvent("master.changePlayer", 0, "0");
 >>>>>>> rules: timer until next turn
 	};
