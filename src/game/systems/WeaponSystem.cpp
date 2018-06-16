@@ -47,4 +47,25 @@ worms::WeaponSystem::update(engine::Scene& scene, float)
         videoDriver->draw3DLine({mousePos3D.X - 1.f, mousePos3D.Y, 0}, {mousePos3D.X + 1.f, mousePos3D.Y, 0}, irr::video::SColor(255, 255, 0, 0));
         videoDriver->draw3DLine({mousePos3D.X, mousePos3D.Y - 1.f, 0}, {mousePos3D.X, mousePos3D.Y + 1.f, 0}, irr::video::SColor(255, 255, 0, 0));
 	});
+
+	entities.withTag("projectile", [&](engine::Entity const& e) {
+		auto& t = e.get<engine::TransformComponent>();
+		auto& p = e.get<engine::PhysicsComponent>();
+		irr::core::vector2df direction = p.velocity;
+
+		direction.normalize();
+		t.rotation = irr::core::vector3df(0, 0, std::atan2(direction.Y, direction.X) * _RadiansDegrees());
+	});
+}
+
+constexpr float
+worms::WeaponSystem::_Pi()
+{
+	return static_cast<float>(std::atan(1) * 4);
+}
+
+constexpr float
+worms::WeaponSystem::_RadiansDegrees()
+{
+	return 180 / _Pi();
 }

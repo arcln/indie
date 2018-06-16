@@ -22,5 +22,8 @@ namespace worms {
 
     private:
         engine::Game& _game;
+
+		static constexpr float _Pi();
+		static constexpr float _RadiansDegrees();
 	};
 }
