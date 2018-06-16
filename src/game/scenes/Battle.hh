@@ -272,9 +272,11 @@ namespace worms { namespace scene {
 		});
 
 
-		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
+		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const& pos) {
 			scene.spawnEntity("rpg");
-			scene.spawnEntity("player");
+			scene.spawnEntity("player", [&](engine::Entity const& entity) {
+				entity.get<engine::TransformComponent>().position = (Vector3f) pos;
+			});
 
 			return 0;
 		});
@@ -340,13 +342,12 @@ namespace worms { namespace scene {
 
 		scene.spawnEntity("camera");
 		scene.spawnEntity("map");
-		scene.spawnEntity("player");
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
 		scene.spawnEntity("timer");
 
 		for (auto i = 0; i < 2; ++i) {
-			scene.triggerEvent<Vector3f>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f));
+			scene.triggerEvent<std::string>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f).serialize());
 		}
 
 //		scene.triggerEvent<std::string>("timer.change", 0, "42");
