@@ -113,13 +113,9 @@ engine::Game::_popScenes()
 }
 
 void
-engine::Game::registerSystem(std::string const& name, System* system)
+engine::Game::registerSystem(System* system)
 {
-	if (_systems[name] != nullptr) {
-		delete system;
-	}
-
-	_systems[name] = system;
+	_systems.push_back(system);
 }
 
 void
@@ -161,7 +157,7 @@ void engine::Game::_updateScenes()
 
 	for (auto& scene : _scenes) {
 		for (auto& system : _systems) {
-			system.second->update(scene, tick);
+			system->update(scene, tick);
 		}
 	}
 

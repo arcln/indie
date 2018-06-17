@@ -90,7 +90,7 @@ engine::DisplaySystem::update(Scene& scene, float)
         for (auto& segment : h.segments3D) {
     		segment.p1.Z = -1.f;
     		segment.p2.Z = -1.f;
-            auto wSegment = engine::Segment3D{
+            auto wSegment = engine::Segment3D {
                 (segment.p1* t.scale + t.position),
                 (segment.p2 * t.scale + t.position)
             };
@@ -99,7 +99,6 @@ engine::DisplaySystem::update(Scene& scene, float)
         }
     });
 
-    // debug: display axis
 //    _videoDriver->draw3DLine({-100, 0, 0}, {100, 0, 0}, irr::video::SColor(255, 255, 0, 0));
 //    _videoDriver->draw3DLine({0, -100, 0}, {0, 100, 0}, irr::video::SColor(255, 0, 255, 0));
 //    _videoDriver->draw3DLine({0, 0, -100}, {0, 0, 100}, irr::video::SColor(255, 0, 0, 255));

@@ -20,7 +20,7 @@ engine::Engine::play(std::function<void (Game&)> const& model)
 		model(_game);
 
 		if (_isServer) {
-			_game.registerSystem("network", new ServerNetworkSystem());
+			_game.registerSystem(new ServerNetworkSystem());
 		}
 
 		_game.play("main");

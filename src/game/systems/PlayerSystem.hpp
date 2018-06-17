@@ -14,11 +14,13 @@ namespace worms {
 
 	class PlayerSystem : public engine::System {
 	public:
+		PlayerSystem(irr::video::IVideoDriver* videoDriver) : _videoDriver(videoDriver) {}
 		void update(engine::Scene& scene, float tick) override;
 
 		static std::string getState(std::string const& state, engine::HoldComponent const& hc);
 
 	private:
+		irr::video::IVideoDriver* _videoDriver;
 		static float const _CameraSpeed;
 		static irr::core::vector3df const _CameraOffset;
 	};

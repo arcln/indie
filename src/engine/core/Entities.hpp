@@ -40,9 +40,9 @@ namespace engine {
 		template <typename... ComponentsTypes>
 		void each(typename EntityCallback<ComponentsTypes...>::Get const& callback, bool doChilds = true)
 		{
-			try {
-				_getEntityComponents<ComponentsTypes...>(0, 0, callback);
-			} catch (internal::ComponentPoolException const& e) {}
+//			try {
+//				_getEntityComponents<ComponentsTypes...>(0, 0, callback);
+//			} catch (internal::ComponentPoolException const& e) {}
 			this->eachChilds<ComponentsTypes...>(Entity::nullId, callback, doChilds);
 		}
 

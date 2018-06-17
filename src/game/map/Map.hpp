@@ -66,12 +66,10 @@ public:
 		return _perlinScale;
 	};
 
-
-
 private:
 	int _blockDisplayed = 0;
 
-	const float _mapPrecision = .2f;
+	const float _mapPrecision = .4f;
 
 	float _perlinScale = -1.f;
 
