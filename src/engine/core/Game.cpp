@@ -157,6 +157,8 @@ void engine::Game::_updateScenes()
 		return;
 	}
 
+	tick /= 2;
+
     this->device()->getVideoDriver()->beginScene(true, true, irr::video::SColor(255, 100, 101, 140));
 
 	for (auto& scene : _scenes) {

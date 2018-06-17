@@ -358,7 +358,7 @@ void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float r
 		for (unsigned int idx = 0; idx < blockToDivide.size(); idx++) {
 			auto &t = blockToDivide[idx].get<engine::TransformComponent>();
 
-			if (float(ceil(t.scale.X * 10.f)) / 10.f <= 0.2f) {
+			if (float(ceil(t.scale.X * 10.f)) / 10.f <= 0.5f) {
 				blockToDivide[idx].kill();
 			} else {
 				divideBlock(scene, blockToDivide[idx]);
