@@ -16,7 +16,11 @@ void engine::TimeoutSystem::update(engine::Scene& scene, float tick)
 				timeout.remaining -= tick;
 			} else if (!timeout.done) {
 				timeout.callback();
-				timeout.done = true;
+				if (timeout.interval > 0) {
+					timeout.remaining = timeout.interval;
+				} else {
+					timeout.done = true;
+				}
 			}
 		}
 	});

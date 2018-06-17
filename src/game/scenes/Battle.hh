@@ -34,9 +34,12 @@
 namespace worms { namespace scene {
 
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
-		scene.registerEntityModel("master", [](engine::Entity const& entity) {
+		scene.registerEntityModel("master", [&scene](engine::Entity const& entity) {
 			entity.set<MasterComponent>().currentPlayer = 0;
 			entity.set<engine::TagComponent>("master");
+			entity.set<engine::TimeoutComponent>(3.f, [&scene]() {
+				scene.triggerEvent<std::string>("master.changePlayer");
+			}, true);
 		});
 
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
@@ -299,7 +302,9 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene](std::string const& player) {
-			scene.getEntities().each<MasterComponent>([&](engine::Entity const& e, auto& m) {
+			scene.getEntities().each<MasterComponent>([&scene, &player](engine::Entity const& e, auto& m) {
+				scene.triggerSyncedEvent("player.move", m.players[m.currentPlayer], Vector2f(0.f, 0.f).serialize());
+
 				try {
 					m.currentPlayer = std::stoi(player);
 				} catch (std::exception& e) {
@@ -310,9 +315,6 @@ namespace worms { namespace scene {
 				}
 
 				scene.triggerSyncedEvent("player.play", m.players[m.currentPlayer], "");
-				e.set<engine::TimeoutComponent>(3.f, [&scene]() {
-//					scene.triggerEvent<std::string>("master.changePlayer");
-				});
 			});
 
 			return 0;
