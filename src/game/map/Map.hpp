@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2017
-** cpp_d0
+** indie
 ** File description:
 ** Map
 */

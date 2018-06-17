@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2017
-** cpp_d0
+** indie
 ** File description:
 ** Map
 */
@@ -41,23 +41,51 @@ Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
 	}
 	map.length = 70;
 	map.height = 25;
+	float maxpY = -100.f;
+	float maxpX = -100.f;
+	float maxp = -100.f;
+
+	float minpY = 100.f;
+	float minpX = 100.f;
+	float minp = 100.f;
 	for (float y = 0.f; y < map.length; y += _mapPrecision) {
-		float perlinY = ((y > map.length * 0.8f ? map.length * 0.8f : y) / (map.length * 0.8f));
+//		float perlinY = ((y > map.length * 0.8f ? map.length * 0.8f : y) / (map.length * 0.8f));
+		float perlinY = (y > map.length / 2.f ? (map.length - y) : y) / map.length / 1.2f;
+		std::cout << "perlinY = " << perlinY << std::endl;
 		for (float x = 0.f; x < map.length; x += _mapPrecision) {
 			float perlin;
-			float perlinX = (x > map.length / 2.f ? map.length - x : x) / map.length / 2.f;
+			float perlinX = (x > map.length / 2.f ? map.length - x : x) / map.length / 3.f;
 
 			perlin = (((getPerlin((x + _perlinScale) / 6.f,
 					   (y + _perlinScale) / 6.f,
-					   0) + 1.f) / 6.7f));
-			perlin = perlin + perlinY + perlinX;
-			if (perlin > 0.8f && y < map.length - map.height * 1.2)
+					   0) + 1.f) / 7.f));
+
+			if ((perlinY) < minpY)
+				minpY = (perlinY);
+			if ((perlinY) > maxpY)
+				maxpY = (perlinY);
+			if ((perlinX) < minpX)
+				minpX = (perlinX);
+			if ((perlinX) > maxpX)
+				maxpX = (perlinX);
+//			perlin = perlin + perlinY + perlinX;
+//			perlin = perlin + perlinY;
+
+
+			if (perlin > maxp)
+				maxp = perlin;
+			if (perlin < minp)
+				minp = perlin;
+//			if (perlin > 0.8f && y < map.length - map.height * 1.2)
+			if (perlin + perlinY + perlinX > 0.6212345f)
 				map.string.push_back('.');
 			else
 				map.string.push_back('o');
 		}
 		map.string.push_back('\n');
 	}
+//	std::cout << map.string << std::endl;
+	std::cout << "max X Y : " << maxpX << " " << maxpY << " min X Y : " << minpX << " " << minpY << " min max perlin : " << minp << " " << maxp << std::endl;
 	getChunk(&map);
 	for (int i = 0; i < map.nbChunks; i++) {
 		fillBigChunks(game, scene, &map.chunks[i]);
@@ -81,7 +109,7 @@ Wornite::Map::getChunk(Wornite::Map::mapSettings *map)
 		if (y0 != 0.f)
 			break;
 	}
-	map->height = int(((map->length - map->height * 1.2) / _mapPrecision) - y0);
+	map->height = int(((map->length) / _mapPrecision) - y0);
 	map->length = int(map->length / _mapPrecision);
 	map->nbChunks = (int) std::ceil(static_cast<float>(map->length) / static_cast<float>(map->height));
 
