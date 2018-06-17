@@ -82,7 +82,7 @@ namespace worms { namespace scene {
 
 			scene.registerEntityModel("player", [&](engine::Entity const& entity) {
 				entity.set<PlayerComponent>(0);
-				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d", "texture/silinoid.png");
+				entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d", "texture/player_jason.png");
                 entity.set<engine::TagComponent>(std::string("player"));
                 std::cout << "player " << entity.getId() << std::endl;
 
