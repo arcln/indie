@@ -29,13 +29,13 @@
 namespace worms {
 
 	static const auto worms = [](engine::Game& game) {
-        game.registerSystem("item", new engine::ItemSystem());
-        game.registerSystem("physics", new engine::PhysicsSystem());
-		game.registerSystem("display", new engine::DisplaySystem(game));
-		game.registerSystem("timeout", new engine::TimeoutSystem());
-		game.registerSystem("player", new PlayerSystem());
-        game.registerSystem("weapon", new WeaponSystem(game));
-		game.registerSystem("effects", new engine::Menu::MenuEngineSystem());
+		game.registerSystem(new engine::PhysicsSystem());
+        game.registerSystem(new engine::ItemSystem());
+		game.registerSystem(new WeaponSystem(game));
+		game.registerSystem(new PlayerSystem(game.device()->getVideoDriver()));
+		game.registerSystem(new engine::TimeoutSystem());
+		game.registerSystem(new engine::Menu::MenuEngineSystem());
+		game.registerSystem(new engine::DisplaySystem(game));
 
 		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);

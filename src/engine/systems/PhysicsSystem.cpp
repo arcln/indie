@@ -287,6 +287,7 @@ engine::PhysicsSystem::patchDeplacement(Entities& entities, Entity const& entity
                 break;
             }
         }
+
         if (!isOk)
             t.position = prevPos;
     });

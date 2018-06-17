@@ -66,8 +66,6 @@ public:
 		return _perlinScale;
 	};
 
-
-
 private:
 	int _blockDisplayed = 0;
 

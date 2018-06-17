@@ -34,7 +34,7 @@ namespace engine {
 		void pushScene(std::string const& name);
 		void popScene();
 
-		void registerSystem(std::string const& name, System* system);
+		void registerSystem(System* system);
 		void registerSceneModel(std::string const& name, SceneModel const& sceneModel);
 
 		irr::IrrlichtDevice* device();
@@ -54,7 +54,7 @@ namespace engine {
 	private:
 		irr::IrrlichtDevice* _device;
 		EventsReceiver _eventReceiver;
-		std::unordered_map<std::string, System*> _systems;
+		std::vector<System*> _systems;
 		std::list<Scene> _scenes;
 		SceneModels _sceneModels;
 		std::string _cwd;

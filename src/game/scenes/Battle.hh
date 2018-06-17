@@ -42,6 +42,7 @@ namespace worms { namespace scene {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		std::vector<engine::EntityId> players;
 >>>>>>> rules: select player that receives events
@@ -49,6 +50,12 @@ namespace worms { namespace scene {
 >>>>>>> rules: manual turn by turn
 		engine::Entity master(engine::Entity::nullId, engine::Entity::nullId, &scene.getEntities());
 		master.set<MasterComponent>().currentPlayer = 0;
+=======
+		scene.registerEntityModel("master", [](engine::Entity const& entity) {
+			entity.set<MasterComponent>().currentPlayer = 0;
+			entity.set<engine::TagComponent>("master");
+		});
+>>>>>>> wip
 
 		scene.registerEntityModel("camera", [&](engine::Entity const& entity) {
 			entity.set<engine::TransformComponent>();
@@ -474,11 +481,13 @@ namespace worms { namespace scene {
 			particlesComponent.node->getEmitter()->setMaxStartColor(irr::video::SColor(0, 255, 255, 255));
 		});
 
-		scene.registerEntityModel("player", [&game, &scene, master](engine::Entity const& entity) {
+		scene.registerEntityModel("player", [&game, &scene](engine::Entity const& entity) {
 			entity.set<PlayerComponent>();
 			entity.set<engine::IrrlichtComponent>(&game, "obj/silinoid.ms3d", "texture/silinoid.png");
 			entity.set<engine::TagComponent>(std::string("player"));
-			master.get<MasterComponent>().players.push_back(entity.getId());
+			scene.getEntities().each<MasterComponent>([&](auto const& e, auto& m) {
+				m.players.push_back(entity.getId());
+			});
 
 			auto& physicsComponent = entity.set<engine::PhysicsComponent>();
 			auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -600,12 +609,12 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(10.f, 0.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 100.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
-				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
-				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_U, "player.use", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_UP, "player.aim", entity.getId(), Vector2f(0.f, 1.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_RIGHT, "player.aim", entity.getId(), Vector2f(1.f, 0.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_DOWN, "player.aim", entity.getId(), Vector2f(0.f, -1.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_LEFT, "player.aim", entity.getId(), Vector2f(-1.f, 0.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
+				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
+				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_U, "player.use", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 
 				return 0;
 			});
@@ -824,7 +833,6 @@ namespace worms { namespace scene {
 
 		scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
 			entity.set<engine::TagComponent>(std::string("rpg"));
-
 			entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
 			entity.set<engine::PhysicsComponent>();
 			auto& ic = entity.set<engine::ItemComponent>([]() {
@@ -911,22 +919,25 @@ namespace worms { namespace scene {
 			staticTextComponent.node->setWordWrap(false);
 			staticTextComponent.node->setOverrideFont(game.device()->getGUIEnvironment()->getFont(L"../assets/font/PTSans48/PTSans48.xml"));
 
-			scene.registerEvent<std::string>("timer.change", 0, [&staticTextComponent](std::string const& time) {
-				std::wstring wtime(time.begin(), time.end());
-				staticTextComponent.node->setText(wtime.c_str());
-				return 0;
-			});
+//			scene.registerEvent<std::string>("timer.change", 0, [&staticTextComponent](std::string const& time) {
+//				std::wstring wtime(time.begin(), time.end());
+//				staticTextComponent.node->setText(wtime.c_str());
+//				return 0;
+//			});
 		});
 
-		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene, master](std::string const& player) {
-			auto& m = master.get<MasterComponent>();
+		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene](std::string const& player) {
+			scene.getEntities().each<MasterComponent>([&](engine::Entity const& e, auto& m) {
+				try {
+					m.currentPlayer = std::stoi(player);
+				} catch (std::exception& e) {
+					++m.currentPlayer;
+					if (m.currentPlayer >= static_cast<int>(m.players.size())) {
+						m.currentPlayer = 0;
+					}
+				}
 
-			try {
-				m.currentPlayer = std::stoi(player);
-			} catch (std::exception& e) {
-				++m.currentPlayer;
-			}
-
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -949,6 +960,12 @@ namespace worms { namespace scene {
 			scene.triggerSyncedEvent("player.play", m.players[m.currentPlayer], "");
 			master.set<engine::TimeoutComponent>(3.f, [&scene]() {
 				scene.triggerEvent<std::string>("master.changePlayer");
+=======
+				scene.triggerSyncedEvent("player.play", m.players[m.currentPlayer], "");
+				e.set<engine::TimeoutComponent>(3.f, [&scene]() {
+					scene.triggerEvent<std::string>("master.changePlayer");
+				});
+>>>>>>> wip
 			});
 >>>>>>> rules: timer until next turn
 
@@ -963,7 +980,7 @@ namespace worms { namespace scene {
 				static bool DebugMode = true;
 				engine::Entities entities = scene.getEntities();
 				entities.withTag("map", [&](engine::Entity const& chunk) {
-					entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
+					entities.eachChilds(chunk.getId(), [&](engine::Entity const& child) {
 						child.get<engine::HitboxComponent>().hasDebugMode = DebugMode;
 					});
 				});
@@ -981,6 +998,7 @@ namespace worms { namespace scene {
 
 		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "map.hitbox.display", 0, Vector2f(0.f, 0.f), engine::EVT_SYNCED);
 
+		scene.spawnEntity("master");
 		scene.spawnEntity("camera");
 		scene.spawnEntity("map");
 <<<<<<< HEAD

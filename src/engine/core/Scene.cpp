@@ -92,6 +92,6 @@ engine::Scene::synchronizeWith(std::string const& hostname, Game& game)
 	}
 	std::cerr << "worms: network: successfuly connected to " << hostname << std::endl;
 
-	game.registerSystem("network", new ClientNetworkSystem(_socket, _events));
+	game.registerSystem(new ClientNetworkSystem(_socket, _events));
 	_synced = true;
 }
