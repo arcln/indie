@@ -131,7 +131,6 @@ namespace worms { namespace scene {
 
 				scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent, &hc](std::string const& jump) {
 					if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
-						std::cout << "jump" << std::endl;
 						physicsComponent.velocity += (Vector2f) jump;
 						animationComponent.currentState = PlayerSystem::getState("jump", hc);
 						animationComponent.playOnce = true;
@@ -292,6 +291,17 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
+		scene.registerEntityModel("background", [&](engine::Entity const& entity) {
+			auto& i = entity.set<engine::IrrlichtComponent>(&game, "obj/spaceBackground.obj");
+			auto& t = entity.set<engine::TransformComponent>();
+
+			t.scale *= 550;
+			t.scale.Y *= 1200.f / 1920.f;
+			t.rotation.X = 10;
+			t.position.Z = 200;
+		});
+
+		Wornite::Map().genMap(game, scene);
 
 		scene.registerEntityModel("map", [&](engine::Entity const& entity) {
 			Wornite::Map().genMap(game, scene).getSeed();
@@ -324,5 +334,6 @@ namespace worms { namespace scene {
 		scene.spawnEntity("player");
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
+		scene.spawnEntity("background");
 	};
 }}
