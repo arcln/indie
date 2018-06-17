@@ -336,21 +336,23 @@ Wornite::Map::getBlastCollision(engine::Entities& entities, engine::Entity blast
 	return blastCollision;
 }
 
-void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius)
+void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float radius, bool explosion)
 {
 	engine::Entity blast = engine::GeometryHelper::createBlastPolygon(scene, x, y, radius);
 	auto& bt = blast.get<engine::TransformComponent>();
 
-	scene.getEntities().each<engine::PhysicsComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& p, auto& t) {
-		if (!engine::GeometryHelper::simplePolygonCollide(e, blast))
+	if (explosion) {
+		scene.getEntities().each<engine::PhysicsComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& p, auto& t) {
+			if (!engine::GeometryHelper::simplePolygonCollide(e, blast))
 			return;
-		engine::Vec2D vec;
-		vec.X = t.position.X - bt.position.X;
-		vec.Y = t.position.Y - bt.position.Y + 100.f;
-		vec.normalize();
-		vec *= radius * 50.f;
-		p.velocity += vec;
-	});
+			engine::Vec2D vec;
+			vec.X = t.position.X - bt.position.X;
+			vec.Y = t.position.Y - bt.position.Y + 100.f;
+			vec.normalize();
+			vec *= radius * 50.f;
+			p.velocity += vec;
+		});
+	}
 
 	std::vector<engine::Entity> blockToDivide = getBlastCollision(scene.getEntities(), blast);
 

@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <game/map/Map.hpp>
+#include "engine/helpers/GeometryHelper.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
 #include "engine/components/LightComponent.hpp"
@@ -117,6 +118,15 @@ namespace worms { namespace scene {
 
 				auto& hc = entity.set<engine::HoldComponent>();
 
+                // give pickaxe
+                auto pickaxe = scene.spawnEntity("pickaxe");
+                auto& h = pickaxe.get<engine::HitboxComponent>();
+                auto& t = pickaxe.get<engine::TransformComponent>();
+                engine::GeometryHelper::transformHitbox(h, t);
+                auto item = entity.attach(pickaxe);
+                hc.items[++hc.current] = item;
+                hc.count += 1;
+
 				scene.registerEvent<std::string>("player.move", entity.getId(), [&](std::string const& move) {
                     auto _move = (Vector2f)move;
 					physicsComponent.move = _move;
@@ -193,7 +203,63 @@ namespace worms { namespace scene {
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_RIGHT, "player.aim", entity.getId(), Vector2f(1.f, 0.f), engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_DOWN, "player.aim", entity.getId(), Vector2f(0.f, -1.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_LEFT, "player.aim", entity.getId(), Vector2f(-1.f, 0.f), engine::EVT_SYNCED);
+
+				return 0;
 			});
+
+
+
+        scene.registerEntityModel("item", [&](engine::Entity const& entity) {
+            entity.set<engine::TagComponent>(std::string("item"));
+            std::cout << "item " << entity.getId() << std::endl;
+
+
+            entity.set<engine::IrrlichtComponent>(&game, "obj/block.obj");
+            entity.set<engine::PhysicsComponent>();
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+                std::cout << "use item" << std::endl;
+            });
+
+            ic.offset = {1.f, 2.f, 0.f};
+            auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.position = {-10.f, 10.f, 0.f};
+            transformComponent.scale = {0.5f, 0.5f, 0.5f};
+		});
+
+		scene.registerEntityModel("light", [&](engine::Entity const& entity) {
+			entity.set<engine::LightComponent>(
+				game.device(), irr::core::vector3df(0, 500, 50), irr::video::SColorf(0.0f, 0.0f, 0.0f), 1000
+			);
+		});
+
+        scene.registerEntityModel("pickaxe", [&](engine::Entity const& entity) {
+            entity.set<engine::TagComponent>(std::string("pickaxe"));
+
+            auto& wc = entity.set<WeaponComponent>();
+            wc.hasAim = true;
+
+            entity.set<engine::IrrlichtComponent>(&game, "obj/pickaxe.obj");
+            entity.set<engine::PhysicsComponent>();
+
+            auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-8 -3, -8 3, 6 3, 6 -3)");
+			hitboxComponent.hasDebugMode = true;
+
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+            transformComponent.position = {5.f, 10.f, 0.f};
+            transformComponent.scale = {0.15f, 0.15f, 0.15f};
+            transformComponent.offset = {0.f, -3.2f, 0.f};
+            // transformComponent.offsetRotation = {0.f, 0.f, -90.f};
+            transformComponent.rotation = {0.f, 180.f, 0.f};
+
+            auto& ic = entity.set<engine::ItemComponent>();
+            ic.use = [&]() {
+                auto p = wc.aimPosition;
+                p.normalize();
+                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X + p.X, transformComponent.position.Y + p.Y, 1.5f, false);
+            };
+            ic.offset = {1.5f, 1.f, 0.f};
+		});
 
         scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("sword"));
@@ -201,7 +267,8 @@ namespace worms { namespace scene {
             auto& wc = entity.set<WeaponComponent>();
             wc.hasAim = true;
 
-            entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj", "obj/sword.mtl");
+
+            entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj");
             entity.set<engine::PhysicsComponent>();
 
 			auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -327,6 +394,10 @@ namespace worms { namespace scene {
 		scene.spawnEntity("camera");
 		scene.spawnEntity("map");
 		scene.spawnEntity("player");
+		scene.spawnEntity("light");
+		scene.spawnEntity("item");
+        scene.spawnEntity("sword");
+		scene.spawnEntity("pickaxe");
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
 		scene.spawnEntity("background");

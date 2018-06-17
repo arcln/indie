@@ -9,4 +9,4 @@ Ks 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 1
-map_Kd /home/huseyingm/Masaüstü/low_poly_hand_painted_swords_by_ninja_magus-d2yc2cd.jpg
+map_Kd ../texture/sword.jpg

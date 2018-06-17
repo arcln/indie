@@ -1,6 +1,6 @@
 # Blender v2.69 (sub 0) OBJ File: 'SwordGame.blend'
 # www.blender.org
-mtllib SwordGame.mtl
+mtllib sword.mtl
 o Plane
 v -0.930588 6.330781 -5.606068
 v -0.930588 6.319938 -5.431826
