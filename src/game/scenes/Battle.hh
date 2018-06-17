@@ -198,7 +198,7 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 70.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_A, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_S, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_UP, "player.aim", entity.getId(), Vector2f(0.f, 1.f), engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_RIGHT, "player.aim", entity.getId(), Vector2f(1.f, 0.f), engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_DOWN, "player.aim", entity.getId(), Vector2f(0.f, -1.f), engine::EVT_SYNCED);
@@ -242,7 +242,6 @@ namespace worms { namespace scene {
             entity.set<engine::PhysicsComponent>();
 
             auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-8 -3, -8 3, 6 3, 6 -3)");
-			hitboxComponent.hasDebugMode = true;
 
 
 			auto& transformComponent = entity.set<engine::TransformComponent>();
@@ -263,11 +262,6 @@ namespace worms { namespace scene {
 
         scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("sword"));
-
-            auto& wc = entity.set<WeaponComponent>();
-            wc.hasAim = true;
-
-
             entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj");
             entity.set<engine::PhysicsComponent>();
 
@@ -282,12 +276,6 @@ namespace worms { namespace scene {
 
             auto& ic = entity.set<engine::ItemComponent>();
             ic.use = [&]() {
-                auto bullet = scene.spawnEntity("sword.bullet");
-                auto& bt = bullet.get<engine::TransformComponent>();
-                auto& bp = bullet.get<engine::PhysicsComponent>();
-                bt.position = transformComponent.position;
-                bp.velocity = wc.aimPosition;
-                bp.velocity = bp.velocity.normalize() * 100.f;
             };
             ic.offset = {1.5f, 1.f, 0.f};
 		});
@@ -313,22 +301,31 @@ namespace worms { namespace scene {
 
         scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("rpg"));
-
 			entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
             entity.set<engine::PhysicsComponent>();
-			auto& ic = entity.set<engine::ItemComponent>([]() {
-                std::cout << "use item" << std::endl;
-            });
 
-            ic.offset = {1.f, 2.f, 0.f};
+			auto& transform = entity.set<engine::TransformComponent>();
+			transform.position = {10.f, 10.f, 0.f};
+			transform.scale = {0.4f, 0.4f, 0.4f};
+			transform.offsetRotation = {0.f, -90.f, 0.f};
 
-			auto& transformComponent = entity.set<engine::TransformComponent>();
-			transformComponent.position = {-10.f, 10.f, 0.f};
-            transformComponent.scale = {0.4f, 0.4f, 0.4f};
-			transformComponent.offsetRotation.Y = -90;
+			auto& hitbox = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitbox.rebound = 0.2;
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-			hitboxComponent.rebound = 0.2;
+			auto& weapon = entity.set<WeaponComponent>();
+			auto& item = entity.set<engine::ItemComponent>([&scene, &transform, &weapon]() {
+				auto bullet = scene.spawnEntity("sword.bullet");
+				auto& bulletTransform = bullet.get<engine::TransformComponent>();
+				auto& bulletPhysics = bullet.get<engine::PhysicsComponent>();
+
+				bulletTransform.position = transform.position;
+				bulletPhysics.velocity = weapon.aimPosition;
+				bulletPhysics.velocity = bulletPhysics.velocity.normalize() * 100.f;
+			});
+			item.heavy = true;
+
+			weapon.hasAim = true;
+            item.offset = {1.f, 1.f, 0.f};
 		});
 
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
