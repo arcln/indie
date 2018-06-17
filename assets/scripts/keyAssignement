@@ -10,8 +10,8 @@ image:
 
 image:
 	- name: logo
-	- image: texture/wornite720PTsans.png
-	- pos: 390 , 60
+	- image: texture/Logo600.png
+	- pos: 340 , 100
 
 text:
 	- name: Move left
@@ -99,6 +99,6 @@ button:
 
 button:
 	- event: go back
-	- image: texture/button_back.png
+	- image: texture/back.png
 	- border: false
 	- rect: 380, 620, 520, 675

@@ -10,33 +10,29 @@ image:
 
 image:
 	- name: logo
-	- image: texture/wornite720PTsans.png
-	- pos: 390 , 60
+	- image: texture/Logo600.png
+	- pos: 340 , 100
 
 button:
-	- image: texture/button_play.png
-	- imagePressed: texture/button_play(1).png
-	- rect: 343, 250, 937, 316
+	- image: texture/play.png
+	- rect: 343, 288, 937, 374
 	- border: false
 	- event: Play
 
 button:
-	- image: texture/button_options.png
-	- imagePressed: texture/button_options(1).png
-	- rect: 343, 338, 937, 404
+	- image: texture/options.png
+	- rect: 343, 396, 937, 462
 	- border: false
 	- event: Options
 
 button:
-	- image: texture/button_credits.png
-	- imagePressed: texture/button_credits(1).png
-	- rect: 343, 426, 937, 492
+	- image: texture/credits.png
+	- rect: 343, 484, 937, 550
 	- border: false
 	- event: Credits
 
 button:
-	- image: texture/button_quit.png
-	- imagePressed: texture/button_quit(1).png
-	- rect: 343, 514, 937, 580
+	- image: texture/quit.png
+	- rect: 343, 572, 937, 648
 	- border: false
 	- event: Quit

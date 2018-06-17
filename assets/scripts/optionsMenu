@@ -10,8 +10,8 @@ image:
 
 image:
 	- name: logo
-	- image: texture/wornite720PTsans.png
-	- pos: 390 , 60
+	- image: texture/Logo600.png
+	- pos: 340 , 100
 
 image:
 	- name: soundBar
@@ -48,42 +48,38 @@ image:
 	- image: texture/baton.png
 	- pos: 850, 345
 
-text:
+image:
 	- name: Volume
-	- setText: Volume:
-	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
+	- image: texture/volumetext.png
 	- pos: 320, 280
-	- color: 255, 255, 255, 255
 
 text:
 	- name: VolumeLvl
 	- setText: 0
 	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
-	- pos: 470, 280
+	- pos: 450, 277
 	- color: 255, 255, 255, 255
 
 button:
 	- event: volume plus
-	- image: texture/right.png
-	- imagePressed: texture/right(1).png
+	- image: texture/right(1).png
 	- rect: 910, 338, 966, 388
 	- border: false
 
 button:
 	- event: volume minus
-	- image: texture/left.png
-	- imagePressed: texture/left(1).png
+	- image: texture/left(1).png
 	- rect: 320, 338, 376, 388
 	- border: false
 
 button:
 	- event: to assignKey
-	- image: texture/button_keyAssignment.png
+	- image: texture/keyAssignement.png
 	- border: false
 	- rect: 343, 500, 937, 554
 
 button:
 	- event: go back
-	- image: texture/button_back.png
+	- image: texture/back.png
 	- border: false
 	- rect: 380, 620, 520, 675
