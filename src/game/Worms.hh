@@ -24,6 +24,7 @@
 #include "game/scenes/CreditsMenu.hh"
 #include "game/scenes/WaitingMenu.hh"
 #include "game/scenes/KeyAssign.hh"
+#include "game/scenes/GameOver.hh"
 
 namespace worms {
 
@@ -45,5 +46,6 @@ namespace worms {
 		game.registerSceneModel("waintingMenu", worms::scene::waitingScene);
 		game.registerSceneModel("main", worms::scene::loading);
 		game.registerSceneModel("battle", worms::scene::battle);
+		game.registerSceneModel("gameOver", worms::scene::gameOver);
 	};
 }
