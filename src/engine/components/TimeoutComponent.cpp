@@ -10,6 +10,14 @@
 engine::TimeoutComponent::TimeoutComponent()
 {}
 
-engine::TimeoutComponent::TimeoutComponent(float after, std::function<void()> const& callback)
-	: remaining(after), done(false), callback(callback)
-{}
+engine::TimeoutComponent::TimeoutComponent(float after, std::function<void()> const& callback, bool interval)
+	: done(false), callback(callback)
+{
+	this->remaining = after;
+
+	if (interval) {
+		this->interval = after;
+	} else {
+		this->interval = -1;
+	}
+}

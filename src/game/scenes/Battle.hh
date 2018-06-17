@@ -40,6 +40,7 @@ namespace worms { namespace scene {
 
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -55,8 +56,14 @@ namespace worms { namespace scene {
 =======
 >>>>>>> manual player change
 		scene.registerEntityModel("master", [](engine::Entity const& entity) {
+=======
+		scene.registerEntityModel("master", [&scene](engine::Entity const& entity) {
+>>>>>>> game: change player by interval
 			entity.set<MasterComponent>().currentPlayer = 0;
 			entity.set<engine::TagComponent>("master");
+			entity.set<engine::TimeoutComponent>(3.f, [&scene]() {
+				scene.triggerEvent<std::string>("master.changePlayer");
+			}, true);
 		});
 >>>>>>> wip
 
@@ -924,7 +931,9 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene](std::string const& player) {
-			scene.getEntities().each<MasterComponent>([&](engine::Entity const& e, auto& m) {
+			scene.getEntities().each<MasterComponent>([&scene, &player](engine::Entity const& e, auto& m) {
+				scene.triggerSyncedEvent("player.move", m.players[m.currentPlayer], Vector2f(0.f, 0.f).serialize());
+
 				try {
 					m.currentPlayer = std::stoi(player);
 				} catch (std::exception& e) {
@@ -959,10 +968,13 @@ namespace worms { namespace scene {
 				scene.triggerEvent<std::string>("master.changePlayer");
 =======
 				scene.triggerSyncedEvent("player.play", m.players[m.currentPlayer], "");
+<<<<<<< HEAD
 				e.set<engine::TimeoutComponent>(3.f, [&scene]() {
 //					scene.triggerEvent<std::string>("master.changePlayer");
 				});
 >>>>>>> wip
+=======
+>>>>>>> game: change player by interval
 			});
 >>>>>>> rules: timer until next turn
 

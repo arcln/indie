@@ -15,8 +15,9 @@ namespace engine {
 		using Constraint = ComponentConstraint<TimeoutComponent, true>;
 
 		TimeoutComponent();
-		TimeoutComponent(float after, std::function<void ()> const& callback);
+		TimeoutComponent(float after, std::function<void ()> const& callback, bool interval = false);
 
+		float interval;
 		float remaining;
 		bool done;
 		std::function<void ()> callback;
