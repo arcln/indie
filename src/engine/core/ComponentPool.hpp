@@ -71,7 +71,7 @@ namespace engine {
 		{
 			try {
 				return _components.at(entityId);
-			} catch (std::out_of_range& e) {
+			} catch (std::exception& e) {
 				throw internal::ComponentPoolException(std::string("components not found, ") + e.what());
 			}
 		}

@@ -34,7 +34,6 @@
 namespace worms { namespace scene {
 
 	static const auto battle = [](engine::Game& game, engine::Scene& scene) {
-
 		scene.registerEntityModel("master", [](engine::Entity const& entity) {
 			entity.set<MasterComponent>().currentPlayer = 0;
 			entity.set<engine::TagComponent>("master");
@@ -297,12 +296,6 @@ namespace worms { namespace scene {
 																		  false);
 			staticTextComponent.node->setWordWrap(false);
 			staticTextComponent.node->setOverrideFont(game.device()->getGUIEnvironment()->getFont(L"../assets/font/PTSans48/PTSans48.xml"));
-
-//			scene.registerEvent<std::string>("timer.change", 0, [&staticTextComponent](std::string const& time) {
-//				std::wstring wtime(time.begin(), time.end());
-//				staticTextComponent.node->setText(wtime.c_str());
-//				return 0;
-//			});
 		});
 
 		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene](std::string const& player) {
@@ -318,7 +311,7 @@ namespace worms { namespace scene {
 
 				scene.triggerSyncedEvent("player.play", m.players[m.currentPlayer], "");
 				e.set<engine::TimeoutComponent>(3.f, [&scene]() {
-					scene.triggerEvent<std::string>("master.changePlayer");
+//					scene.triggerEvent<std::string>("master.changePlayer");
 				});
 			});
 
@@ -344,7 +337,8 @@ namespace worms { namespace scene {
 			return 0;
 		});
 
-		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "map.hitbox.display", 0, Vector2f(0.f, 0.f), engine::EVT_SYNCED);
+		game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_H, "map.hitbox.display", 0, Vector2f(0.f, 0.f));
+		game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_P, "master.changePlayer", 0, "");
 
 		scene.spawnEntity("master");
 		scene.spawnEntity("camera");
@@ -357,6 +351,6 @@ namespace worms { namespace scene {
 			scene.triggerEvent<std::string>("player.spawn", 0, Vector3f(10.f * i - 5.f, 25.f, 0.f).serialize());
 		}
 
-		scene.triggerEvent("master.changePlayer", 0, "0");
+		scene.triggerEvent<std::string>("master.changePlayer", 0, "0");
 	};
 }}
