@@ -13,12 +13,6 @@
 #include "../components/ItemComponent.hpp"
 #include "../components/HitboxComponent.hpp"
 
-/*
-
-sqrt( (A.x - C.x) ** 2 + (A.y - (C.x * 2 + 1)) ** 2 ) =  dist
-
-*/
-
 void
 engine::ItemSystem::update(Scene& scene, float)
 {
@@ -27,6 +21,7 @@ engine::ItemSystem::update(Scene& scene, float)
 
     entities.each<TransformComponent, ItemComponent, HitboxComponent>([&](Entity const& e, auto& t, auto& i, auto& h) {
         auto parentID = e.getParentId();
+
 
         if (e.has<ItemComponent>() && parentID == Entity::nullId) {
             t.rotation.Y += 1.f;
@@ -52,7 +47,7 @@ engine::ItemSystem::update(Scene& scene, float)
         i.direction = true;
         if (!parent.get<TransformComponent>().direction) {
             i.direction = false;
-            t.position.X -= (h.WSize.X - parentH.WSize.X / 2);
+            t.position.X -= h.WSize.X + parentH.WSize.X - (i.offset.X / 2);
             t.rotation.Y = 180.f;
         } else {
             t.rotation.Y = 0.f;

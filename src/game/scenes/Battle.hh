@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <game/map/Map.hpp>
+#include "engine/helpers/GeometryHelper.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
 #include "engine/components/LightComponent.hpp"
@@ -119,6 +120,9 @@ namespace worms { namespace scene {
 
                 // give pickaxe
                 auto pickaxe = scene.spawnEntity("pickaxe");
+                auto& h = pickaxe.get<engine::HitboxComponent>();
+                auto& t = pickaxe.get<engine::TransformComponent>();
+                engine::GeometryHelper::transformHitbox(h, t);
                 auto item = entity.attach(pickaxe);
                 hc.items[++hc.current] = item;
                 hc.count += 1;
@@ -232,13 +236,12 @@ namespace worms { namespace scene {
             entity.set<engine::TagComponent>(std::string("pickaxe"));
 
             auto& wc = entity.set<WeaponComponent>();
-            // wc.hasAim = true;
-
+            wc.hasAim = true;
 
             entity.set<engine::IrrlichtComponent>(&game, "obj/pickaxe.obj");
             entity.set<engine::PhysicsComponent>();
 
-            auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-10 -3, -10 3, 1 3, 1 -3)");
+            auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-8 -3, -8 3, 6 3, 6 -3)");
 			hitboxComponent.hasDebugMode = true;
 
 
@@ -251,8 +254,9 @@ namespace worms { namespace scene {
 
             auto& ic = entity.set<engine::ItemComponent>();
             ic.use = [&]() {
-                std::cout << "use item" << std::endl;
-                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y - 2.f, 2.f);
+                auto p = wc.aimPosition;
+                p.normalize();
+                Wornite::Map::tryDestroyMap(scene, transformComponent.position.X + p.X, transformComponent.position.Y + p.Y, 1.5f, false);
             };
             ic.offset = {1.5f, 1.f, 0.f};
 		});
