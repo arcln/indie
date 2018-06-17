@@ -17,6 +17,7 @@
 #include "engine/core/Entities.hpp"
 #include "engine/helpers/GeometryHelper.hpp"
 #include "game/components/PlayerComponent.hpp"
+#include "game/components/MasterComponent.hpp"
 
 Wornite::Map&
 Wornite::Map::genMap(engine::Game& game, engine::Scene &scene)
@@ -372,7 +373,13 @@ void Wornite::Map::tryDestroyMap(engine::Scene& scene, float x, float y, float r
 
 			if (e.get<worms::PlayerComponent>().hp <= 0) {
 				e.kill();
-				std::cout << "gameover" << std::endl;
+				scene.getEntities().each<worms::MasterComponent>([e](auto const&, auto& m) {
+					auto it = std::find(std::begin(m.players), std::end(m.players), e.getId());
+					if (it == std::end(m.players)) {
+						return;
+					}
+					m.players.erase(it);
+				});
 			}
 		}
     });

@@ -193,7 +193,7 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEvent<Vector2i>("matchmaking", 0, [&](Vector2i const&) {
-			game.replaceScene("waintingMenu");
+			game.replaceScene("battle");
 			return 0;
 		});
 

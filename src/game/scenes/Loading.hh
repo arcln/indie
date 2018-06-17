@@ -42,6 +42,6 @@ namespace worms { namespace scene {
 
 		scene.triggerEvent<engine::GenericEvent>("loadMeshes", 0);
 		scene.triggerEvent<engine::GenericEvent>("loadTextures", 0);
-		game.replaceScene("battle");
+		game.replaceScene("postMenu");
 	};
 }}

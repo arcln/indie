@@ -27,7 +27,19 @@ worms::PlayerSystem::update(engine::Scene& scene, float tick)
 {
 	engine::Entities& entities = scene.getEntities();
 
-	entities.each<PlayerComponent, engine::PhysicsComponent, engine::AnimationComponent, engine::HoldComponent>([&entities, tick](engine::Entity const& e, auto& pl, auto& ph, auto& a, auto& hc) {
+	entities.each<PlayerComponent, engine::PhysicsComponent, engine::AnimationComponent, engine::HoldComponent, engine::TransformComponent>([&](engine::Entity const& e, auto& pl, auto& ph, auto& a, auto& hc, auto& t) {
+		if (t.position.Y < -10) {
+			e.kill();
+			entities.each<MasterComponent>([e](auto const&, auto& m) {
+				auto it = std::find(std::begin(m.players), std::end(m.players), e.getId());
+				if (it == std::end(m.players)) {
+					return;
+				}
+
+				m.players.erase(it);
+			});
+		}
+
 		if (engine::PhysicsSystem::isGrounded(entities, e)) {
 			if (!a.playOnce)
 				a.currentState = (ph.move.X == 0 ? getState("idle", hc) : getState("run", hc));
@@ -35,6 +47,10 @@ worms::PlayerSystem::update(engine::Scene& scene, float tick)
 		}
 
 		entities.each<MasterComponent>([&](auto const&, auto& m) {
+			if (m.players.size() == 1) {
+				scene.triggerEvent<engine::EntityId>("master.win", 0, m.players.front());
+			}
+
 			if (m.players[m.currentPlayer] == e.getId()) {
 				entities.each<engine::CameraComponent>([e, tick](engine::Entity const& eCamera, auto& tCamera) {
 					irr::core::vector3df const& oldPosition = tCamera.node->getPosition();

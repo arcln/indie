@@ -31,8 +31,6 @@ namespace engine { namespace network {
 			if (::send(_socket, reinterpret_cast<char *>(&dataCpy), sizeof(MessageType), 0) < 0) {
 				throw std::runtime_error(std::string("failed to write into socket (") + strerror(errno) + ")");
 			}
-
-			std::cout << "just sent\n" << std::flush;
 		}
 
 		template <typename MessageType>
@@ -45,7 +43,6 @@ namespace engine { namespace network {
 			} else if (recvSize == 0) {
 				throw std::runtime_error("connection was closed by remote host");
 			}
-			std::cout << "just read\n" << std::flush;
 
 			auto data = reinterpret_cast<MessageType*>(buffer);
 			if (data->size != sizeof(MessageType)) {

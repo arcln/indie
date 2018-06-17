@@ -61,7 +61,7 @@ namespace worms { namespace scene {
 >>>>>>> game: change player by interval
 			entity.set<MasterComponent>().currentPlayer = 0;
 			entity.set<engine::TagComponent>("master");
-			entity.set<engine::TimeoutComponent>(3.f, [&scene]() {
+			entity.set<engine::TimeoutComponent>(15.f, [&scene]() {
 				scene.triggerEvent<std::string>("master.changePlayer");
 			}, true);
 		});
@@ -561,7 +561,6 @@ namespace worms { namespace scene {
 
 			scene.registerEvent<std::string>("player.jump", entity.getId(), [entity, &scene, &physicsComponent, &animationComponent, &hc](std::string const& jump) {
 				if (engine::PhysicsSystem::isGrounded(scene.getEntities(), entity)) {
-					std::cout << "jump" << std::endl;
 					physicsComponent.velocity += (Vector2f) jump;
 					animationComponent.currentState = PlayerSystem::getState("jump", hc);
 					animationComponent.playOnce = true;
@@ -680,7 +679,6 @@ namespace worms { namespace scene {
 
 		scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
 			entity.set<engine::TagComponent>(std::string("sword"));
-			std::cout << "sword " << entity.getId() << std::endl;
 
 <<<<<<< HEAD
 				entity.set<engine::IrrlichtComponent>(&game, "obj/missile.obj", "texture/missile.png");
@@ -978,6 +976,11 @@ namespace worms { namespace scene {
 			});
 >>>>>>> rules: timer until next turn
 
+			return 0;
+		});
+
+		scene.registerEvent<engine::EntityId>("master.win", 0, [&](engine::EntityId const& winner) {
+			game.replaceScene("main");
 			return 0;
 		});
 

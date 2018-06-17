@@ -81,6 +81,7 @@ engine::Game::_replaceScene()
 		_scenes.clear();
 	}
 	engine::internal::componentPoolReset.emit(true);
+	_device->getGUIEnvironment()->clear();
 	this->pushScene(_replacementScene);
 	_replacementScene = "";
 }
