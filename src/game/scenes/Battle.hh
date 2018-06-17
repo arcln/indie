@@ -248,7 +248,6 @@ namespace worms { namespace scene {
             transformComponent.position = {5.f, 10.f, 0.f};
             transformComponent.scale = {0.15f, 0.15f, 0.15f};
             transformComponent.offset = {0.f, -3.2f, 0.f};
-            // transformComponent.offsetRotation = {0.f, 0.f, -90.f};
             transformComponent.rotation = {0.f, 180.f, 0.f};
 
             auto& ic = entity.set<engine::ItemComponent>();
@@ -257,7 +256,7 @@ namespace worms { namespace scene {
                 p.normalize();
                 Wornite::Map::tryDestroyMap(scene, transformComponent.position.X + p.X, transformComponent.position.Y + p.Y, 1.5f, false);
             };
-            ic.offset = {1.5f, 1.f, 0.f};
+            ic.offset = {1.3f, 1.f, 0.f};
 		});
 
         scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
@@ -277,10 +276,10 @@ namespace worms { namespace scene {
             auto& ic = entity.set<engine::ItemComponent>();
             ic.use = [&]() {
             };
-            ic.offset = {1.5f, 1.f, 0.f};
+            ic.offset = {1.65f, 1.f, 0.f};
 		});
 
-        scene.registerEntityModel("sword.bullet", [&](engine::Entity const& entity) {
+        scene.registerEntityModel("rpg.bullet", [&](engine::Entity const& entity) {
             entity.set<engine::TagComponent>(std::string("projectile"));
 
             entity.set<engine::IrrlichtComponent>(&game, "obj/missile.obj", "texture/missile.png");
@@ -314,18 +313,21 @@ namespace worms { namespace scene {
 
 			auto& weapon = entity.set<WeaponComponent>();
 			auto& item = entity.set<engine::ItemComponent>([&scene, &transform, &weapon]() {
-				auto bullet = scene.spawnEntity("sword.bullet");
+				auto bullet = scene.spawnEntity("rpg.bullet");
 				auto& bulletTransform = bullet.get<engine::TransformComponent>();
 				auto& bulletPhysics = bullet.get<engine::PhysicsComponent>();
 
-				bulletTransform.position = transform.position;
+
 				bulletPhysics.velocity = weapon.aimPosition;
 				bulletPhysics.velocity = bulletPhysics.velocity.normalize() * 100.f;
+				bulletTransform.position = transform.position;
+				bulletTransform.position.X += bulletPhysics.velocity.X / 200;
+				bulletTransform.position.Y += bulletPhysics.velocity.Y / 200;
 			});
 			item.heavy = true;
 
 			weapon.hasAim = true;
-            item.offset = {1.f, 1.f, 0.f};
+            item.offset = {0.7f, 1.f, 0.f};
 		});
 
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
