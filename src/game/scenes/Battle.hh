@@ -113,7 +113,6 @@ namespace worms { namespace scene {
 				transformComponent.position = {0.f, 25.f, 0.f};
 
 				auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 0, -1 4, 1 4, 1 0)");
-				hitboxComponent.hasDebugMode = true;
 				hitboxComponent.rebound = 0.1f;
 
 				auto& hc = entity.set<engine::HoldComponent>();
@@ -187,9 +186,9 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Q, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(10.f, 0.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
-				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_Z, "player.jump", entity.getId(), Vector2f(0.f, 70.f), engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 70.f), engine::EVT_SYNCED);
 				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED);
-				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_SPACE, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
+				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_A, "player.use", entity.getId(), "0", engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_UP, "player.aim", entity.getId(), Vector2f(0.f, 1.f), engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_RIGHT, "player.aim", entity.getId(), Vector2f(1.f, 0.f), engine::EVT_SYNCED);
                 game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_DOWN, "player.aim", entity.getId(), Vector2f(0.f, -1.f), engine::EVT_SYNCED);
@@ -213,7 +212,6 @@ namespace worms { namespace scene {
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-6 -1.5, -6 1.5, 6 1.5, 6 -1.5)");
 			hitboxComponent.rebound = 0.2;
-			hitboxComponent.hasDebugMode = true;
 
             auto& ic = entity.set<engine::ItemComponent>();
             ic.use = [&]() {
@@ -244,7 +242,6 @@ namespace worms { namespace scene {
 				auto& explosionTransform = scene.spawnEntity("explosion").get<engine::TransformComponent>();
 				explosionTransform.position = transformComponent.position;
             };
-            hitboxComponent.hasDebugMode = true;
 		});
 
         scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
@@ -265,7 +262,6 @@ namespace worms { namespace scene {
 
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
 			hitboxComponent.rebound = 0.2;
-			hitboxComponent.hasDebugMode = true;
 		});
 
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const&) {
@@ -313,7 +309,6 @@ namespace worms { namespace scene {
 					entities.eachChilds(chunk.getId(), [&](engine::Entity const &child) {
 						auto& h = child.get<engine::HitboxComponent>();
 
-						h.hasDebugMode = DebugMode;
 					});
 				});
 				DebugMode = !DebugMode;
