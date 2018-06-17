@@ -10,15 +10,13 @@ image:
 
 image:
 	- name: logo
-	- image: texture/wornite720PTsans.png
-	- pos: 390 , 60
+	- image: texture/Logo600.png
+	- pos: 340 , 100
 
-text:
+image:
 	- name: CharName
-	- setText: Waiting
-	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
-	- color: 255, 255, 255, 255
-	- pos: 575, 225
+	- image: texture/waiting.png
+	- pos: 600, 225
 
 image:
 	- name: spinner0
