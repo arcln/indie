@@ -142,9 +142,5 @@ namespace worms { namespace scene {
 
 		parser.parseFile();
 		parser.fillMap();
-
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F2, "Play", 0, Vector2i(0, 0), 0);
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F3, "Options", 0, Vector2i(0, 0), 0);
-		game.eventsHandler.subscribe<Vector2i>(scene, irr::KEY_F4, "Credits", 0, Vector2i(0, 0), 0);
 	};
 }}

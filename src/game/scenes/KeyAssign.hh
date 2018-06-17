@@ -245,7 +245,7 @@ namespace worms { namespace scene {
 		});
 
 		scene.spawnEntity("camera");
-		engine::Menu::MyScriptParser parser("engine/menu/script/keyAssignement", &scene, &game);
+		engine::Menu::MyScriptParser parser("scripts/keyAssignement", &scene, &game);
 
 		parser.parseFile();
 		parser.fillMap();

@@ -17,84 +17,84 @@ text:
 	- name: Move left
 	- setText: Move left:
 	- pos: 330, 230
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Move right
 	- setText: Move right:
 	- pos: 330, 290
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Validate
 	- setText: Validate:
 	- pos: 330, 350
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Jump
 	- setText: Jump:
 	- pos: 640, 230
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Shoot
 	- setText: Shoot:
 	- pos: 640, 290
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Grab
 	- setText: Grab:
 	- pos: 640, 350
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 button:
 	- event: key left
 	- setText: Q
 	- rect: 480, 230, 630, 270
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- setIsPushButton: true
 
 button:
 	- event: key right
 	- setText: D
 	- rect: 480, 290, 630, 330
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- setIsPushButton: true
 
 button:
 	- event: validate
 	- setText: E
 	- rect: 480, 350, 630, 390
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- setIsPushButton: true
 
 button:
 	- event: jump
 	- setText: Z
 	- rect: 750, 230, 900, 270
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- setIsPushButton: true
 
 button:
 	- event: shoot
 	- setText: S
 	- rect: 750, 290, 900, 330
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- setIsPushButton: true
 
 button:
 	- event: grab
 	- setText: G
 	- rect: 750, 350, 900, 390
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- setIsPushButton: true
 
 button:

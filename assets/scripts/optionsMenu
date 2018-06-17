@@ -51,14 +51,14 @@ image:
 text:
 	- name: Volume
 	- setText: Volume:
-	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
 	- pos: 320, 280
 	- color: 255, 255, 255, 255
 
 text:
 	- name: VolumeLvl
 	- setText: 0
-	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
 	- pos: 470, 280
 	- color: 255, 255, 255, 255
 

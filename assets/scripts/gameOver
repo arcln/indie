@@ -1,0 +1,40 @@
+image:
+	- name: background
+	- image: texture/gameBack.png
+	- pos: 0, 0
+
+image:
+	- name: background2
+	- image: texture/frontBack.png
+	- pos: 280, 0
+
+image:
+	- name: logo
+	- image: texture/wornite720PTsans.png
+	- pos: 390 , 60
+
+text:
+	- setText: The Winner Is :
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
+	- color: 255, 255, 255, 255
+	- pos: 343, 225
+
+text:
+	- name: Winner
+	- setText: Name
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
+	- color: 255, 255, 255, 255
+	- pos: 343, 300
+
+button:
+	- image: texture/button_main-menu.png
+	- rect: 343, 426, 937, 492
+	- border: false
+	- event: Main Menu
+
+button:
+	- image: texture/button_quit.png
+	- imagePressed: texture/button_quit(1).png
+	- rect: 343, 514, 937, 580
+	- border: false
+	- event: Quit

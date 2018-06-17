@@ -17,35 +17,35 @@ text:
 	- name: Arthur CHALOIN
 	- setText: Arthur CHALOIN: Project Leader & ECS Dev
 	- pos: 310, 230
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Paul LAFFITE
 	- setText: Paul LAFFITE: Animation & ECS Dev
 	- pos: 310, 290
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Thomas ARBONA
 	- setText: Thomas ARBONA: Physics Dev
 	- pos: 310, 350
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Julien JORDAN
 	- setText: Julien JORDAN: Map Generation
 	- pos: 310, 410
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 text:
 	- name: Marlon LHUILLIER
 	- setText: Marlon LHUILLIER: Menu Engine Dev
 	- pos: 310, 470
-	- overrideFont: ../assets/font/PTSans32/PTSans32.xml
+	- overrideFont: ./assets/font/PTSans32/PTSans32.xml
 	- color: 255, 255, 255, 255
 
 button:

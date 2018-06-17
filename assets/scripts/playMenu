@@ -16,14 +16,14 @@ image:
 text:
 	- name: CharName
 	- setText: Choose your character name
-	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
 	- color: 255, 255, 255, 255
 	- pos: 383, 170
 
 text:
 	- name: Choose a Skin
 	- setText: Choose your character skin
-	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
 	- color: 255, 255, 255, 255
 	- pos: 400, 300
 
@@ -34,7 +34,7 @@ text:
 editBox:
 	- pos: 360, 240
 	- size: 565, 50
-	- overrideFont: ../assets/font/PTSans42/PTSans42.xml
+	- overrideFont: ./assets/font/PTSans42/PTSans42.xml
 	- color: 255, 0, 0, 0
 
 image:
