@@ -14,7 +14,6 @@ namespace worms { namespace scene {
 
 	static const auto loading = [](engine::Game& game, engine::Scene& scene) {
 
-
 		/********************************************************************\
 		|*				  		CLIENT ONLY EVENTS							*|
 		\********************************************************************/
@@ -42,6 +41,6 @@ namespace worms { namespace scene {
 
 		scene.triggerEvent<engine::GenericEvent>("loadMeshes", 0);
 		scene.triggerEvent<engine::GenericEvent>("loadTextures", 0);
-		game.replaceScene("postMenu");
+		game.replaceScene("mainMenu");
 	};
 }}

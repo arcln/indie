@@ -37,6 +37,7 @@ namespace worms {
 		game.registerSystem(new engine::Menu::MenuEngineSystem());
 		game.registerSystem(new engine::DisplaySystem(game));
 
+		game.registerSceneModel("main", worms::scene::loading);
 		game.registerSceneModel("postMenu", worms::scene::postMenu);
 		game.registerSceneModel("mainMenu", worms::scene::mainMenu);
 		game.registerSceneModel("playMenu", worms::scene::playScene);
@@ -44,7 +45,6 @@ namespace worms {
 		game.registerSceneModel("optionsMenu", worms::scene::optionsScene);
 		game.registerSceneModel("keyAssign", worms::scene::keyAssign);
 		game.registerSceneModel("waintingMenu", worms::scene::waitingScene);
-		game.registerSceneModel("main", worms::scene::loading);
 		game.registerSceneModel("battle", worms::scene::battle);
 		game.registerSceneModel("gameOver", worms::scene::gameOver);
 	};

@@ -47,6 +47,10 @@ worms::PlayerSystem::update(engine::Scene& scene, float tick)
 		}
 
 		entities.each<MasterComponent>([&](auto const&, auto& m) {
+			if (m.currentPlayer >= m.players.size()) {
+				return;
+			}
+
 			if (m.players.size() == 1) {
 				scene.triggerEvent<engine::EntityId>("master.win", 0, m.players.front());
 			}
