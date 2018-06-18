@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 #include <game/map/Map.hpp>
+#include <irrlicht/irrlicht.h>
 #include "engine/helpers/GeometryHelper.hpp"
 #include "engine/core/Game.hpp"
 #include "engine/systems/PhysicsSystem.hpp"
@@ -289,7 +290,7 @@ namespace worms { namespace scene {
 			entity.set<engine::PhysicsComponent>();
 
 			auto& transform = entity.set<engine::TransformComponent>();
-			transform.position = {10.f, 10.f, 0.f};
+			transform.position = {14.f, 10.f, 0.f};
 			transform.scale = {0.4f, 0.4f, 0.4f};
 			transform.offsetRotation = {0.f, -90.f, 0.f};
 
@@ -358,7 +359,19 @@ namespace worms { namespace scene {
 		scene.registerEvent<std::string>("player.spawn", 0, [&](std::string const& pos) {
 			scene.spawnEntity("rpg");
 			scene.spawnEntity("player", [&](engine::Entity const& entity) {
-				entity.get<engine::TransformComponent>().position = (Vector3f) pos;
+                static int id = 0;
+                std::string texture;
+                ++id;
+                id %= 3;
+                if (id == 1) {
+                    texture = "texture/player_anonymous.png";
+                } else if (id == 2) {
+                    texture = "texture/player_dali.png";
+                } else {
+                    texture = "texture/player_anonymous.png";
+                }
+				entity.get<engine::TransformComponent>().position = (Vector3f)pos;
+				entity.get<engine::IrrlichtComponent>().node->setMaterialTexture(0, engine::ResourceManager<engine::Texture*>::instance().get(texture));
 			});
 			return 0;
 		});
@@ -394,7 +407,6 @@ namespace worms { namespace scene {
 		scene.spawnEntity("sword");
 		scene.spawnEntity("pickaxe");
 		scene.spawnEntity("rpg");
-		scene.spawnEntity("sword");
 		scene.spawnEntity("background");
 		scene.spawnEntity("timer");
 
