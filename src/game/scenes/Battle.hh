@@ -259,6 +259,50 @@ namespace worms { namespace scene {
 			ic.offset = {1.3f, 1.f, 0.f};
 		});
 
+        scene.registerEntityModel("grenade", [&](engine::Entity const& entity) {
+			entity.set<engine::TagComponent>(std::string("pickaxe"));
+
+			auto& wc = entity.set<WeaponComponent>();
+			wc.hasAim = true;
+
+			entity.set<engine::IrrlichtComponent>(&game, "obj/MK3A2.obj");
+			auto& pc = entity.set<engine::PhysicsComponent>();
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-100 -100, -100 100, 100 100, 100 -100)");
+            hitboxComponent.hasDebugMode = true;
+
+
+			auto& transformComponent = entity.set<engine::TransformComponent>();
+			transformComponent.position = {7.f, 10.f, 0.f};
+			transformComponent.scale = {0.003f, 0.003f, 0.003f};
+			transformComponent.offset = {0.f, -3.2f, 0.f};
+			transformComponent.rotation = {0.f, 180.f, 0.f};
+
+			auto& ic = entity.set<engine::ItemComponent>();
+			ic.use = [&]() {
+                auto parent = scene.getEntities().getParentEntity(entity);
+                auto& hc = parent.get<engine::HoldComponent>();
+				auto vec = wc.aimPosition;
+
+                hc.count -= 1;
+                hc.current -= 1;
+                entity.detach();
+
+                pc.velocity = vec * 10.f;
+
+                hitboxComponent.onCollide = [entity, &scene, &transformComponent](
+                    engine::Entity const& collideWith) -> void {
+                    entity.set<engine::TimeoutComponent>(0.0001f, [entity, &scene, &transformComponent]() -> void {
+                        Wornite::Map::tryDestroyMap(scene, transformComponent.position.X, transformComponent.position.Y, 2.f);
+                        entity.kill();
+                    });
+                    auto& explosionTransform = scene.spawnEntity("explosion").get<engine::TransformComponent>();
+                    explosionTransform.position = transformComponent.position;
+                };
+			};
+			ic.offset = {1.3f, 1.f, 0.f};
+		});
+
 		scene.registerEntityModel("sword", [&](engine::Entity const& entity) {
 			entity.set<engine::TagComponent>(std::string("sword"));
 			entity.set<engine::IrrlichtComponent>(&game, "obj/sword.obj");
@@ -400,6 +444,7 @@ namespace worms { namespace scene {
 		scene.spawnEntity("pickaxe");
 		scene.spawnEntity("rpg");
 		scene.spawnEntity("sword");
-		scene.spawnEntity("background");
+        scene.spawnEntity("background");
+		scene.spawnEntity("grenade");
 	};
 }}
