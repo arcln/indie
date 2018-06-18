@@ -39,7 +39,7 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("master", [&scene](engine::Entity const& entity) {
 			entity.set<MasterComponent>().currentPlayer = 0;
 			entity.set<engine::TagComponent>("master");
-			entity.set<engine::TimeoutComponent>(3.f, [&scene]() {
+			entity.set<engine::TimeoutComponent>(8.f, [&scene]() {
 				scene.triggerEvent<std::string>("master.changePlayer");
 			}, true);
 		});
