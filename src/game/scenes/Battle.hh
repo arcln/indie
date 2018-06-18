@@ -70,7 +70,7 @@ namespace worms { namespace scene {
 			auto& transformComponent = entity.set<engine::TransformComponent>();
 			auto& particlesComponent = entity.set<engine::ParticlesComponent>(game.device(), 1, 2);
 
-			entity.set<engine::TimeoutComponent>(.1f, [&particlesComponent]() -> void {
+			entity.set<engine::TimeoutComponent>(.08f, [&particlesComponent]() -> void {
 				particlesComponent.node->setEmitter(nullptr);
 			});
 
@@ -202,7 +202,7 @@ namespace worms { namespace scene {
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_KEY_D, "player.move", entity.getId(), Vector2f(0.f, 0.f), engine::EVT_SYNCED | engine::EVT_RELEASE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_SPACE, "player.jump", entity.getId(), Vector2f(0.f, 70.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_R, "player.pick", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
-				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_A, "player.use", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
+				game.eventsHandler.subscribe<std::string>(scene, engine::KeyCode::KEY_KEY_S, "player.use", entity.getId(), "0", engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_UP, "player.aim", entity.getId(), Vector2f(0.f, 1.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_RIGHT, "player.aim", entity.getId(), Vector2f(1.f, 0.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
 				game.eventsHandler.subscribe<Vector2f>(scene, engine::KeyCode::KEY_DOWN, "player.aim", entity.getId(), Vector2f(0.f, -1.f), engine::EVT_SYNCED | engine::EVT_OVERRIDE);
@@ -228,8 +228,7 @@ namespace worms { namespace scene {
 			entity.set<engine::IrrlichtComponent>(&game, "obj/pickaxe.obj");
 			entity.set<engine::PhysicsComponent>();
 
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-8 -3, -8 3, 6 3, 6 -3)");
-			hitboxComponent.hasDebugMode = true;
+			entity.set<engine::HitboxComponent>("(-8 -3, -8 3, 6 3, 6 -3)");
 
 			auto& transformComponent = entity.set<engine::TransformComponent>();
 			transformComponent.position = {5.f, 10.f, 0.f};
@@ -260,8 +259,10 @@ namespace worms { namespace scene {
 			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-6 -1.5, -6 1.5, 6 1.5, 6 -1.5)");
 			hitboxComponent.rebound = 0.2;
 
-			auto& ic = entity.set<engine::ItemComponent>([]() {std::cout << "use item\n";});
-			ic.offset = {1.f, 2.f, 0.f};
+			auto& ic = entity.set<engine::ItemComponent>([]() {
+				std::cout << "use item\n";
+			});
+			ic.offset = {1.65f, 1.f, 0.f};
 		});
 
         scene.registerEntityModel("rpg.bullet", [&](engine::Entity const& entity) {
@@ -283,32 +284,34 @@ namespace worms { namespace scene {
 		});
 
 		scene.registerEntityModel("rpg", [&](engine::Entity const& entity) {
-			auto& transformComponent = entity.set<engine::TransformComponent>();
-			transformComponent.position = {10.f, 10.f, 0.f};
-			transformComponent.scale = {0.4f, 0.4f, 0.4f};
-			transformComponent.offsetRotation.Y = -90;
-
-			auto& wc = entity.set<WeaponComponent>();
-			wc.hasAim = true;
-
 			entity.set<engine::TagComponent>(std::string("rpg"));
 			entity.set<engine::IrrlichtComponent>(&game, "obj/rpg.obj", "texture/rpg.png");
 			entity.set<engine::PhysicsComponent>();
-			auto& ic = entity.set<engine::ItemComponent>([&]() {
+
+			auto& transform = entity.set<engine::TransformComponent>();
+			transform.position = {10.f, 10.f, 0.f};
+			transform.scale = {0.4f, 0.4f, 0.4f};
+			transform.offsetRotation = {0.f, -90.f, 0.f};
+
+			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
+			hitboxComponent.rebound = 0.2;
+
+			auto& weapon = entity.set<WeaponComponent>();
+			weapon.hasAim = true;
+
+			auto& item = entity.set<engine::ItemComponent>([&scene, &transform, &weapon]() {
 				auto bullet = scene.spawnEntity("rpg.bullet");
 				auto& bulletTransform = bullet.get<engine::TransformComponent>();
 				auto& bulletPhysics = bullet.get<engine::PhysicsComponent>();
 
-				bulletTransform.position = transformComponent.position;
-				bulletPhysics.velocity = wc.aimPosition;
+				bulletPhysics.velocity = weapon.aimPosition;
 				bulletPhysics.velocity = bulletPhysics.velocity.normalize() * 100.f;
+				bulletTransform.position = transform.position;
+				bulletTransform.position.X += bulletPhysics.velocity.X / 200;
+				bulletTransform.position.Y += bulletPhysics.velocity.Y / 200;
 			});
-
-			ic.offset = {1.f, 1.f, 0.f};
-			ic.heavy = true;
-
-			auto& hitboxComponent = entity.set<engine::HitboxComponent>("(-1 -1, -1 1, 1 1, 1 -1)");
-			hitboxComponent.rebound = 0.2;
+			item.heavy = true;
+			item.offset = {0.7f, 1.f, 0.f};
 		});
 
 		scene.registerEvent<std::string>("master.changePlayer", 0, [&scene](std::string const& player) {
@@ -337,14 +340,7 @@ namespace worms { namespace scene {
 		scene.registerEntityModel("timer", [&](engine::Entity const& entity) {
 			entity.set<engine::TagComponent>("timer");
 			static irr::s32 id = 0;
-			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(),
-																		  L"30",
-																		  irr::core::rect<irr::s32>(10, 10, 300, 300),
-																		  false,
-																		  false,
-																		  nullptr,
-																		  id,
-																		  false);
+			auto& staticTextComponent = entity.set<engine::TextComponent>(game.device(), L"30", irr::core::rect<irr::s32>(10, 10, 300, 300), false, false, nullptr, id, false);
 			staticTextComponent.node->setWordWrap(false);
 			staticTextComponent.node->setOverrideFont(game.device()->getGUIEnvironment()->getFont(L"../assets/font/PTSans48/PTSans48.xml"));
 		});
